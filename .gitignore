@@ -1,0 +1,20 @@
+# Compiled workload files
+*.elf
+*.hex
+*.bin
+*.o
+*.a
+*.map
+*.dump
+
+# Simulation files
+*.log
+*.vcd
+*.fsdb
+*.shm
+*.shm/
+
+# Temporary files
+*.tmp
+*.swp
+__pycache__/
