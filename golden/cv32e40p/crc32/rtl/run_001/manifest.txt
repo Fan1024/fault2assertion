@@ -1,0 +1,15 @@
+design=cv32e40p
+workload=crc32
+simulation_level=rtl
+run_name=run_001
+run_time=2026-07-22T11:55:54-04:00
+firmware_source=/raid/spring2026/fwu44/research/fault2assertion/build/cv32e40p/crc32/crc32.hex
+elf_source=/raid/spring2026/fwu44/research/fault2assertion/build/cv32e40p/crc32/crc32.elf
+cv32e40p_home=/raid/spring2026/fwu44/research/cv32e40p
+rtl_manifest=/raid/spring2026/fwu44/research/cv32e40p/cv32e40p_manifest.flist
+testbench_directory=/raid/spring2026/fwu44/research/cv32e40p/verification/shared/tb
+maxcycles=5000000
+vcd=1
+verbose=0
+expected_crc32_vector=0xCBF43926
+expected_crc32_signature=0x2D6352B3

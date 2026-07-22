@@ -1,0 +1,14 @@
+ M workloads/crc32/crc_32.c
+ M workloads/crc32/sniptype.h
+?? build/cv32e40p/
+?? build/host/
+?? golden/cv32e40p/crc32/
+?? platform/README.md
+?? platform/cv32e40p/
+?? scripts/README.md
+?? scripts/build_crc32_cv32e40p.sh
+?? scripts/inspect_crc32.sh
+?? scripts/run_xrun.sh
+?? scripts/setup_env.sh
+?? workloads/README.md
+?? workloads/crc32/crc32_baremetal.c

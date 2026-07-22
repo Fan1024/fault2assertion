@@ -1,0 +1,1 @@
+/raid/spring2026/fwu44/pdks/NanGate_45nm/pdk_v1.3_v2010_12/NangateOpenCellLibrary_PDKv1_3_v2010_12/Front_End/Verilog/NangateOpenCellLibrary.v

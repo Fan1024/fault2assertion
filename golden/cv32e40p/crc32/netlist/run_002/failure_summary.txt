@@ -1,0 +1,5 @@
+stage=simulation
+result=TIMEOUT
+maxcycles=5000000
+rtl_reference_cycles=approximately_940800
+suspected_cause=unconnected inactive COREV_CLUSTER0 inputs in sleep_unit_i

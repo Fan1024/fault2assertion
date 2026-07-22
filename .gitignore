@@ -18,3 +18,26 @@
 *.tmp
 *.swp
 __pycache__/
+
+# Xcelium generated simulation database
+**/xcelium.d/
+**/INCA_libs/
+**/*.shm/
+**/env.history.*
+
+# Complete simulation run directories
+runs/
+
+# Xcelium temporary compile/elaboration databases
+**/xcelium.d/
+**/INCA_libs/
+**/env.d/
+**/*.shm/
+
+# Xcelium transient runtime files
+**/xrun.key
+**/xrun.history
+**/env.history.*
+
+# Build-time simulator workspace
+build/xcelium_work/

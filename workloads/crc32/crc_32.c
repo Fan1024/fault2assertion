@@ -122,6 +122,7 @@ DWORD updateCRC32(unsigned char ch, DWORD crc)
       return UPDC32(ch, crc);
 }
 
+#ifndef CRC32_BAREMETAL
 Boolean_T crc32file(char *name, DWORD *crc, long *charcnt)
 {
       register FILE *fin;
@@ -156,6 +157,8 @@ Boolean_T crc32file(char *name, DWORD *crc, long *charcnt)
       return Success_;
 }
 
+#endif /* !CRC32_BAREMETAL */
+
 DWORD crc32buf(char *buf, size_t len)
 {
       register DWORD oldcrc32;
@@ -171,6 +174,7 @@ DWORD crc32buf(char *buf, size_t len)
       
 }
 
+#ifndef CRC32_BAREMETAL
 int
 main(int argc, char *argv[])
 {
@@ -185,3 +189,4 @@ main(int argc, char *argv[])
       }
       return(errors != 0);
 }
+#endif /* !CRC32_BAREMETAL */
