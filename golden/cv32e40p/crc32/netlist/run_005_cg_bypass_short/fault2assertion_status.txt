@@ -1,0 +1,3 @@
+ M platform/cv32e40p/tb/cv32e40p_tb_subsystem.sv
+?? build/cv32e40p/
+?? golden/cv32e40p/crc32/netlist/run_005_cg_bypass_short/

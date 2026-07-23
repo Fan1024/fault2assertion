@@ -1,0 +1,9 @@
+ M platform/cv32e40p/tb/cv32e40p_tb_subsystem.sv
+ M scripts/run_xrun.sh
+?? build/cv32e40p/
+?? golden/cv32e40p/crc32/netlist/run_005_cg_bypass_short/
+?? golden/cv32e40p/crc32/netlist/run_006_cg_bypass_full/
+?? golden/cv32e40p/crc32/netlist/run_007_clean_reset_short/
+?? golden/cv32e40p/crc32/netlist/run_009_tetramax_short/
+?? golden/cv32e40p/crc32/netlist/run_010_tetramax_full/
+?? platform/cv32e40p/smoke/

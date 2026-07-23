@@ -284,7 +284,8 @@ XRUN_ARGS=(
 # SDF will be added only after this run passes.
 if [[ "${SIM_LEVEL}" == "netlist" ]]; then
     XRUN_ARGS+=(
-        -delay_mode zero
+        +define+TETRAMAX
+    -delay_mode zero
         -notimingchecks
     )
 fi

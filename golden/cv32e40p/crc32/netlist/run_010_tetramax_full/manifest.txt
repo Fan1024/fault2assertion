@@ -1,0 +1,15 @@
+design=cv32e40p
+workload=crc32
+simulation_level=netlist
+run_name=run_010_tetramax_full
+run_time=2026-07-22T20:07:41-04:00
+firmware=/raid/spring2026/fwu44/research/fault2assertion/build/cv32e40p/crc32/crc32.hex
+elf=/raid/spring2026/fwu44/research/fault2assertion/build/cv32e40p/crc32/crc32.elf
+cv32e40p_home=/raid/spring2026/fwu44/research/cv32e40p
+mapped_netlist=/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v
+cell_model=/raid/spring2026/fwu44/pdks/NanGate_45nm/pdk_v1.3_v2010_12/NangateOpenCellLibrary_PDKv1_3_v2010_12/Front_End/Verilog/NangateOpenCellLibrary.v
+maxcycles=5000000
+vcd=0
+verbose=0
+expected_crc32_vector=0xCBF43926
+expected_crc32_signature=0x2D6352B3

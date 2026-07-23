@@ -39,7 +39,7 @@ SIZE_TXT     := $(BUILD_DIR)/crc32.size.txt
 
 APP_SRCS := \
     $(WORKLOAD_DIR)/crc_32.c \
-    $(WORKLOAD_DIR)/crc32_smoke.c
+    $(WORKLOAD_DIR)/crc32_baremetal.c
 
 RUNTIME_SRCS := \
     $(RUNTIME_DIR)/crt0.S \

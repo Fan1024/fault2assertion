@@ -64,6 +64,35 @@ module cv32e40p_tb_subsystem #(
 
   logic                               core_sleep_o;
 
+  // NETLIST_STARTUP_RESET
+  //
+  // Gate-level registers begin as X unless reset is asserted
+  // deterministically. The external legacy tb_top reset becomes
+  // known too late for reliable gate-level initialization, so this
+  // wrapper supplies a clean startup reset to both the CPU and RAM.
+  logic netlist_rst_ni;
+  logic netlist_fetch_enable;
+
+  initial begin
+    netlist_rst_ni        = 1'b0;
+    netlist_fetch_enable  = 1'b0;
+
+    $display("[TB] Netlist startup reset asserted");
+
+    // Keep reset active for twenty complete clock cycles.
+    repeat (20) @(negedge clk_i);
+
+    netlist_rst_ni = 1'b1;
+    $display("[TB] Netlist startup reset released");
+
+    // Allow reset release to propagate before instruction fetch.
+    repeat (2) @(negedge clk_i);
+
+    netlist_fetch_enable = 1'b1;
+    $display("[TB] Netlist fetch enabled");
+  end
+
+
 
 
 
@@ -72,10 +101,10 @@ module cv32e40p_tb_subsystem #(
   // instantiate the core
   cv32e40p_top top_i (
       .clk_i (clk_i),
-      .rst_ni(rst_ni),
+      .rst_ni(netlist_rst_ni),
 
       .pulp_clock_en_i(1'b1),
-      .scan_cg_en_i   (1'b0),
+      .scan_cg_en_i   (1'b1),
 
       .boot_addr_i        (BOOT_ADDR),
       .mtvec_addr_i       (32'h0),
@@ -107,7 +136,7 @@ module cv32e40p_tb_subsystem #(
       .debug_running_o  (),
       .debug_halted_o   (),
 
-      .fetch_enable_i(fetch_enable_i),
+      .fetch_enable_i(netlist_fetch_enable),
       .core_sleep_o  (core_sleep_o)
   );
 
@@ -119,7 +148,7 @@ module cv32e40p_tb_subsystem #(
       .INSTR_RDATA_WIDTH(INSTR_RDATA_WIDTH)
   ) ram_i (
       .clk_i (clk_i),
-      .rst_ni(rst_ni),
+      .rst_ni(netlist_rst_ni),
 
       .instr_req_i   (instr_req),
       .instr_addr_i  (instr_addr[RAM_ADDR_WIDTH-1:0]),
