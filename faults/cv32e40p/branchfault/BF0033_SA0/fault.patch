@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0033_SA0/fault_netlist.v
+@@ -903,7 +903,7 @@
+   AOI22_X1 g42424__7098(.A1 (\mhpmcounter_q[3] [50]), .A2 (n_1030), .B1
+        (dscratch1_q[18]), .B2 (n_27455_BAR), .ZN (n_1210));
+   AOI22_X1 g42425__6131(.A1 (\mhpmcounter_q[2] [17]), .A2 (n_1029), .B1
+-       (dscratch1_q[17]), .B2 (n_27455_BAR), .ZN (n_1209));
++       (1'b0), .B2 (n_27455_BAR), .ZN (n_1209));
+   AOI22_X1 g42426__1881(.A1 (\mhpmcounter_q[2] [25]), .A2 (n_1029), .B1
+        (dscratch1_q[25]), .B2 (n_27455_BAR), .ZN (n_1208));
+   AOI22_X1 g42427__5115(.A1 (\mhpmcounter_q[2] [32]), .A2 (n_1031), .B1

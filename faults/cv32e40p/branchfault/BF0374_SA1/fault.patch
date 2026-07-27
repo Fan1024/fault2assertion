@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0374_SA1/fault_netlist.v
+@@ -37093,7 +37093,7 @@
+        (data_rdata_i[7]), .B2 (n_552), .ZN (n_562));
+   OAI22_X1 g455(.A1 (data_rdata_i[15]), .A2 (rdata_offset_q[1]), .B1
+        (data_rdata_i[31]), .B2 (n_552), .ZN (n_563));
+-  AND2_X1 g451(.A1 (n_566), .A2 (rdata_offset_q[1]), .ZN (n_567));
++  AND2_X1 g451(.A1 (n_566), .A2 (1'b1), .ZN (n_567));
+   INV_X1 g461(.A (n_555), .ZN (n_566));
+   MUX2_X1 g435(.A (rdata_q[15]), .B (n_565), .S (n_82), .Z
+        (data_rdata_ex_o[15]));

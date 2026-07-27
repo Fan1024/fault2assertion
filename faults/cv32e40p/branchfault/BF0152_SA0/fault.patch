@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0152_SA0/fault_netlist.v
+@@ -18555,7 +18555,7 @@
+        (\csa_tree_add_228_5_groupi/n_323 ));
+   AOI22_X1 \csa_tree_add_228_5_groupi/g12738 (.A1
+        (\csa_tree_add_228_5_groupi/n_152 ), .A2 (op_a_i[1]), .B1
+-       (\csa_tree_add_228_5_groupi/n_231 ), .B2 (op_a_i[2]), .ZN
++       (\csa_tree_add_228_5_groupi/n_231 ), .B2 (1'b0), .ZN
+        (\csa_tree_add_228_5_groupi/n_322 ));
+   AOI22_X1 \csa_tree_add_228_5_groupi/g12739 (.A1
+        (\csa_tree_add_228_5_groupi/n_152 ), .A2 (op_a_i[0]), .B1

@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0173_SA1/fault_netlist.v
+@@ -20406,7 +20406,7 @@
+   INV_X1 g9961(.A (n_207), .ZN (n_281));
+   AOI22_X1 g9962(.A1 (n_176), .A2 (regfile_we_wb_i), .B1
+        (data_req_ex_i), .B2 (regfile_we_ex_i), .ZN (n_206));
+-  NOR2_X1 g9963(.A1 (data_misaligned_i), .A2 (n_183), .ZN
++  NOR2_X1 g9963(.A1 (data_misaligned_i), .A2 (1'b1), .ZN
+        (operand_b_fw_mux_sel_o[0]));
+   NAND2_X1 g9964(.A1 (n_288), .A2 (n_181), .ZN (instr_req_o));
+   NOR2_X1 g9965(.A1 (n_291), .A2 (fencei_insn_i), .ZN (n_205));

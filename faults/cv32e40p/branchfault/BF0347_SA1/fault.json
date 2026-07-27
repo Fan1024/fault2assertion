@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.2",
+  "generated_at_utc": "2026-07-24T20:25:15.790775+00:00",
+  "fault_id": "BF0347_SA1",
+  "fault_pair_id": "BF0347",
+  "location_id": "BL00347",
+  "paired_fault_id": "BF0347_SA0",
+  "design": "cv32e40p",
+  "fault_model": "branch_stuck_at",
+  "stuck_at": 1,
+  "source_netlist": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",
+  "source_netlist_sha256": "39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7",
+  "site": {
+    "site_id": "BS029515",
+    "site_key": "cv32e40p_load_store_unit_PULP_OBI0|\\ADD_UNS_OP/g1162|A",
+    "module": "cv32e40p_load_store_unit_PULP_OBI0",
+    "functional_region": "lsu",
+    "source_net": "\\ADD_UNS_OP/n_19",
+    "source_class": "combinational_output",
+    "source_driver": {
+      "cell_type": "NAND2_X1",
+      "instance": "\\ADD_UNS_OP/g1296",
+      "pin": "ZN"
+    },
+    "source_fanout": 3,
+    "fanout_bucket": "3_4",
+    "sink_instance": "\\ADD_UNS_OP/g1162",
+    "sink_cell_type": "OAI21_X1",
+    "sink_pin": "A",
+    "sink_role": "combinational_input"
+  },
+  "sampling": {
+    "stratum": "lsu|combinational_output|3_4",
+    "stratum_population": 168,
+    "stratum_sample": 3,
+    "selection_probability": 0.017857142857142856,
+    "analysis_weight": 56.0,
+    "confidence_level": 0.95,
+    "margin_of_error": 0.05,
+    "random_seed": 20260724
+  },
+  "modification": {
+    "original_connection": "\\ADD_UNS_OP/n_19",
+    "replacement_connection": "1'b1",
+    "method": "replace only the selected sink-pin branch expression"
+  },
+  "artifacts": {
+    "fault_netlist": "fault_netlist.v",
+    "patch": "fault.patch",
+    "metadata": "fault.json",
+    "fault_netlist_sha256": "56a23f2a962a75859895a93041d089cb77844f1aa40206fd3bbf9e5b1cbd4ba8"
+  },
+  "results": {
+    "status": "not_run",
+    "path_template": "results/<workload>/",
+    "note": "The results directory is created only when a simulation is run; empty result directories are intentionally not generated."
+  }
+}

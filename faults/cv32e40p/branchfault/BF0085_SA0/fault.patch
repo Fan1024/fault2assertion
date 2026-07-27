@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0085_SA0/fault_netlist.v
+@@ -9015,7 +9015,7 @@
+   NAND2_X1 g28025(.A1 (result_div[17]), .A2 (n_754), .ZN (n_131));
+   NAND2_X1 g28026(.A1 (result_div[26]), .A2 (n_754), .ZN (n_130));
+   NAND2_X1 g28027(.A1 (result_div[22]), .A2 (n_754), .ZN (n_129));
+-  NAND2_X1 g28028(.A1 (result_div[20]), .A2 (n_754), .ZN (n_128));
++  NAND2_X1 g28028(.A1 (result_div[20]), .A2 (1'b0), .ZN (n_128));
+   NAND2_X1 g28029(.A1 (result_div[18]), .A2 (n_754), .ZN (n_127));
+   NAND2_X1 g28030(.A1 (result_div[24]), .A2 (n_754), .ZN (n_126));
+   NAND2_X1 g28031(.A1 (result_div[16]), .A2 (n_754), .ZN (n_125));

@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0328_SA0/fault_netlist.v
+@@ -35568,7 +35568,7 @@
+        .ZN (n_195));
+   XNOR2_X1 \add_167_42/g707 (.A (\add_167_42/n_57 ), .B (pc_id_o[29]),
+        .ZN (n_193));
+-  XNOR2_X1 \add_167_42/g709 (.A (\add_167_42/n_48 ), .B (pc_id_o[27]),
++  XNOR2_X1 \add_167_42/g709 (.A (1'b0 ), .B (pc_id_o[27]),
+        .ZN (n_191));
+   XNOR2_X1 \add_167_42/g710 (.A (\add_167_42/n_47 ), .B (pc_id_o[25]),
+        .ZN (n_189));

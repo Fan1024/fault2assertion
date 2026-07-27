@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0199_SA1/fault_netlist.v
+@@ -31356,7 +31356,7 @@
+   INV_X1 g27948(.A (n_227), .ZN (n_226));
+   INV_X1 g27949(.A (n_225), .ZN (n_224));
+   NOR2_X1 g27950(.A1 (n_75), .A2 (n_29), .ZN (n_222));
+-  NOR2_X1 g27951(.A1 (n_57), .A2 (n_29), .ZN (n_221));
++  NOR2_X1 g27951(.A1 (1'b1), .A2 (n_29), .ZN (n_221));
+   XNOR2_X1 g27952(.A (ctrl_transfer_insn_in_id[0]), .B
+        (ctrl_transfer_insn_in_id[1]), .ZN (n_220));
+   NOR2_X1 g27953(.A1 (ex_ready_i), .A2 (n_28), .ZN (n_219));

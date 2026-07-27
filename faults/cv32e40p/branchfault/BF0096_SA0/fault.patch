@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0096_SA0/fault_netlist.v
+@@ -9131,7 +9131,7 @@
+   AOI22_X1 g28158(.A1 (n_41), .A2 (operand_a_i[15]), .B1 (n_32), .B2
+        (operand_a_i[14]), .ZN (n_7));
+   NAND2_X1 g28159(.A1 (n_41), .A2 (operand_a_i[15]), .ZN (n_6));
+-  AOI21_X1 g28160(.A (n_8), .B1 (n_1), .B2 (operator_i[0]), .ZN (n_5));
++  AOI21_X1 g28160(.A (n_8), .B1 (n_1), .B2 (1'b0), .ZN (n_5));
+   AND2_X1 g28161(.A1 (n_1), .A2 (operator_i[0]), .ZN (n_4));
+   OR3_X1 g28164(.A1 (n_766), .A2 (n_764), .A3 (n_39), .ZN (n_1));
+   XNOR2_X1 \add_168_54/g1230 (.A (\add_168_54/n_193 ), .B

@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0163_SA0/fault_netlist.v
+@@ -12259,7 +12259,7 @@
+   wire n_1352, n_1353, n_1354, n_1355, n_1356, n_1357, n_1358, n_1359;
+   wire n_1360, n_1361, n_1362, n_1363, n_1364, n_1365, n_1366, n_1367;
+   wire short_mac_msb1;
+-  AND3_X1 g1887(.A1 (short_op_a[15]), .A2 (short_signed_i[0]), .A3
++  AND3_X1 g1887(.A1 (1'b0), .A2 (short_signed_i[0]), .A3
+        (n_66), .ZN (short_op_a[16]));
+   MUX2_X1 g1888(.A (op_a_i[28]), .B (op_a_i[12]), .S (n_65), .Z
+        (n_165));

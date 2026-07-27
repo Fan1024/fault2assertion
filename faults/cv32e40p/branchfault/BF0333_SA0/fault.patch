@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0333_SA0/fault_netlist.v
+@@ -34162,7 +34162,7 @@
+        (clk), .D (\gen_no_trans_stable.obi_addr_q [18]), .SE (n_2), .SI
+        (trans_addr_i[18]), .Q (\gen_no_trans_stable.obi_addr_q [18]));
+   SDFFR_X1 \gen_no_trans_stable.obi_addr_q_reg[19] (.RN (rst_n), .CK
+-       (clk), .D (\gen_no_trans_stable.obi_addr_q [19]), .SE (n_2), .SI
++       (clk), .D (1'b0), .SE (n_2), .SI
+        (trans_addr_i[19]), .Q (\gen_no_trans_stable.obi_addr_q [19]));
+   SDFFR_X1 \gen_no_trans_stable.obi_addr_q_reg[20] (.RN (rst_n), .CK
+        (clk), .D (\gen_no_trans_stable.obi_addr_q [20]), .SE (n_2), .SI

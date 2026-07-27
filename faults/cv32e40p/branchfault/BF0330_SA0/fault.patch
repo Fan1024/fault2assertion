@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0330_SA0/fault_netlist.v
+@@ -35248,7 +35248,7 @@
+        (jump_target_id_i[20]), .ZN (n_93));
+   AOI22_X1 g6123(.A1 (n_35), .A2 (boot_addr_i[6]), .B1 (n_37), .B2
+        (jump_target_id_i[6]), .ZN (n_92));
+-  AOI22_X1 g6124(.A1 (n_35), .A2 (boot_addr_i[31]), .B1 (n_37), .B2
++  AOI22_X1 g6124(.A1 (n_35), .A2 (boot_addr_i[31]), .B1 (1'b0), .B2
+        (jump_target_id_i[31]), .ZN (n_91));
+   AOI22_X1 g6125(.A1 (n_35), .A2 (boot_addr_i[26]), .B1 (n_37), .B2
+        (jump_target_id_i[26]), .ZN (n_90));

@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0322_SA1/fault_netlist.v
+@@ -33805,7 +33805,7 @@
+        (read_pointer_q), .Z (data_o[17]));
+   MUX2_X1 g2489(.A (\mem_q[0] [13]), .B (\mem_q[1] [13]), .S
+        (read_pointer_q), .Z (data_o[13]));
+-  OR2_X1 g2490(.A1 (cnt_o[0]), .A2 (cnt_o[1]), .ZN (n_28));
++  OR2_X1 g2490(.A1 (cnt_o[0]), .A2 (1'b1), .ZN (n_28));
+   SDFFR_X1 \mem_q_reg[0][0] (.RN (rst_ni), .CK (clk_i), .D
+        (\mem_q[0] [0]), .SE (n_16), .SI (data_i[0]), .Q (\mem_q[0]
+        [0]));

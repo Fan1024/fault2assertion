@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0120_SA0/fault_netlist.v
+@@ -5985,7 +5985,7 @@
+   INV_X1 g4223(.A (n_504), .ZN (n_44));
+   NAND2_X1 g4224(.A1 (n_228), .A2 (n_8), .ZN (n_43));
+   AOI21_X1 g4225(.A (n_7), .B1 (OpBIsZero_SI), .B2 (n_4), .ZN (n_42));
+-  AOI22_X1 g4226(.A1 (ResReg_DP[0]), .A2 (n_6), .B1 (ResReg_DP[1]), .B2
++  AOI22_X1 g4226(.A1 (ResReg_DP[0]), .A2 (1'b0), .B1 (ResReg_DP[1]), .B2
+        (n_226), .ZN (n_41));
+   AOI22_X1 g4227(.A1 (ResReg_DP[1]), .A2 (n_6), .B1 (ResReg_DP[2]), .B2
+        (n_226), .ZN (n_40));

@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.2",
+  "generated_at_utc": "2026-07-24T20:25:18.559253+00:00",
+  "fault_id": "BF0356_SA1",
+  "fault_pair_id": "BF0356",
+  "location_id": "BL00356",
+  "paired_fault_id": "BF0356_SA0",
+  "design": "cv32e40p",
+  "fault_model": "branch_stuck_at",
+  "stuck_at": 1,
+  "source_netlist": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",
+  "source_netlist_sha256": "39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7",
+  "site": {
+    "site_id": "BS029872",
+    "site_key": "cv32e40p_load_store_unit_PULP_OBI0|g12809|A1",
+    "module": "cv32e40p_load_store_unit_PULP_OBI0",
+    "functional_region": "lsu",
+    "source_net": "data_sign_ext_q[0]",
+    "source_class": "sequential_output",
+    "source_driver": {
+      "cell_type": "SDFFR_X1",
+      "instance": "\\data_sign_ext_q_reg[0]",
+      "pin": "Q"
+    },
+    "source_fanout": 2,
+    "fanout_bucket": "2",
+    "sink_instance": "g12809",
+    "sink_cell_type": "NAND2_X1",
+    "sink_pin": "A1",
+    "sink_role": "combinational_input"
+  },
+  "sampling": {
+    "stratum": "lsu|sequential_output|2",
+    "stratum_population": 20,
+    "stratum_sample": 2,
+    "selection_probability": 0.1,
+    "analysis_weight": 10.0,
+    "confidence_level": 0.95,
+    "margin_of_error": 0.05,
+    "random_seed": 20260724
+  },
+  "modification": {
+    "original_connection": "data_sign_ext_q[0]",
+    "replacement_connection": "1'b1",
+    "method": "replace only the selected sink-pin branch expression"
+  },
+  "artifacts": {
+    "fault_netlist": "fault_netlist.v",
+    "patch": "fault.patch",
+    "metadata": "fault.json",
+    "fault_netlist_sha256": "c4a0e3f77a754a8883070b145de876cbe5ca19367fcecc9af67ec6df643990bb"
+  },
+  "results": {
+    "status": "not_run",
+    "path_template": "results/<workload>/",
+    "note": "The results directory is created only when a simulation is run; empty result directories are intentionally not generated."
+  }
+}

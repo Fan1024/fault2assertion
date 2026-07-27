@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0006_SA1/fault_netlist.v
+@@ -37163,7 +37163,7 @@
+   INV_X1 g100(.A (fetch_enable_o), .ZN (n_1));
+   DFFR_X1 fetch_enable_q_reg(.RN (rst_n), .CK (clk_ungated_i), .D
+        (n_0), .Q (fetch_enable_o));
+-  OR2_X1 g68(.A1 (fetch_enable_o), .A2 (fetch_enable_i), .ZN (n_0));
++  OR2_X1 g68(.A1 (1'b1), .A2 (fetch_enable_i), .ZN (n_0));
+ endmodule
+ 
+ module

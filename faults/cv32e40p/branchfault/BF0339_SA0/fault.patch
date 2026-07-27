@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0339_SA0/fault_netlist.v
+@@ -34361,7 +34361,7 @@
+        (trans_addr_q[6]), .ZN (n_112));
+   AOI22_X1 g2510(.A1 (n_100), .A2 (n_177), .B1 (n_102), .B2
+        (trans_addr_q[9]), .ZN (n_111));
+-  AOI22_X1 g2511(.A1 (n_100), .A2 (n_173), .B1 (n_102), .B2
++  AOI22_X1 g2511(.A1 (n_100), .A2 (1'b0), .B1 (n_102), .B2
+        (trans_addr_q[5]), .ZN (n_110));
+   AOI22_X1 g2512(.A1 (n_100), .A2 (n_187), .B1 (n_102), .B2
+        (trans_addr_q[19]), .ZN (n_109));

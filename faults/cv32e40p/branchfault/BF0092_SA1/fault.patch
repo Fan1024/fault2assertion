@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0092_SA1/fault_netlist.v
+@@ -8320,7 +8320,7 @@
+   AOI221_X1 g27591(.A (n_460), .B1 (shift_right_result[8]), .B2
+        (n_755), .C1 (n_469), .C2 (operand_a_i[23]), .ZN (n_558));
+   AOI222_X1 g27592(.A1 (result_div[10]), .A2 (n_754), .B1 (n_469), .B2
+-       (operand_a_i[10]), .C1 (shift_right_result[10]), .C2 (n_301),
++       (1'b1), .C1 (shift_right_result[10]), .C2 (n_301),
+        .ZN (n_557));
+   AOI22_X1 g27593(.A1 (n_509), .A2 (operand_b_i[7]), .B1
+        (shift_right_result[7]), .B2 (n_301), .ZN (n_556));

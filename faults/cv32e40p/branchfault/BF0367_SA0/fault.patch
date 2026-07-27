@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0367_SA0/fault_netlist.v
+@@ -36389,7 +36389,7 @@
+   NOR2_X1 g12777(.A1 (n_105), .A2 (data_type_ex_i[0]), .ZN (n_139));
+   AOI22_X1 g12778(.A1 (data_rdata_i[1]), .A2 (n_552), .B1
+        (data_rdata_i[17]), .B2 (rdata_offset_q[1]), .ZN (n_138));
+-  AOI22_X1 g12779(.A1 (data_rdata_i[6]), .A2 (n_552), .B1
++  AOI22_X1 g12779(.A1 (data_rdata_i[6]), .A2 (1'b0), .B1
+        (data_rdata_i[22]), .B2 (rdata_offset_q[1]), .ZN (n_137));
+   NOR3_X1 g12781(.A1 (n_1), .A2 (data_type_ex_i[1]), .A3
+        (data_type_ex_i[0]), .ZN (n_134));

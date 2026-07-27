@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0035_SA1/fault_netlist.v
+@@ -770,7 +770,7 @@
+   AOI222_X1 g42365__5122(.A1 (n_969), .A2 (n_962), .B1 (n_27452_BAR),
+        .B2 (\gen_trigger_regs.tmatch_value_q [1]), .C1 (mscratch_q[1]),
+        .C2 (n_854), .ZN (n_1268));
+-  AOI22_X1 g42366__8246(.A1 (mscratch_q[7]), .A2 (n_45), .B1
++  AOI22_X1 g42366__8246(.A1 (1'b1), .A2 (n_45), .B1
+        (\mhpmevent_q[3] [7]), .B2 (n_985), .ZN (n_1267));
+   AOI22_X1 g42367__7098(.A1 (mscratch_q[4]), .A2 (n_854), .B1
+        (mcause_q[4]), .B2 (n_1093), .ZN (n_1266));

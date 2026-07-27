@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0132_SA0/fault_netlist.v
+@@ -12568,7 +12568,7 @@
+        (\csa_tree_add_111_42_groupi/n_812 ), .ZN
+        (\csa_tree_add_111_42_groupi/n_813 ));
+   NOR2_X1 \csa_tree_add_111_42_groupi/g7968 (.A1
+-       (\csa_tree_add_111_42_groupi/n_809 ), .A2
++       (1'b0 ), .A2
+        (\csa_tree_add_111_42_groupi/n_750 ), .ZN
+        (\csa_tree_add_111_42_groupi/n_812 ));
+   XNOR2_X1 \csa_tree_add_111_42_groupi/g7969 (.A

@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0336_SA0/fault_netlist.v
+@@ -34391,7 +34391,7 @@
+   NAND2_X1 g2534(.A1 (branch_addr_i[14]), .A2 (branch_i), .ZN (n_145));
+   NAND2_X1 g2535(.A1 (branch_addr_i[13]), .A2 (branch_i), .ZN (n_157));
+   NAND2_X1 g2536(.A1 (branch_addr_i[23]), .A2 (branch_i), .ZN (n_158));
+-  NAND2_X1 g2537(.A1 (branch_addr_i[12]), .A2 (branch_i), .ZN (n_160));
++  NAND2_X1 g2537(.A1 (branch_addr_i[12]), .A2 (1'b0), .ZN (n_160));
+   NAND2_X1 g2538(.A1 (branch_addr_i[6]), .A2 (branch_i), .ZN (n_140));
+   INV_X1 g2539(.A (n_100), .ZN (n_101));
+   NAND2_X1 g2540(.A1 (branch_addr_i[20]), .A2 (branch_i), .ZN (n_162));

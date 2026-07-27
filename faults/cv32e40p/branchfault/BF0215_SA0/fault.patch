@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0215_SA0/fault_netlist.v
+@@ -21295,7 +21295,7 @@
+        (n_66));
+   INV_X1 g4382(.A (n_161), .ZN (n_64));
+   AOI21_X1 g4384(.A (n_13), .B1 (n_50), .B2 (n_142), .ZN (n_61));
+-  AOI21_X1 g4392(.A (n_143), .B1 (n_23), .B2 (n_24), .ZN (n_52));
++  AOI21_X1 g4392(.A (n_143), .B1 (1'b0), .B2 (n_24), .ZN (n_52));
+   NAND2_X1 g4396(.A1 (n_22), .A2 (n_24), .ZN (n_50));
+   AOI22_X1 g4397(.A1 (irq_i[20]), .A2 (mie_bypass_i[20]), .B1
+        (irq_i[21]), .B2 (mie_bypass_i[21]), .ZN (n_49));

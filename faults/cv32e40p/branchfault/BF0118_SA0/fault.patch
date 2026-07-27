@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0118_SA0/fault_netlist.v
+@@ -5932,7 +5932,7 @@
+   AOI222_X1 g4145(.A1 (n_6), .A2 (BReg_DP[20]), .B1 (n_226), .B2
+        (BReg_DP[21]), .C1 (OpB_DI[20]), .C2 (n_3505_BAR), .ZN (n_91));
+   AOI222_X1 g4146(.A1 (n_6), .A2 (BReg_DP[23]), .B1 (n_226), .B2
+-       (BReg_DP[24]), .C1 (OpB_DI[23]), .C2 (n_3505_BAR), .ZN (n_90));
++       (BReg_DP[24]), .C1 (OpB_DI[23]), .C2 (1'b0), .ZN (n_90));
+   AOI222_X1 g4147(.A1 (n_6), .A2 (BReg_DP[14]), .B1 (n_226), .B2
+        (BReg_DP[15]), .C1 (OpB_DI[14]), .C2 (n_3505_BAR), .ZN (n_89));
+   AOI222_X1 g4148(.A1 (n_6), .A2 (BReg_DP[9]), .B1 (n_226), .B2

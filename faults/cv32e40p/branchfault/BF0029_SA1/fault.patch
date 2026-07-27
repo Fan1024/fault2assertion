@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0029_SA1/fault_netlist.v
+@@ -3929,7 +3929,7 @@
+        .ZN (n_49));
+   NOR2_X1 g41919(.A1 (n_1389), .A2 (n_34), .ZN (n_67));
+   NOR2_X1 g41920(.A1 (n_1388), .A2 (n_34), .ZN (n_65));
+-  NAND2_X1 g41921(.A1 (n_48), .A2 (csr_save_if_i), .ZN (n_64));
++  NAND2_X1 g41921(.A1 (n_48), .A2 (1'b1), .ZN (n_64));
+   NAND2_X1 g41922(.A1 (debug_mode_i), .A2 (n_1398), .ZN (n_62));
+   NOR2_X1 g41923(.A1 (n_1396), .A2 (n_34), .ZN (n_61));
+   NOR2_X1 g41924(.A1 (n_1392), .A2 (n_34), .ZN (n_60));

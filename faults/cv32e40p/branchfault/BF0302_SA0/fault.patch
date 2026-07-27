@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0302_SA0/fault_netlist.v
+@@ -32630,7 +32630,7 @@
+        .ZN (instr_valid_o));
+   OAI211_X1 g4021(.A (n_144), .B (n_135), .C1 (n_141), .C2 (n_130), .ZN
+        (instr_aligned_o[1]));
+-  AOI222_X1 g4022(.A1 (n_120), .A2 (fetch_rdata_i[15]), .B1 (n_119),
++  AOI222_X1 g4022(.A1 (n_120), .A2 (1'b0), .B1 (n_119),
+        .B2 (fetch_rdata_i[31]), .C1 (n_131), .C2 (r_instr_h[15]), .ZN
+        (n_146));
+   MUX2_X1 g4023(.A (fetch_rdata_i[26]), .B (fetch_rdata_i[10]), .S

@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0005_SA1/fault_netlist.v
+@@ -37160,7 +37160,7 @@
+        .Q (core_busy_q));
+   OR3_X1 g99(.A1 (ctrl_busy_i), .A2 (lsu_busy_i), .A3 (if_busy_i), .ZN
+        (n_2));
+-  INV_X1 g100(.A (fetch_enable_o), .ZN (n_1));
++  INV_X1 g100(.A (1'b1), .ZN (n_1));
+   DFFR_X1 fetch_enable_q_reg(.RN (rst_n), .CK (clk_ungated_i), .D
+        (n_0), .Q (fetch_enable_o));
+   OR2_X1 g68(.A1 (fetch_enable_o), .A2 (fetch_enable_i), .ZN (n_0));

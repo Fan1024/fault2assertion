@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0059_SA1/fault_netlist.v
+@@ -1083,7 +1083,7 @@
+   AOI22_X1 g42513__6131(.A1 (\mhpmcounter_q[0] [14]), .A2 (n_982), .B1
+        (\mhpmcounter_q[0] [46]), .B2 (n_981), .ZN (n_1121));
+   AOI22_X1 g42514__1881(.A1 (\mhpmcounter_q[0] [13]), .A2 (n_982), .B1
+-       (\mhpmcounter_q[0] [45]), .B2 (n_981), .ZN (n_1120));
++       (\mhpmcounter_q[0] [45]), .B2 (1'b1), .ZN (n_1120));
+   AOI22_X1 g42515__5115(.A1 (\mhpmcounter_q[0] [12]), .A2 (n_982), .B1
+        (\mhpmcounter_q[0] [44]), .B2 (n_981), .ZN (n_1119));
+   AOI22_X1 g42516__7482(.A1 (\mhpmcounter_q[0] [7]), .A2 (n_982), .B1

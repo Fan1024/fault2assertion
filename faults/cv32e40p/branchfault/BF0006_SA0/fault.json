@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.2",
+  "generated_at_utc": "2026-07-24T20:23:25.770190+00:00",
+  "fault_id": "BF0006_SA0",
+  "fault_pair_id": "BF0006",
+  "location_id": "BL00006",
+  "paired_fault_id": "BF0006_SA1",
+  "design": "cv32e40p",
+  "fault_model": "branch_stuck_at",
+  "stuck_at": 0,
+  "source_netlist": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",
+  "source_netlist_sha256": "39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7",
+  "site": {
+    "site_id": "BS000019",
+    "site_key": "cv32e40p_sleep_unit_COREV_CLUSTER0|g68|A1",
+    "module": "cv32e40p_sleep_unit_COREV_CLUSTER0",
+    "functional_region": "core_glue_sleep",
+    "source_net": "fetch_enable_o",
+    "source_class": "sequential_output",
+    "source_driver": {
+      "cell_type": "DFFR_X1",
+      "instance": "fetch_enable_q_reg",
+      "pin": "Q"
+    },
+    "source_fanout": 3,
+    "fanout_bucket": "3_4",
+    "sink_instance": "g68",
+    "sink_cell_type": "OR2_X1",
+    "sink_pin": "A1",
+    "sink_role": "combinational_input"
+  },
+  "sampling": {
+    "stratum": "core_glue_sleep|sequential_output|3_4",
+    "stratum_population": 3,
+    "stratum_sample": 2,
+    "selection_probability": 0.6666666666666666,
+    "analysis_weight": 1.5,
+    "confidence_level": 0.95,
+    "margin_of_error": 0.05,
+    "random_seed": 20260724
+  },
+  "modification": {
+    "original_connection": "fetch_enable_o",
+    "replacement_connection": "1'b0",
+    "method": "replace only the selected sink-pin branch expression"
+  },
+  "artifacts": {
+    "fault_netlist": "fault_netlist.v",
+    "patch": "fault.patch",
+    "metadata": "fault.json",
+    "fault_netlist_sha256": "71eba56cf2f35d46026b5a052f8fdbdd94137c98fbc81004b34780cf595970a9"
+  },
+  "results": {
+    "status": "not_run",
+    "path_template": "results/<workload>/",
+    "note": "The results directory is created only when a simulation is run; empty result directories are intentionally not generated."
+  }
+}

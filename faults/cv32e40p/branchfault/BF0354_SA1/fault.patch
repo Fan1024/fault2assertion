@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0354_SA1/fault_netlist.v
+@@ -35929,7 +35929,7 @@
+        (n_360));
+   AND2_X1 g7060(.A1 (addr_useincr_ex_i), .A2 (operand_b_ex_i[2]), .ZN
+        (n_359));
+-  MUX2_X1 g12487(.A (rdata_q[14]), .B (n_331), .S (data_rvalid_i), .Z
++  MUX2_X1 g12487(.A (rdata_q[14]), .B (n_331), .S (1'b1), .Z
+        (data_rdata_ex_o[14]));
+   MUX2_X1 g12488(.A (rdata_q[13]), .B (n_330), .S (n_82), .Z
+        (data_rdata_ex_o[13]));

@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0348_SA0/fault_netlist.v
+@@ -36825,7 +36825,7 @@
+        (\ADD_UNS_OP/n_39 ), .A3 (\ADD_UNS_OP/n_51 ), .A4
+        (\ADD_UNS_OP/n_54 ), .ZN (\ADD_UNS_OP/n_118 ));
+   OR4_X1 \ADD_UNS_OP/g1194 (.A1 (\ADD_UNS_OP/n_5 ), .A2
+-       (\ADD_UNS_OP/n_16 ), .A3 (\ADD_UNS_OP/n_2 ), .A4
++       (\ADD_UNS_OP/n_16 ), .A3 (1'b0 ), .A4
+        (\ADD_UNS_OP/n_14 ), .ZN (\ADD_UNS_OP/n_109 ));
+   OAI21_X1 \ADD_UNS_OP/g1195 (.A (\ADD_UNS_OP/n_35 ), .B1
+        (\ADD_UNS_OP/n_10 ), .B2 (\ADD_UNS_OP/n_19 ), .ZN

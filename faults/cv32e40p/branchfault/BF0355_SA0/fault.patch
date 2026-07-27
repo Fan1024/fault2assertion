@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0355_SA0/fault_netlist.v
+@@ -35973,7 +35973,7 @@
+        (data_rdata_ex_o[20]));
+   MUX2_X1 g12510(.A (rdata_q[19]), .B (n_336), .S (data_rvalid_i), .Z
+        (data_rdata_ex_o[19]));
+-  MUX2_X1 g12511(.A (rdata_q[30]), .B (n_347), .S (data_rvalid_i), .Z
++  MUX2_X1 g12511(.A (rdata_q[30]), .B (n_347), .S (1'b0), .Z
+        (data_rdata_ex_o[30]));
+   MUX2_X1 g12512(.A (rdata_q[29]), .B (n_346), .S (data_rvalid_i), .Z
+        (data_rdata_ex_o[29]));

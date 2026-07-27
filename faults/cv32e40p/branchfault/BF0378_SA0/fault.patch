@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0378_SA0/fault_netlist.v
+@@ -36529,7 +36529,7 @@
+   INV_X1 g8000(.A (n_51), .ZN (n_67));
+   INV_X1 g8001(.A (n_50), .ZN (n_66));
+   INV_X1 g8002(.A (n_49), .ZN (n_65));
+-  AOI222_X1 g8003(.A1 (n_580), .A2 (n_9), .B1 (n_4), .B2 (rdata_q[31]),
++  AOI222_X1 g8003(.A1 (n_580), .A2 (n_9), .B1 (n_4), .B2 (1'b0),
+        .C1 (n_12), .C2 (data_rdata_i[31]), .ZN (n_64));
+   AOI222_X1 g8004(.A1 (n_334), .A2 (n_9), .B1 (n_4), .B2 (rdata_q[17]),
+        .C1 (n_12), .C2 (data_rdata_i[17]), .ZN (n_63));

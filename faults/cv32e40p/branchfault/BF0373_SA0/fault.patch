@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0373_SA0/fault_netlist.v
+@@ -36354,7 +36354,7 @@
+   AOI21_X1 g12751(.A (n_115), .B1 (data_rdata_i[25]), .B2
+        (rdata_offset_q[1]), .ZN (n_159));
+   AOI21_X1 g12752(.A (n_122), .B1 (data_rdata_i[26]), .B2
+-       (rdata_offset_q[1]), .ZN (n_158));
++       (1'b0), .ZN (n_158));
+   AOI21_X1 g12753(.A (n_123), .B1 (rdata_q[30]), .B2
+        (rdata_offset_q[1]), .ZN (n_157));
+   AOI21_X1 g12754(.A (n_117), .B1 (rdata_q[29]), .B2

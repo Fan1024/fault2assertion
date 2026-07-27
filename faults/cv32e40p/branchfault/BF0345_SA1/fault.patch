@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0345_SA1/fault_netlist.v
+@@ -34645,7 +34645,7 @@
+   NAND2_X1 \inc_add_138_56/g472 (.A1 (\inc_add_138_56/n_40 ), .A2
+        (trans_addr_q[24]), .ZN (\inc_add_138_56/n_45 ));
+   XNOR2_X1 \inc_add_138_56/g473 (.A (\inc_add_138_56/n_18 ), .B
+-       (trans_addr_q[9]), .ZN (n_177));
++       (1'b1), .ZN (n_177));
+   AOI21_X1 \inc_add_138_56/g474 (.A (\inc_add_138_56/n_36 ), .B1
+        (\inc_add_138_56/n_19 ), .B2 (\inc_add_138_56/n_1 ), .ZN
+        (n_179));

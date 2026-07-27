@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0332_SA1/fault_netlist.v
+@@ -35488,7 +35488,7 @@
+        .SE (n_2), .SI (pc_if_o[6]), .Q (pc_id_o[6]));
+   SDFFR_X1 \pc_id_o_reg[7] (.RN (rst_n), .CK (clk), .D (pc_id_o[7]),
+        .SE (n_2), .SI (pc_if_o[7]), .Q (pc_id_o[7]));
+-  SDFFR_X1 \pc_id_o_reg[8] (.RN (rst_n), .CK (clk), .D (pc_id_o[8]),
++  SDFFR_X1 \pc_id_o_reg[8] (.RN (rst_n), .CK (clk), .D (1'b1),
+        .SE (n_2), .SI (pc_if_o[8]), .Q (pc_id_o[8]));
+   SDFFR_X1 \pc_id_o_reg[9] (.RN (rst_n), .CK (clk), .D (pc_id_o[9]),
+        .SE (n_2), .SI (pc_if_o[9]), .Q (pc_id_o[9]));

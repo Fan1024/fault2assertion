@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0303_SA1/fault_netlist.v
+@@ -32586,7 +32586,7 @@
+        (fetch_rdata_i[24]), .C1 (n_131), .C2 (r_instr_h[8]), .ZN
+        (n_158));
+   AOI222_X1 g4002(.A1 (n_124), .A2 (fetch_rdata_i[4]), .B1 (n_119), .B2
+-       (fetch_rdata_i[20]), .C1 (n_131), .C2 (r_instr_h[4]), .ZN
++       (1'b1), .C1 (n_131), .C2 (r_instr_h[4]), .ZN
+        (n_157));
+   AOI222_X1 g4003(.A1 (n_124), .A2 (fetch_rdata_i[3]), .B1 (n_119), .B2
+        (fetch_rdata_i[19]), .C1 (n_131), .C2 (r_instr_h[3]), .ZN

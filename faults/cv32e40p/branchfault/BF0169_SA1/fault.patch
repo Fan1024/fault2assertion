@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0169_SA1/fault_netlist.v
+@@ -20362,7 +20362,7 @@
+        (n_223));
+   NAND2_X1 g9924(.A1 (n_213), .A2 (n_179), .ZN (n_230));
+   OAI211_X1 g9925(.A (n_196), .B (debug_mode_o), .C1 (ecall_insn_i),
+-       .C2 (illegal_insn_q), .ZN (n_222));
++       .C2 (1'b1), .ZN (n_222));
+   NAND2_X1 g9926(.A1 (n_210), .A2 (instr_valid_i), .ZN (n_229));
+   NOR2_X1 g9927(.A1 (n_213), .A2 (n_180), .ZN (jr_stall_o));
+   OAI211_X1 g9928(.A (n_298), .B (ctrl_fsm_cs[3]), .C1 (n_159), .C2

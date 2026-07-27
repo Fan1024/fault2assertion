@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0028_SA0/fault_netlist.v
+@@ -1302,7 +1302,7 @@
+        .C2 (csr_wdata_i[30]), .ZN (n_1003));
+   OAI211_X1 g42654__7410(.A (n_1839), .B (csr_op_i[0]), .C1 (n_894),
+        .C2 (csr_wdata_i[27]), .ZN (n_1002));
+-  OAI211_X1 g42655__6417(.A (n_1839), .B (csr_op_i[0]), .C1 (n_847),
++  OAI211_X1 g42655__6417(.A (n_1839), .B (1'b0), .C1 (n_847),
+        .C2 (csr_wdata_i[25]), .ZN (n_1001));
+   OAI211_X1 g42656__5477(.A (n_1839), .B (csr_op_i[0]), .C1 (n_847),
+        .C2 (csr_wdata_i[23]), .ZN (n_1000));

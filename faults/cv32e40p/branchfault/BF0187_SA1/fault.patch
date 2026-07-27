@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0187_SA1/fault_netlist.v
+@@ -31343,7 +31343,7 @@
+   NOR2_X1 g27935(.A1 (n_62), .A2 (n_226), .ZN (n_243));
+   AND3_X1 g27936(.A1 (ex_ready_i), .A2 (n_227), .A3 (n_12), .ZN
+        (n_242));
+-  NAND2_X1 g27937(.A1 (n_225), .A2 (n_226), .ZN (n_241));
++  NAND2_X1 g27937(.A1 (1'b1), .A2 (n_226), .ZN (n_241));
+   AND2_X1 g27938(.A1 (n_225), .A2 (alu_en), .ZN (n_240));
+   NOR2_X1 g27939(.A1 (n_224), .A2 (n_226), .ZN (n_238));
+   NAND4_X1 g27940(.A1 (n_23), .A2 (alu_operator[4]), .A3

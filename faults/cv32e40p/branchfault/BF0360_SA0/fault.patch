@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0360_SA0/fault_netlist.v
+@@ -36151,7 +36151,7 @@
+   AOI22_X1 g12617(.A1 (rdata_q[28]), .A2 (n_560), .B1
+        (data_rdata_i[12]), .B2 (n_558), .ZN (n_254));
+   OAI222_X1 g12618(.A1 (n_98), .A2 (n_135), .B1 (n_134), .B2 (n_97),
+-       .C1 (n_108), .C2 (n_1), .ZN (data_be_o[0]));
++       .C1 (n_108), .C2 (1'b0), .ZN (data_be_o[0]));
+   AOI22_X1 g12619(.A1 (data_rdata_i[23]), .A2 (n_572), .B1
+        (data_rdata_i[7]), .B2 (n_567), .ZN (n_253));
+   NAND2_X1 g12620(.A1 (n_196), .A2 (n_223), .ZN (data_wdata_o[23]));

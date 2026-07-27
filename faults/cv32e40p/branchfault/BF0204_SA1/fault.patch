@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0204_SA1/fault_netlist.v
+@@ -29862,7 +29862,7 @@
+        (n_777));
+   AOI21_X1 g16304(.A (n_770), .B1 (n_765), .B2 (instr_rdata_i[15]), .ZN
+        (n_776));
+-  AOI21_X1 g16305(.A (n_770), .B1 (n_765), .B2 (instr_rdata_i[14]), .ZN
++  AOI21_X1 g16305(.A (n_770), .B1 (1'b1), .B2 (instr_rdata_i[14]), .ZN
+        (n_775));
+   AOI21_X1 g16306(.A (n_770), .B1 (n_765), .B2 (instr_rdata_i[19]), .ZN
+        (n_774));

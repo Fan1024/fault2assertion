@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0102_SA1/fault_netlist.v
+@@ -7104,7 +7104,7 @@
+   NOR2_X1 g145(.A1 (n_504), .A2 (Cnt_DP[0]), .ZN (n_505));
+   NOR3_X1 g146(.A1 (n_503), .A2 (Cnt_DP[4]), .A3 (Cnt_DP[1]), .ZN
+        (n_504));
+-  OR4_X1 g148(.A1 (Cnt_DP[2]), .A2 (Cnt_DP[0]), .A3 (Cnt_DP[3]), .A4
++  OR4_X1 g148(.A1 (Cnt_DP[2]), .A2 (1'b1), .A3 (Cnt_DP[3]), .A4
+        (Cnt_DP[5]), .ZN (n_503));
+   NAND2_X1 g134(.A1 (n_512), .A2 (n_511), .ZN (n_513));
+   NAND2_X1 g136(.A1 (n_510), .A2 (Cnt_DP[4]), .ZN (n_512));

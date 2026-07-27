@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0137_SA1/fault_netlist.v
+@@ -19613,7 +19613,7 @@
+        (\csa_tree_add_228_5_groupi/n_26 ), .A2 (op_b_i[19]), .ZN
+        (\csa_tree_add_228_5_groupi/n_81 ));
+   NAND2_X1 \csa_tree_add_228_5_groupi/g12980 (.A1
+-       (\csa_tree_add_228_5_groupi/n_26 ), .A2 (op_b_i[19]), .ZN
++       (1'b1 ), .A2 (op_b_i[19]), .ZN
+        (\csa_tree_add_228_5_groupi/n_87 ));
+   OR2_X1 \csa_tree_add_228_5_groupi/g12981 (.A1
+        (\csa_tree_add_228_5_groupi/n_22 ), .A2 (op_b_i[7]), .ZN

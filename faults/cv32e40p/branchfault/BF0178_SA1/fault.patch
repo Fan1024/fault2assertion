@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0178_SA1/fault_netlist.v
+@@ -21223,7 +21223,7 @@
+   INV_X1 g8727(.A (instr_rdata_i[28]), .ZN (n_30));
+   INV_X1 g8728(.A (instr_rdata_i[21]), .ZN (n_29));
+   INV_X1 g8729(.A (instr_rdata_i[20]), .ZN (n_28));
+-  INV_X1 g8730(.A (instr_rdata_i[25]), .ZN (n_27));
++  INV_X1 g8730(.A (1'b1), .ZN (n_27));
+   INV_X1 g8731(.A (instr_rdata_i[31]), .ZN (n_26));
+   INV_X1 g8732(.A (instr_rdata_i[12]), .ZN (n_25));
+   INV_X1 g8733(.A (instr_rdata_i[13]), .ZN (n_24));

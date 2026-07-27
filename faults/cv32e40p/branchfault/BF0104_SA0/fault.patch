@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0104_SA0/fault_netlist.v
+@@ -5540,7 +5540,7 @@
+        (Res_DO[25]));
+   MUX2_X1 g3959(.A (n_263), .B (n_241), .S (ResInv_SP), .Z
+        (Res_DO[23]));
+-  MUX2_X1 g3960(.A (n_267), .B (n_245), .S (ResInv_SP), .Z
++  MUX2_X1 g3960(.A (n_267), .B (n_245), .S (1'b0), .Z
+        (Res_DO[27]));
+   MUX2_X1 g3961(.A (n_385), .B (n_237), .S (ResInv_SP), .Z
+        (Res_DO[19]));

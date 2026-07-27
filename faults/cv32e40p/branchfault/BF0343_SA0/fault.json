@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.2",
+  "generated_at_utc": "2026-07-24T20:25:14.398194+00:00",
+  "fault_id": "BF0343_SA0",
+  "fault_pair_id": "BF0343",
+  "location_id": "BL00343",
+  "paired_fault_id": "BF0343_SA1",
+  "design": "cv32e40p",
+  "fault_model": "branch_stuck_at",
+  "stuck_at": 0,
+  "source_netlist": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",
+  "source_netlist_sha256": "39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7",
+  "site": {
+    "site_id": "BS029311",
+    "site_key": "cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2|\\inc_add_138_56/g485|B2",
+    "module": "cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2",
+    "functional_region": "if_prefetch",
+    "source_net": "trans_addr_q[14]",
+    "source_class": "sequential_output",
+    "source_driver": {
+      "cell_type": "DFFR_X1",
+      "instance": "\\trans_addr_q_reg[14]",
+      "pin": "Q"
+    },
+    "source_fanout": 5,
+    "fanout_bucket": "5_8",
+    "sink_instance": "\\inc_add_138_56/g485",
+    "sink_cell_type": "OAI21_X1",
+    "sink_pin": "B2",
+    "sink_role": "combinational_input"
+  },
+  "sampling": {
+    "stratum": "if_prefetch|sequential_output|5_8",
+    "stratum_population": 161,
+    "stratum_sample": 3,
+    "selection_probability": 0.018633540372670808,
+    "analysis_weight": 53.666666666666664,
+    "confidence_level": 0.95,
+    "margin_of_error": 0.05,
+    "random_seed": 20260724
+  },
+  "modification": {
+    "original_connection": "trans_addr_q[14]",
+    "replacement_connection": "1'b0",
+    "method": "replace only the selected sink-pin branch expression"
+  },
+  "artifacts": {
+    "fault_netlist": "fault_netlist.v",
+    "patch": "fault.patch",
+    "metadata": "fault.json",
+    "fault_netlist_sha256": "aafa68e8a0780a6daecefd5863721f108bafc88f5dc4fc4632034d8fdd240b6f"
+  },
+  "results": {
+    "status": "not_run",
+    "path_template": "results/<workload>/",
+    "note": "The results directory is created only when a simulation is run; empty result directories are intentionally not generated."
+  }
+}

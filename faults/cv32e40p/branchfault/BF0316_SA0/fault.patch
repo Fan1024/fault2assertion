@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0316_SA0/fault_netlist.v
+@@ -33557,7 +33557,7 @@
+   OAI21_X1 g9631(.A (n_46), .B1 (n_74), .B2 (n_35), .ZN (n_140));
+   AOI21_X1 g9632(.A (n_11), .B1 (n_79), .B2 (is_compressed_o), .ZN
+        (n_139));
+-  OAI221_X1 g9633(.A (n_61), .B1 (n_34), .B2 (n_49), .C1 (n_2), .C2
++  OAI221_X1 g9633(.A (n_61), .B1 (n_34), .B2 (n_49), .C1 (1'b0), .C2
+        (is_compressed_o), .ZN (n_138));
+   AND4_X1 g9634(.A1 (n_106), .A2 (n_30), .A3 (n_48), .A4 (instr_i[5]),
+        .ZN (n_137));

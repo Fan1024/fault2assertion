@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.2",
+  "generated_at_utc": "2026-07-24T20:23:34.828833+00:00",
+  "fault_id": "BF0034_SA1",
+  "fault_pair_id": "BF0034",
+  "location_id": "BL00034",
+  "paired_fault_id": "BF0034_SA0",
+  "design": "cv32e40p",
+  "fault_model": "branch_stuck_at",
+  "stuck_at": 1,
+  "source_netlist": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",
+  "source_netlist_sha256": "39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7",
+  "site": {
+    "site_id": "BS001868",
+    "site_key": "cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1|g42629__2398|A",
+    "module": "cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1",
+    "functional_region": "csr_debug",
+    "source_net": "mie_q[11]",
+    "source_class": "sequential_output",
+    "source_driver": {
+      "cell_type": "DFFR_X1",
+      "instance": "\\mie_q_reg[11]",
+      "pin": "Q"
+    },
+    "source_fanout": 2,
+    "fanout_bucket": "2",
+    "sink_instance": "g42629__2398",
+    "sink_cell_type": "OAI21_X1",
+    "sink_pin": "A",
+    "sink_role": "combinational_input"
+  },
+  "sampling": {
+    "stratum": "csr_debug|sequential_output|2",
+    "stratum_population": 368,
+    "stratum_sample": 5,
+    "selection_probability": 0.01358695652173913,
+    "analysis_weight": 73.6,
+    "confidence_level": 0.95,
+    "margin_of_error": 0.05,
+    "random_seed": 20260724
+  },
+  "modification": {
+    "original_connection": "mie_q[11]",
+    "replacement_connection": "1'b1",
+    "method": "replace only the selected sink-pin branch expression"
+  },
+  "artifacts": {
+    "fault_netlist": "fault_netlist.v",
+    "patch": "fault.patch",
+    "metadata": "fault.json",
+    "fault_netlist_sha256": "bc67fe01cdd880b523ec737d335dfeeabce6e16562ad0f4afe6e5aee1f65941c"
+  },
+  "results": {
+    "status": "not_run",
+    "path_template": "results/<workload>/",
+    "note": "The results directory is created only when a simulation is run; empty result directories are intentionally not generated."
+  }
+}

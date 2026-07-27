@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0207_SA1/fault_netlist.v
+@@ -31582,7 +31582,7 @@
+   NAND2_X1 g28138(.A1 (regfile_alu_wdata_fw_i[3]), .A2
+        (operand_c_fw_mux_sel[0]), .ZN (n_51));
+   NAND2_X1 g28139(.A1 (regfile_alu_wdata_fw_i[4]), .A2
+-       (operand_c_fw_mux_sel[0]), .ZN (n_50));
++       (1'b1), .ZN (n_50));
+   NAND2_X1 g28140(.A1 (alu_op_b_mux_sel[1]), .A2 (n_14), .ZN (n_49));
+   AND2_X2 g28141(.A1 (alu_op_a_mux_sel[0]), .A2 (n_15), .ZN (n_47));
+   NAND2_X2 g28142(.A1 (alu_op_a_mux_sel[0]), .A2 (alu_op_a_mux_sel[1]),

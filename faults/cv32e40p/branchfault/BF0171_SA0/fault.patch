@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0171_SA0/fault_netlist.v
+@@ -20696,7 +20696,7 @@
+   NOR2_X1 g10639(.A1 (n_3), .A2 (debug_mode_o), .ZN (n_20));
+   NOR2_X1 g10640(.A1 (ebrk_insn_i), .A2 (n_287), .ZN (n_19));
+   NOR2_X1 g10641(.A1 (n_294), .A2 (ctrl_fsm_cs[0]), .ZN (n_18));
+-  NAND2_X1 g10642(.A1 (n_4), .A2 (n_143), .ZN (n_32));
++  NAND2_X1 g10642(.A1 (n_4), .A2 (1'b0), .ZN (n_32));
+   NOR2_X1 g10643(.A1 (debug_req_i), .A2 (debug_mode_o), .ZN (n_17));
+   NOR2_X1 g10644(.A1 (n_289), .A2 (n_296), .ZN (n_30));
+   NOR2_X1 g10645(.A1 (n_306), .A2 (ctrl_fsm_cs[0]), .ZN (n_29));

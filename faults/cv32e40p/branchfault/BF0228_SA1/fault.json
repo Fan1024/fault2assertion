@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.2",
+  "generated_at_utc": "2026-07-24T20:24:37.576621+00:00",
+  "fault_id": "BF0228_SA1",
+  "fault_pair_id": "BF0228",
+  "location_id": "BL00228",
+  "paired_fault_id": "BF0228_SA0",
+  "design": "cv32e40p",
+  "fault_model": "branch_stuck_at",
+  "stuck_at": 1,
+  "source_netlist": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",
+  "source_netlist_sha256": "39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7",
+  "site": {
+    "site_id": "BS018217",
+    "site_key": "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0|g66912|B2",
+    "module": "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0",
+    "functional_region": "id_control_regfile",
+    "source_net": "\\mem[26] [11]",
+    "source_class": "sequential_output",
+    "source_driver": {
+      "cell_type": "DFFR_X1",
+      "instance": "\\mem_reg[26][11]",
+      "pin": "Q"
+    },
+    "source_fanout": 2,
+    "fanout_bucket": "2",
+    "sink_instance": "g66912",
+    "sink_cell_type": "AOI22_X1",
+    "sink_pin": "B2",
+    "sink_role": "combinational_input"
+  },
+  "sampling": {
+    "stratum": "id_control_regfile|sequential_output|2",
+    "stratum_population": 1450,
+    "stratum_sample": 14,
+    "selection_probability": 0.009655172413793104,
+    "analysis_weight": 103.57142857142857,
+    "confidence_level": 0.95,
+    "margin_of_error": 0.05,
+    "random_seed": 20260724
+  },
+  "modification": {
+    "original_connection": "\\mem[26] [11]",
+    "replacement_connection": "1'b1",
+    "method": "replace only the selected sink-pin branch expression"
+  },
+  "artifacts": {
+    "fault_netlist": "fault_netlist.v",
+    "patch": "fault.patch",
+    "metadata": "fault.json",
+    "fault_netlist_sha256": "0908f4ed8f7c23834e6b64527043ff1e17d067a13b15f3c43f433d76d7086619"
+  },
+  "results": {
+    "status": "not_run",
+    "path_template": "results/<workload>/",
+    "note": "The results directory is created only when a simulation is run; empty result directories are intentionally not generated."
+  }
+}

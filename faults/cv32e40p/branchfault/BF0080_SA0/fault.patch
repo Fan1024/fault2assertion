@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0080_SA0/fault_netlist.v
+@@ -8318,7 +8318,7 @@
+   NOR4_X1 g27590(.A1 (n_521), .A2 (n_479), .A3 (n_458), .A4 (n_307),
+        .ZN (n_559));
+   AOI221_X1 g27591(.A (n_460), .B1 (shift_right_result[8]), .B2
+-       (n_755), .C1 (n_469), .C2 (operand_a_i[23]), .ZN (n_558));
++       (n_755), .C1 (1'b0), .C2 (operand_a_i[23]), .ZN (n_558));
+   AOI222_X1 g27592(.A1 (result_div[10]), .A2 (n_754), .B1 (n_469), .B2
+        (operand_a_i[10]), .C1 (shift_right_result[10]), .C2 (n_301),
+        .ZN (n_557));

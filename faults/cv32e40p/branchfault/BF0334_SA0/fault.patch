@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0334_SA0/fault_netlist.v
+@@ -34859,7 +34859,7 @@
+   MUX2_X1 g829(.A (fifo_rdata[14]), .B (instr_rdata_i[14]), .S
+        (fifo_empty), .Z (fetch_rdata_o[14]));
+   MUX2_X1 g830(.A (fifo_rdata[18]), .B (instr_rdata_i[18]), .S
+-       (fifo_empty), .Z (fetch_rdata_o[18]));
++       (1'b0), .Z (fetch_rdata_o[18]));
+   MUX2_X1 g831(.A (fifo_rdata[1]), .B (instr_rdata_i[1]), .S
+        (fifo_empty), .Z (fetch_rdata_o[1]));
+   MUX2_X1 g832(.A (fifo_rdata[23]), .B (instr_rdata_i[23]), .S

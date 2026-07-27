@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0321_SA1/fault_netlist.v
+@@ -33759,7 +33759,7 @@
+        (read_pointer_q), .Z (data_o[5]));
+   MUX2_X1 g2466(.A (\mem_q[0] [18]), .B (\mem_q[1] [18]), .S
+        (read_pointer_q), .Z (data_o[18]));
+-  MUX2_X1 g2467(.A (\mem_q[0] [24]), .B (\mem_q[1] [24]), .S
++  MUX2_X1 g2467(.A (1'b1), .B (\mem_q[1] [24]), .S
+        (read_pointer_q), .Z (data_o[24]));
+   MUX2_X1 g2468(.A (\mem_q[0] [20]), .B (\mem_q[1] [20]), .S
+        (read_pointer_q), .Z (data_o[20]));

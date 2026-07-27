@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0380_SA1/fault_netlist.v
+@@ -36583,7 +36583,7 @@
+        .C1 (n_12), .C2 (data_rdata_i[7]), .ZN (n_31));
+   AOI222_X1 g8037(.A1 (n_325), .A2 (n_9), .B1 (n_4), .B2 (rdata_q[8]),
+        .C1 (n_12), .C2 (data_rdata_i[8]), .ZN (n_30));
+-  AOI222_X1 g8038(.A1 (n_326), .A2 (n_9), .B1 (n_4), .B2 (rdata_q[9]),
++  AOI222_X1 g8038(.A1 (n_326), .A2 (n_9), .B1 (n_4), .B2 (1'b1),
+        .C1 (n_12), .C2 (data_rdata_i[9]), .ZN (n_29));
+   AOI222_X1 g8039(.A1 (n_327), .A2 (n_9), .B1 (n_4), .B2 (rdata_q[10]),
+        .C1 (n_12), .C2 (data_rdata_i[10]), .ZN (n_28));

@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0212_SA1/fault_netlist.v
+@@ -31261,7 +31261,7 @@
+        (n_151), .B2 (regfile_data_ra_id[3]), .C1
+        (regfile_alu_wdata_fw_i[3]), .C2 (n_33), .ZN (n_288));
+   AOI222_X1 g27879(.A1 (regfile_wdata_wb_i[4]), .A2 (n_31), .B1
+-       (n_151), .B2 (regfile_data_ra_id[4]), .C1
++       (n_151), .B2 (1'b1), .C1
+        (regfile_alu_wdata_fw_i[4]), .C2 (n_33), .ZN (n_287));
+   AOI222_X1 g27880(.A1 (regfile_wdata_wb_i[4]), .A2 (n_40), .B1
+        (n_152), .B2 (regfile_data_rb_id[4]), .C1

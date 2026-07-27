@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0079_SA0/fault_netlist.v
+@@ -8727,7 +8727,7 @@
+        (operand_c_i[0]), .C2 (n_255), .ZN (n_328));
+   AOI221_X1 g27833(.A (n_140), .B1 (n_213), .B2 (operand_b_i[1]), .C1
+        (operand_c_i[1]), .C2 (n_255), .ZN (n_327));
+-  INV_X1 g27834(.A (n_312), .ZN (n_313));
++  INV_X1 g27834(.A (1'b0), .ZN (n_313));
+   OAI211_X1 g27835(.A (n_195), .B (n_60), .C1 (n_251), .C2 (n_252), .ZN
+        (n_311));
+   AOI21_X1 g27836(.A (n_283), .B1 (operand_a_i[4]), .B2 (n_49), .ZN

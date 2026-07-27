@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.2",
+  "generated_at_utc": "2026-07-24T20:25:12.812414+00:00",
+  "fault_id": "BF0338_SA0",
+  "fault_pair_id": "BF0338",
+  "location_id": "BL00338",
+  "paired_fault_id": "BF0338_SA1",
+  "design": "cv32e40p",
+  "fault_model": "branch_stuck_at",
+  "stuck_at": 0,
+  "source_netlist": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",
+  "source_netlist_sha256": "39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7",
+  "site": {
+    "site_id": "BS029059",
+    "site_key": "cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2|g261|A",
+    "module": "cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2",
+    "functional_region": "if_prefetch",
+    "source_net": "n_13",
+    "source_class": "combinational_output",
+    "source_driver": {
+      "cell_type": "OAI22_X1",
+      "instance": "g2337",
+      "pin": "ZN"
+    },
+    "source_fanout": 3,
+    "fanout_bucket": "3_4",
+    "sink_instance": "g261",
+    "sink_cell_type": "XOR2_X1",
+    "sink_pin": "A",
+    "sink_role": "combinational_input"
+  },
+  "sampling": {
+    "stratum": "if_prefetch|combinational_output|3_4",
+    "stratum_population": 480,
+    "stratum_sample": 6,
+    "selection_probability": 0.0125,
+    "analysis_weight": 80.0,
+    "confidence_level": 0.95,
+    "margin_of_error": 0.05,
+    "random_seed": 20260724
+  },
+  "modification": {
+    "original_connection": "n_13",
+    "replacement_connection": "1'b0",
+    "method": "replace only the selected sink-pin branch expression"
+  },
+  "artifacts": {
+    "fault_netlist": "fault_netlist.v",
+    "patch": "fault.patch",
+    "metadata": "fault.json",
+    "fault_netlist_sha256": "796ea3f64557db96b78fa8f85eab35f5a8b6cdde31af9c0a7661a3e8d506b037"
+  },
+  "results": {
+    "status": "not_run",
+    "path_template": "results/<workload>/",
+    "note": "The results directory is created only when a simulation is run; empty result directories are intentionally not generated."
+  }
+}

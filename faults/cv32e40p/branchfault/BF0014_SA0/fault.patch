@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/BF0014_SA0/fault_netlist.v
+@@ -4477,7 +4477,7 @@
+   NAND2_X1 \inc_add_1387_74_I3/g1650 (.A1 (\inc_add_1387_74_I3/n_91 ),
+        .A2 (\mhpmcounter_q[2] [36]), .ZN (\inc_add_1387_74_I3/n_100 ));
+   NOR2_X1 \inc_add_1387_74_I3/g1651 (.A1 (\inc_add_1387_74_I3/n_93 ),
+-       .A2 (\inc_add_1387_74_I3/n_6 ), .ZN (\inc_add_1387_74_I3/n_99 ));
++       .A2 (1'b0 ), .ZN (\inc_add_1387_74_I3/n_99 ));
+   NAND2_X1 \inc_add_1387_74_I3/g1652 (.A1 (\inc_add_1387_74_I3/n_92 ),
+        .A2 (\mhpmcounter_q[2] [40]), .ZN (\inc_add_1387_74_I3/n_98 ));
+   XNOR2_X1 \inc_add_1387_74_I3/g1653 (.A (\inc_add_1387_74_I3/n_88 ),
