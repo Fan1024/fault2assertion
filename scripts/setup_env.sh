@@ -26,7 +26,7 @@ export IBEX_HOME="${RESEARCH_HOME}/ibex"
 export PICORV32_HOME="${RESEARCH_HOME}/picorv32"
 export VEER_EH2_HOME="${RESEARCH_HOME}/Cores-VeeR-EH2"
 
-export ASIC_FLOW_HOME="${RESEARCH_HOME}/ASIC-Flow"
+export ASIC_FLOW_HOME="${RESEARCH_HOME}/asic_flow"
 
 # ----------------------------------------------------------------------
 # RISC-V toolchain

@@ -1,26 +1,25 @@
 #!/usr/bin/env python3
-"""Create a statistically justified CV32E40P branch stuck-at fault dataset.
+"""Create and apply CV32E40P branch stuck-at fault definitions.
 
-Repository layout produced by this script:
+Persistent campaign layout:
 
 faults/cv32e40p/branchfault/
 +-- population.json
 +-- selection.json
 +-- BF0001_SA0/
-¦   +-- fault_netlist.v
 ¦   +-- fault.json
 ¦   +-- fault.patch
 +-- BF0001_SA1/
-¦   +-- ...
+¦   +-- fault.json
+¦   +-- fault.patch
 +-- ...
 
-Each sampled branch location receives one shared pair ID such as BF0001.
-The two concrete fault instances are named BF0001_SA0 and BF0001_SA1.
-Result directories are NOT created here. A simulation script should create
-BFxxxx_SAx/results/<workload>/ only when that simulation is actually run.
+A complete faulty netlist is intentionally NOT stored in each BF directory.
+The ``apply`` command reconstructs one run-local faulty netlist from:
 
-The script uses only the Python standard library. No Conda environment or pip
-packages are required.
+    immutable golden netlist + fault.json
+
+This script uses only the Python standard library.
 """
 
 from __future__ import annotations
@@ -43,10 +42,10 @@ from typing import Any, Iterable, Sequence
 
 
 # -----------------------------------------------------------------------------
-# Final experiment policy
+# Current experiment policy
 # -----------------------------------------------------------------------------
 
-SCHEMA_VERSION = "1.2"
+SCHEMA_VERSION = "1.3"
 FAULT_MODEL = "branch_stuck_at"
 CONFIDENCE_LEVEL = 0.95
 MARGIN_OF_ERROR = 0.05
@@ -56,15 +55,14 @@ MINIMUM_PER_NONEMPTY_STRATUM = 2
 STRICT_BRANCH_MIN_FANOUT = 2
 PAIR_POLARITIES = True
 
-# Input pins that are not part of the functional branch-fault population.
+# Clock/reset/scan pins are excluded from the current functional branch-fault
+# population. These criteria can be revised when campaign-v2 is defined.
 EXCLUDED_SINK_PINS = {"CK", "RN", "SN", "SE", "SI"}
 
 # Nangate-style standard-cell output pins. S is an output only for adder cells;
-# it is a select input for mux cells and therefore must not be globally treated
-# as an output.
+# it is a select input for mux cells and must not be globally treated as output.
 DEFAULT_LOGIC_OUTPUT_PINS = {"Z", "ZN", "Y"}
 
-# One script, multiple future design profiles. Only CV32E40P is enabled now.
 DESIGN_PROFILES: dict[str, dict[str, Any]] = {
     "cv32e40p": {
         "region_rules": [
@@ -85,6 +83,9 @@ DESIGN_PROFILES: dict[str, dict[str, Any]] = {
     }
 }
 
+FAULT_DIR_PATTERN = re.compile(r"^(?:BF\d{5}|BF\d{4}_SA[01])$")
+FAULT_ID_PATTERN = re.compile(r"^BF\d{4}_SA[01]$")
+
 
 # -----------------------------------------------------------------------------
 # Generic helpers
@@ -93,10 +94,6 @@ DESIGN_PROFILES: dict[str, dict[str, Any]] = {
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
-
-
-def sha256_bytes(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
 
 
 def sha256_file(path: Path) -> str:
@@ -109,11 +106,15 @@ def sha256_file(path: Path) -> str:
 
 def read_json(path: Path) -> dict[str, Any]:
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        payload = json.loads(path.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:
         raise SystemExit(f"ERROR: file not found: {path}") from exc
     except json.JSONDecodeError as exc:
         raise SystemExit(f"ERROR: invalid JSON in {path}: {exc}") from exc
+
+    if not isinstance(payload, dict):
+        raise SystemExit(f"ERROR: expected a JSON object in {path}")
+    return payload
 
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:
@@ -135,7 +136,7 @@ def ensure_design_supported(design: str) -> dict[str, Any]:
 
 
 def canonical_signal(expression: str) -> str:
-    """Canonical key for connectivity matching only."""
+    """Canonical key for connectivity comparison only."""
     return re.sub(r"\s+", "", expression.strip())
 
 
@@ -145,27 +146,24 @@ def is_constant(expression: str) -> bool:
         return True
     if value in {"0", "1", "1'b0", "1'b1", "1'bx", "1'bz"}:
         return True
-    return bool(re.fullmatch(r"(?:\d+)?'[s]?[bBoOdDhH][0-9a-fA-FxXzZ?_]+", value))
+    return bool(
+        re.fullmatch(r"(?:\d+)?'[s]?[bBoOdDhH][0-9a-fA-FxXzZ?_]+", value)
+    )
 
 
 def is_simple_signal(expression: str) -> bool:
-    """Accept a scalar/bit-select net, but reject expressions and concatenations."""
+    """Accept one scalar/bit-select net; reject operators and concatenations."""
     value = expression.strip()
     if not value or is_constant(value):
         return False
 
-    # Normal identifiers, optionally followed by one bit/part select.
     normal = r"[A-Za-z_$][A-Za-z0-9_$]*(?:\s*\[[^\]]+\])?"
-
-    # Escaped Verilog identifier. Whitespace terminates an escaped identifier;
-    # Genus commonly emits names such as \foo[3] with surrounding whitespace.
     escaped = r"\\[^\s,()]+(?:\s*\[[^\]]+\])?"
-
     return bool(re.fullmatch(rf"(?:{normal}|{escaped})", value))
 
 
 def is_standard_cell(cell_type: str) -> bool:
-    """Match Nangate-style cells such as NAND2_X1 and SDFFR_X1."""
+    """Match Nangate-style names such as NAND2_X1 and SDFFR_X1."""
     return bool(re.fullmatch(r"[A-Z][A-Z0-9_]*_X\d+", cell_type))
 
 
@@ -217,11 +215,11 @@ def sink_role(cell_type: str, pin: str) -> str:
     return "combinational_input"
 
 
-def classify_region(module_name: str, design_profile: dict[str, Any]) -> str:
-    for pattern, region in design_profile["region_rules"]:
+def classify_region(module_name: str, profile: dict[str, Any]) -> str:
+    for pattern, region in profile["region_rules"]:
         if re.search(pattern, module_name, flags=re.IGNORECASE):
-            return region
-    return str(design_profile["default_region"])
+            return str(region)
+    return str(profile["default_region"])
 
 
 # -----------------------------------------------------------------------------
@@ -233,8 +231,8 @@ def classify_region(module_name: str, design_profile: dict[str, Any]) -> str:
 class Connection:
     pin: str
     expression: str
-    expression_start: int  # absolute character index in original netlist
-    expression_end: int    # exclusive
+    expression_start: int
+    expression_end: int
 
 
 @dataclass(frozen=True)
@@ -248,7 +246,7 @@ class CellInstance:
 
 
 def mask_comments_keep_length(text: str) -> str:
-    """Replace comment characters with spaces while preserving indices/newlines."""
+    """Replace comment characters with spaces while preserving all indices."""
     chars = list(text)
 
     for match in re.finditer(r"/\*.*?\*/", text, flags=re.DOTALL):
@@ -270,7 +268,6 @@ def iter_semicolon_statements(
     start: int,
     end: int,
 ) -> Iterable[tuple[int, int]]:
-    """Yield [start,end) spans ending at each semicolon."""
     statement_start = start
     cursor = start
     while cursor < end:
@@ -368,8 +365,6 @@ def parse_standard_cells(netlist_text: str) -> tuple[list[str], list[CellInstanc
             masked_statement = masked[statement_start:statement_end]
             original_statement = netlist_text[statement_start:statement_end]
 
-            # Ignore declarations/assigns/submodule instances. A standard-cell
-            # statement has: CELL_TYPE INSTANCE_NAME (...);
             instance_match = re.match(
                 r"\s*([A-Za-z][A-Za-z0-9_]*)\s+([^\s(]+)\s*\((.*)\)\s*;\s*$",
                 masked_statement,
@@ -400,7 +395,7 @@ def parse_standard_cells(netlist_text: str) -> tuple[list[str], list[CellInstanc
 
             if not connections:
                 raise SystemExit(
-                    f"ERROR: no named connections found for "
+                    "ERROR: no named connections found for "
                     f"{module_name}/{instance_name}"
                 )
 
@@ -444,10 +439,7 @@ def connection_index(
 # -----------------------------------------------------------------------------
 
 
-def build_population(
-    netlist_path: Path,
-    design: str,
-) -> dict[str, Any]:
+def build_population(netlist_path: Path, design: str) -> dict[str, Any]:
     profile = ensure_design_supported(design)
     netlist_text = netlist_path.read_text(encoding="utf-8", errors="strict")
     modules, cells = parse_standard_cells(netlist_text)
@@ -457,7 +449,8 @@ def build_population(
         for module in modules
     }
     unclassified = sorted(
-        module for module, region in module_regions.items()
+        module
+        for module, region in module_regions.items()
         if region == profile["default_region"]
     )
     if unclassified:
@@ -466,7 +459,6 @@ def build_population(
             + "\n  ".join(unclassified)
         )
 
-    # Drivers are standard-cell output pins within each module.
     drivers: dict[tuple[str, str], list[dict[str, str]]] = defaultdict(list)
     sink_candidates: list[dict[str, Any]] = []
     exclusions: Counter[str] = Counter()
@@ -526,7 +518,7 @@ def build_population(
 
         source_drivers = drivers.get(driver_key, [])
         if len(source_drivers) == 1:
-            driver = source_drivers[0]
+            driver: dict[str, str] | None = source_drivers[0]
             source_class = (
                 "sequential_output"
                 if cell_kind(driver["cell_type"]) == "flipflop"
@@ -536,8 +528,6 @@ def build_population(
             driver = None
             source_class = "hierarchy_boundary"
         else:
-            # A strict branch location should have one resolved source. Multiple
-            # local drivers are excluded instead of silently classified.
             exclusions["multiple_local_drivers"] += 1
             continue
 
@@ -574,6 +564,8 @@ def build_population(
 
     if len({site["site_key"] for site in sites}) != len(sites):
         raise SystemExit("ERROR: duplicate eligible site_key detected")
+    if not sites:
+        raise SystemExit("ERROR: no eligible branch-fault locations were found")
 
     by_region = Counter(site["region"] for site in sites)
     by_module = Counter(site["module"] for site in sites)
@@ -581,8 +573,8 @@ def build_population(
     by_fanout = Counter(site["fanout_bucket"] for site in sites)
     by_sink_role = Counter(site["sink_role"] for site in sites)
     by_stratum = Counter(site["stratum"] for site in sites)
-
     population_size = len(sites)
+
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at_utc": utc_now(),
@@ -591,7 +583,9 @@ def build_population(
         "source_netlist": str(netlist_path.resolve()),
         "source_netlist_sha256": sha256_file(netlist_path),
         "definitions": {
-            "population_unit": "one unique source-net to sink-instance.pin branch location",
+            "population_unit": (
+                "one unique source-net to sink-instance.pin branch location"
+            ),
             "strict_branch_min_fanout": STRICT_BRANCH_MIN_FANOUT,
             "excluded_sink_pins": sorted(EXCLUDED_SINK_PINS),
             "stratum": "functional_region|source_class|fanout_bucket",
@@ -617,7 +611,7 @@ def build_population(
 
 
 # -----------------------------------------------------------------------------
-# Strict ±5% sample size and stratified selection
+# Current statistical sampling policy
 # -----------------------------------------------------------------------------
 
 
@@ -625,13 +619,14 @@ def required_sample_size(population_size: int) -> tuple[int, float]:
     if population_size <= 0:
         raise ValueError("population_size must be positive")
 
-    z_score = NormalDist().inv_cdf(1.0 - (1.0 - CONFIDENCE_LEVEL) / 2.0)
+    z_score = NormalDist().inv_cdf(
+        1.0 - (1.0 - CONFIDENCE_LEVEL) / 2.0
+    )
     pq = CONSERVATIVE_P * (1.0 - CONSERVATIVE_P)
-
-    numerator = population_size * (z_score ** 2) * pq
+    numerator = population_size * (z_score**2) * pq
     denominator = (
-        (MARGIN_OF_ERROR ** 2) * (population_size - 1)
-        + (z_score ** 2) * pq
+        (MARGIN_OF_ERROR**2) * (population_size - 1)
+        + (z_score**2) * pq
     )
     return math.ceil(numerator / denominator), z_score
 
@@ -648,7 +643,6 @@ def allocate_strata(
         stratum: min(size, MINIMUM_PER_NONEMPTY_STRATUM)
         for stratum, size in stratum_sizes.items()
     }
-
     base_total = sum(allocation.values())
     if base_total > sample_size:
         raise ValueError(
@@ -710,13 +704,16 @@ def build_selection(
     population: dict[str, Any],
     random_seed: int,
 ) -> dict[str, Any]:
-    sites = population["sites"]
+    sites = population.get("sites")
+    if not isinstance(sites, list) or not sites:
+        raise SystemExit("ERROR: population.json contains no sites")
+
     population_size = len(sites)
     required, z_score = required_sample_size(population_size)
 
     grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for site in sites:
-        grouped[site["stratum"]].append(site)
+        grouped[str(site["stratum"])].append(site)
 
     stratum_sizes = {
         stratum: len(items)
@@ -726,23 +723,21 @@ def build_selection(
 
     rng = random.Random(random_seed)
     selected_sites: list[dict[str, Any]] = []
-
     for stratum in sorted(grouped):
-        chosen = rng.sample(grouped[stratum], allocation[stratum])
-        selected_sites.extend(chosen)
+        selected_sites.extend(
+            rng.sample(grouped[stratum], allocation[stratum])
+        )
 
     selected_sites.sort(key=lambda site: site["site_id"])
     if len({site["site_id"] for site in selected_sites}) != required:
         raise RuntimeError("selected sites are not unique")
 
     selected_locations: list[dict[str, Any]] = []
-
     for location_number, site in enumerate(selected_sites, start=1):
         location_id = f"BL{location_number:05d}"
         fault_pair_id = f"BF{location_number:04d}"
         sa0_id = f"{fault_pair_id}_SA0"
         sa1_id = f"{fault_pair_id}_SA1"
-
         stratum_population = stratum_sizes[site["stratum"]]
         stratum_sample = allocation[site["stratum"]]
 
@@ -766,8 +761,12 @@ def build_selection(
                 "stratum": site["stratum"],
                 "stratum_population": stratum_population,
                 "stratum_sample": stratum_sample,
-                "selection_probability": stratum_sample / stratum_population,
-                "analysis_weight": stratum_population / stratum_sample,
+                "selection_probability": (
+                    stratum_sample / stratum_population
+                ),
+                "analysis_weight": (
+                    stratum_population / stratum_sample
+                ),
                 "faults": [
                     {
                         "fault_id": sa0_id,
@@ -787,14 +786,20 @@ def build_selection(
         stratum: {
             "population": stratum_sizes[stratum],
             "sample": allocation[stratum],
-            "population_weight": stratum_sizes[stratum] / population_size,
-            "selection_probability": allocation[stratum] / stratum_sizes[stratum],
-            "analysis_weight": stratum_sizes[stratum] / allocation[stratum],
+            "population_weight": (
+                stratum_sizes[stratum] / population_size
+            ),
+            "selection_probability": (
+                allocation[stratum] / stratum_sizes[stratum]
+            ),
+            "analysis_weight": (
+                stratum_sizes[stratum] / allocation[stratum]
+            ),
         }
         for stratum in sorted(stratum_sizes)
     }
 
-    selection = {
+    return {
         "schema_version": SCHEMA_VERSION,
         "generated_at_utc": utc_now(),
         "design": population["design"],
@@ -831,18 +836,18 @@ def build_selection(
         "selected_locations": selected_locations,
     }
 
-    return selection
-
 
 # -----------------------------------------------------------------------------
-# Fault netlist materialization
+# Metadata materialization and run-local fault application
 # -----------------------------------------------------------------------------
 
 
-def flatten_faults(selection: dict[str, Any]) -> list[tuple[dict[str, Any], dict[str, Any]]]:
+def flatten_faults(
+    selection: dict[str, Any],
+) -> list[tuple[dict[str, Any], dict[str, Any]]]:
     result: list[tuple[dict[str, Any], dict[str, Any]]] = []
-    for location in selection["selected_locations"]:
-        for fault in location["faults"]:
+    for location in selection.get("selected_locations", []):
+        for fault in location.get("faults", []):
             result.append((location, fault))
     return result
 
@@ -880,7 +885,7 @@ def make_patch(
         original_text.splitlines(keepends=True),
         modified_text.splitlines(keepends=True),
         fromfile=f"a/{source_name}",
-        tofile=f"b/{fault_id}/fault_netlist.v",
+        tofile=f"b/run-local/{fault_id}/fault_netlist.v",
         n=3,
     )
     return "".join(lines)
@@ -891,26 +896,48 @@ def validate_output_root(output_root: Path, force: bool) -> None:
         output_root.mkdir(parents=True, exist_ok=True)
         return
 
-    # Recognize both the obsolete BF00001 form and the paired
-    # BF0001_SA0/BF0001_SA1 form so --force cannot leave mixed datasets.
-    fault_dir_pattern = re.compile(r"^(?:BF\d{5}|BF\d{4}_SA[01])$")
-    existing_bf = sorted(
-        path for path in output_root.iterdir()
-        if fault_dir_pattern.fullmatch(path.name)
+    existing_faults = sorted(
+        path
+        for path in output_root.iterdir()
+        if FAULT_DIR_PATTERN.fullmatch(path.name)
     )
-
-    if existing_bf and not force:
+    if existing_faults and not force:
         raise SystemExit(
             f"ERROR: {output_root} already contains BF directories. "
             "Use --force only when intentionally regenerating them."
         )
 
     if force:
-        for path in existing_bf:
+        for path in existing_faults:
             if path.is_dir():
                 shutil.rmtree(path)
             else:
                 path.unlink()
+
+
+def validate_campaign_pair(
+    population: dict[str, Any],
+    selection: dict[str, Any],
+) -> tuple[Path, str]:
+    source_path = Path(str(population["source_netlist"])).resolve()
+    if not source_path.is_file():
+        raise SystemExit(f"ERROR: source netlist not found: {source_path}")
+
+    expected_sha = str(population["source_netlist_sha256"])
+    actual_sha = sha256_file(source_path)
+    if actual_sha != expected_sha:
+        raise SystemExit(
+            "ERROR: source netlist SHA-256 changed after population scan.\n"
+            f"  expected: {expected_sha}\n"
+            f"  actual:   {actual_sha}"
+        )
+
+    if str(selection.get("source_netlist_sha256")) != expected_sha:
+        raise SystemExit("ERROR: selection.json does not match population.json")
+    if selection.get("design") != population.get("design"):
+        raise SystemExit("ERROR: selection design does not match population design")
+
+    return source_path, expected_sha
 
 
 def materialize_faults(
@@ -920,34 +947,32 @@ def materialize_faults(
     requested_fault_ids: set[str] | None,
     force: bool,
 ) -> tuple[int, int]:
-    source_path = Path(population["source_netlist"])
-    if not source_path.is_file():
-        raise SystemExit(f"ERROR: source netlist not found: {source_path}")
-
-    actual_sha = sha256_file(source_path)
-    expected_sha = population["source_netlist_sha256"]
-    if actual_sha != expected_sha:
-        raise SystemExit(
-            "ERROR: source netlist SHA-256 changed after population scan.\n"
-            f"  expected: {expected_sha}\n"
-            f"  actual:   {actual_sha}"
-        )
-    if selection["source_netlist_sha256"] != expected_sha:
-        raise SystemExit("ERROR: selection.json does not match population.json")
-
+    """Create only fault.json and fault.patch for selected faults."""
+    source_path, expected_sha = validate_campaign_pair(population, selection)
     original_text = source_path.read_text(encoding="utf-8", errors="strict")
     _, cells = parse_standard_cells(original_text)
     connections = connection_index(cells)
 
     all_faults = flatten_faults(selection)
-    known_ids = {fault["fault_id"] for _, fault in all_faults}
+    known_ids = {str(fault["fault_id"]) for _, fault in all_faults}
+    if not known_ids:
+        raise SystemExit("ERROR: selection.json contains no faults")
 
     if requested_fault_ids is not None:
+        invalid_format = sorted(
+            item for item in requested_fault_ids
+            if not FAULT_ID_PATTERN.fullmatch(item)
+        )
+        if invalid_format:
+            raise SystemExit(
+                "ERROR: invalid fault ID format: " + ", ".join(invalid_format)
+            )
         unknown = sorted(requested_fault_ids - known_ids)
         if unknown:
             raise SystemExit("ERROR: unknown fault IDs: " + ", ".join(unknown))
         worklist = [
-            pair for pair in all_faults
+            pair
+            for pair in all_faults
             if pair[1]["fault_id"] in requested_fault_ids
         ]
     else:
@@ -962,7 +987,7 @@ def materialize_faults(
     skipped = 0
 
     for location, fault in worklist:
-        fault_id = fault["fault_id"]
+        fault_id = str(fault["fault_id"])
         fault_dir = output_root / fault_id
 
         if fault_dir.exists():
@@ -974,9 +999,9 @@ def materialize_faults(
                 continue
 
         key = (
-            location["module"],
-            location["sink_instance"],
-            location["sink_pin"],
+            str(location["module"]),
+            str(location["sink_instance"]),
+            str(location["sink_pin"]),
         )
         try:
             connection = connections[key]
@@ -986,17 +1011,20 @@ def materialize_faults(
                 + "/".join(key)
             ) from exc
 
-        if canonical_signal(connection.expression) != canonical_signal(location["source_net"]):
+        if canonical_signal(connection.expression) != canonical_signal(
+            str(location["source_net"])
+        ):
             raise SystemExit(
                 f"ERROR: source expression mismatch for {fault_id}:\n"
                 f"  selection: {location['source_net']}\n"
                 f"  netlist:   {connection.expression}"
             )
 
+        stuck_at = int(fault["stuck_at"])
         modified_text, original_expression = inject_branch_fault(
             original_text,
             connection,
-            int(fault["stuck_at"]),
+            stuck_at,
         )
         patch_text = make_patch(
             original_text,
@@ -1004,17 +1032,13 @@ def materialize_faults(
             source_path.name,
             fault_id,
         )
-
         if not patch_text.strip():
             raise RuntimeError(f"empty patch generated for {fault_id}")
 
-        replacement = f"1'b{fault['stuck_at']}"
+        replacement = f"1'b{stuck_at}"
         fault_dir.mkdir(parents=True, exist_ok=False)
-        netlist_output = fault_dir / "fault_netlist.v"
         patch_output = fault_dir / "fault.patch"
         json_output = fault_dir / "fault.json"
-
-        netlist_output.write_text(modified_text, encoding="utf-8")
         patch_output.write_text(patch_text, encoding="utf-8")
 
         metadata = {
@@ -1026,8 +1050,8 @@ def materialize_faults(
             "paired_fault_id": fault["paired_fault_id"],
             "design": selection["design"],
             "fault_model": FAULT_MODEL,
-            "stuck_at": int(fault["stuck_at"]),
-            "source_netlist": str(source_path.resolve()),
+            "stuck_at": stuck_at,
+            "source_netlist": str(source_path),
             "source_netlist_sha256": expected_sha,
             "site": {
                 "site_id": location["site_id"],
@@ -1057,26 +1081,34 @@ def materialize_faults(
             "modification": {
                 "original_connection": original_expression,
                 "replacement_connection": replacement,
-                "method": "replace only the selected sink-pin branch expression",
+                "method": (
+                    "replace only the selected sink-pin branch expression"
+                ),
             },
             "artifacts": {
-                "fault_netlist": "fault_netlist.v",
-                "patch": "fault.patch",
                 "metadata": "fault.json",
-                "fault_netlist_sha256": sha256_file(netlist_output),
+                "patch": "fault.patch",
+                "fault_netlist_policy": (
+                    "generated temporarily from the immutable golden netlist "
+                    "when a simulation run starts"
+                ),
             },
+            "apply_command": (
+                "python3 scripts/fault_injection/branch_fault.py apply "
+                f"--fault-json {fault_id}/fault.json "
+                "--output-netlist <run-dir>/work/fault_netlist.v"
+            ),
             "results": {
                 "status": "not_run",
-                "path_template": "results/<workload>/",
+                "path_template": "results/<workload>/<run_name>/",
                 "note": (
-                    "The results directory is created only when a simulation is run; "
-                    "empty result directories are intentionally not generated."
+                    "Simulation output directories are created only by the "
+                    "fault simulation runner."
                 ),
             },
         }
         write_json(json_output, metadata)
 
-        # Final local validation.
         if sha256_file(source_path) != expected_sha:
             raise RuntimeError("golden source netlist was modified unexpectedly")
         if replacement not in modified_text[
@@ -1088,6 +1120,133 @@ def materialize_faults(
         created += 1
 
     return created, skipped
+
+
+def apply_fault_metadata(
+    fault_json_path: Path,
+    output_netlist: Path,
+    force: bool,
+) -> Path:
+    """Generate one run-local faulty netlist from golden + fault.json."""
+    metadata = read_json(fault_json_path.resolve())
+
+    try:
+        source_path = Path(str(metadata["source_netlist"])).resolve()
+        expected_sha = str(metadata["source_netlist_sha256"])
+        fault_id = str(metadata["fault_id"])
+        stuck_at = int(metadata["stuck_at"])
+        site = metadata["site"]
+        modification = metadata["modification"]
+    except (KeyError, TypeError, ValueError) as exc:
+        raise SystemExit(
+            f"ERROR: incomplete or invalid fault metadata in "
+            f"{fault_json_path}: {exc}"
+        ) from exc
+
+    if not FAULT_ID_PATTERN.fullmatch(fault_id):
+        raise SystemExit(f"ERROR: invalid fault_id in metadata: {fault_id}")
+    if stuck_at not in {0, 1}:
+        raise SystemExit(f"ERROR: invalid stuck_at value in metadata: {stuck_at}")
+    if not source_path.is_file():
+        raise SystemExit(f"ERROR: source netlist not found: {source_path}")
+
+    resolved_output = output_netlist.resolve()
+    if resolved_output == source_path:
+        raise SystemExit(
+            "ERROR: output netlist must not overwrite the immutable golden netlist"
+        )
+    if resolved_output.exists() and not force:
+        raise SystemExit(
+            f"ERROR: output netlist already exists: {resolved_output}; "
+            "use --force to replace it"
+        )
+
+    actual_sha = sha256_file(source_path)
+    if actual_sha != expected_sha:
+        raise SystemExit(
+            "ERROR: golden source netlist SHA-256 does not match fault.json.\n"
+            f"  expected: {expected_sha}\n"
+            f"  actual:   {actual_sha}"
+        )
+
+    original_text = source_path.read_text(encoding="utf-8", errors="strict")
+    _, cells = parse_standard_cells(original_text)
+    connections = connection_index(cells)
+
+    try:
+        key = (
+            str(site["module"]),
+            str(site["sink_instance"]),
+            str(site["sink_pin"]),
+        )
+        expected_source_net = str(site["source_net"])
+        expected_original = str(modification["original_connection"])
+        expected_replacement = str(modification["replacement_connection"])
+    except (KeyError, TypeError) as exc:
+        raise SystemExit(
+            f"ERROR: malformed site/modification data in {fault_json_path}: {exc}"
+        ) from exc
+
+    try:
+        connection = connections[key]
+    except KeyError as exc:
+        raise SystemExit(
+            "ERROR: fault connection not found in golden netlist: "
+            + "/".join(key)
+        ) from exc
+
+    if canonical_signal(connection.expression) != canonical_signal(
+        expected_source_net
+    ):
+        raise SystemExit(
+            f"ERROR: source expression mismatch for {fault_id}:\n"
+            f"  fault.json: {expected_source_net}\n"
+            f"  netlist:    {connection.expression}"
+        )
+
+    modified_text, original_expression = inject_branch_fault(
+        original_text,
+        connection,
+        stuck_at,
+    )
+    actual_replacement = f"1'b{stuck_at}"
+
+    if canonical_signal(original_expression) != canonical_signal(
+        expected_original
+    ):
+        raise SystemExit(
+            f"ERROR: original connection mismatch for {fault_id}:\n"
+            f"  fault.json: {expected_original}\n"
+            f"  netlist:    {original_expression}"
+        )
+    if canonical_signal(expected_replacement) != canonical_signal(
+        actual_replacement
+    ):
+        raise SystemExit(
+            f"ERROR: replacement mismatch for {fault_id}:\n"
+            f"  fault.json: {expected_replacement}\n"
+            f"  expected:   {actual_replacement}"
+        )
+
+    resolved_output.parent.mkdir(parents=True, exist_ok=True)
+    resolved_output.write_text(modified_text, encoding="utf-8")
+
+    if sha256_file(source_path) != expected_sha:
+        resolved_output.unlink(missing_ok=True)
+        raise RuntimeError("golden source netlist was modified unexpectedly")
+    if actual_replacement not in modified_text[
+        max(0, connection.expression_start - 40):
+        min(len(modified_text), connection.expression_start + 80)
+    ]:
+        resolved_output.unlink(missing_ok=True)
+        raise RuntimeError(f"replacement validation failed for {fault_id}")
+
+    print(f"Fault ID: {fault_id}")
+    print(f"Golden netlist: {source_path}")
+    print(f"Golden SHA-256: {expected_sha}")
+    print(f"Wrote run-local fault netlist: {resolved_output}")
+    print(f"Fault netlist SHA-256: {sha256_file(resolved_output)}")
+    return resolved_output
 
 
 # -----------------------------------------------------------------------------
@@ -1138,7 +1297,9 @@ def command_scan(args: argparse.Namespace) -> int:
     output = output_root / "population.json"
 
     if output.exists() and not args.force:
-        raise SystemExit(f"ERROR: {output} already exists; use --force to replace it")
+        raise SystemExit(
+            f"ERROR: {output} already exists; use --force to replace it"
+        )
 
     population = build_population(netlist, args.design)
     write_json(output, population)
@@ -1178,9 +1339,18 @@ def command_materialize(args: argparse.Namespace) -> int:
         requested_fault_ids=requested,
         force=args.force,
     )
-    print(f"Created BF directories: {created}")
+    print(f"Created BF metadata directories: {created}")
     print(f"Skipped existing BF directories: {skipped}")
     print(f"Output root: {output_root}")
+    return 0
+
+
+def command_apply(args: argparse.Namespace) -> int:
+    apply_fault_metadata(
+        fault_json_path=args.fault_json,
+        output_netlist=args.output_netlist,
+        force=args.force,
+    )
     return 0
 
 
@@ -1208,11 +1378,23 @@ def command_all(args: argparse.Namespace) -> int:
     return 0
 
 
+def add_seed_argument(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=RANDOM_SEED,
+        help=(
+            "random seed for reproducible stratified sampling "
+            f"(default: {RANDOM_SEED})"
+        ),
+    )
+
+
 def make_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Enumerate, statistically sample, and materialize branch stuck-at "
-            "fault netlists using paired BF0001_SA0/BF0001_SA1 directories."
+            "Enumerate, sample, and materialize metadata for paired "
+            "BF0001_SA0/BF0001_SA1 branch stuck-at faults."
         )
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -1222,31 +1404,27 @@ def make_parser() -> argparse.ArgumentParser:
         help="enumerate the complete eligible strict branch population",
     )
     scan.add_argument("--netlist", type=Path, required=True)
-    scan.add_argument("--design", choices=sorted(DESIGN_PROFILES), default="cv32e40p")
+    scan.add_argument(
+        "--design",
+        choices=sorted(DESIGN_PROFILES),
+        default="cv32e40p",
+    )
     scan.add_argument("--output-root", type=Path, required=True)
     scan.add_argument("--force", action="store_true")
     scan.set_defaults(function=command_scan)
 
     select = subparsers.add_parser(
         "select",
-        help="compute the strict +/-5% sample and assign BF IDs",
+        help="compute the current +/-5%% sample and assign paired BF IDs",
     )
     select.add_argument("--output-root", type=Path, required=True)
-    select.add_argument(
-        "--seed",
-        type=int,
-        default=RANDOM_SEED,
-        help=(
-            "random seed for reproducible stratified sampling "
-            f"(default: {RANDOM_SEED})"
-        ),
-    )
+    add_seed_argument(select)
     select.add_argument("--force", action="store_true")
     select.set_defaults(function=command_select)
 
     materialize = subparsers.add_parser(
         "materialize",
-        help="generate BFxxxx_SAx/fault_netlist.v, fault.json, and fault.patch",
+        help="generate BFxxxx_SAx/fault.json and fault.patch only",
     )
     materialize.add_argument("--output-root", type=Path, required=True)
     materialize.add_argument(
@@ -1260,24 +1438,27 @@ def make_parser() -> argparse.ArgumentParser:
     materialize.add_argument("--force", action="store_true")
     materialize.set_defaults(function=command_materialize)
 
+    apply_parser = subparsers.add_parser(
+        "apply",
+        help="generate one run-local fault_netlist.v from fault.json",
+    )
+    apply_parser.add_argument("--fault-json", type=Path, required=True)
+    apply_parser.add_argument("--output-netlist", type=Path, required=True)
+    apply_parser.add_argument("--force", action="store_true")
+    apply_parser.set_defaults(function=command_apply)
+
     all_command = subparsers.add_parser(
         "all",
-        help="run scan, select, and materialize in sequence",
+        help="run scan, select, and metadata materialization in sequence",
     )
     all_command.add_argument("--netlist", type=Path, required=True)
     all_command.add_argument(
-        "--design", choices=sorted(DESIGN_PROFILES), default="cv32e40p"
+        "--design",
+        choices=sorted(DESIGN_PROFILES),
+        default="cv32e40p",
     )
     all_command.add_argument("--output-root", type=Path, required=True)
-    all_command.add_argument(
-        "--seed",
-        type=int,
-        default=RANDOM_SEED,
-        help=(
-            "random seed for reproducible stratified sampling "
-            f"(default: {RANDOM_SEED})"
-        ),
-    )
+    add_seed_argument(all_command)
     all_command.add_argument("--force", action="store_true")
     all_command.set_defaults(function=command_all)
 
