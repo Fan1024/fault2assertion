@@ -1,0 +1,18 @@
+VCD: /raid/spring2026/fwu44/research/fault2assertion/golden/cv32e40p/crc32/netlist/run_golden/riscy_tb.vcd
+SHA-256: 2daa85360835ea6da3ea229f9720ebe1862448d42a2c06a6fe575a12423cb483
+Size bytes: 138871101
+Timescale: 1 ps
+End time: 9408170000
+Selected signals: 6
+Signals with activity: 3
+Signals with unknown values: 0
+Total changes: 3763268
+
+  changes       obs  width    first_time     last_time   unknown               first                last  name
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  1881634   1881635      1             0    9408170000         0                   1                   1  tb_top.clk
+        0         1      1             0             0         0                   1                   1  tb_top.fetch_enable
+  1881633   1881634      1             0    9408165000         0                   1                   0  tb_top.wrapper_i.clk_i
+        0         1      1             0             0         0                   0                   0  tb_top.wrapper_i.core_sleep_o
+        0         1      1             0             0         0                   1                   1  tb_top.wrapper_i.fetch_enable_i
+        1         2      1             0         41000         0                   0                   1  tb_top.wrapper_i.rst_ni

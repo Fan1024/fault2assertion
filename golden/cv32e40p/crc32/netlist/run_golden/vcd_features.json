@@ -1,0 +1,192 @@
+{
+  "schema_version": "1.0",
+  "generated_at_utc": "2026-07-29T15:39:19.389972+00:00",
+  "source": {
+    "vcd": "/raid/spring2026/fwu44/research/fault2assertion/golden/cv32e40p/crc32/netlist/run_golden/riscy_tb.vcd",
+    "size_bytes": 138871101,
+    "sha256": "2daa85360835ea6da3ea229f9720ebe1862448d42a2c06a6fe575a12423cb483",
+    "name_regex": "(^|\\.)(clk_i|rst_ni|clk|clock_en|core_busy_q|core_sleep_o|fetch_enable_i|fetch_enable|instr_req_o|instr_gnt_i|instr_rvalid_i|instr_addr_o|instr_rdata_i|data_req_o|data_gnt_i|data_rvalid_i|data_addr_o|data_wdata_o|data_rdata_i|data_we_o|pc_if|pc_id|pc_ex|pc_wb)(\\s|\\[|$)"
+  },
+  "vcd": {
+    "timescale": "1 ps",
+    "end_time": 9408170000,
+    "declared_variables": 66,
+    "selected_variables": 6,
+    "selected_value_codes": 6
+  },
+  "summary": {
+    "selected_signals": 6,
+    "signals_with_activity": 3,
+    "signals_without_activity": 3,
+    "signals_with_unknown": 0,
+    "total_observations": 3763274,
+    "total_changes": 3763268,
+    "total_unknown_observations": 0
+  },
+  "by_leaf_name": {
+    "clk": {
+      "signal_count": 1,
+      "observations": 1881635,
+      "changes": 1881634,
+      "unknown_observations": 0
+    },
+    "clk_i": {
+      "signal_count": 1,
+      "observations": 1881634,
+      "changes": 1881633,
+      "unknown_observations": 0
+    },
+    "core_sleep_o": {
+      "signal_count": 1,
+      "observations": 1,
+      "changes": 0,
+      "unknown_observations": 0
+    },
+    "fetch_enable": {
+      "signal_count": 1,
+      "observations": 1,
+      "changes": 0,
+      "unknown_observations": 0
+    },
+    "fetch_enable_i": {
+      "signal_count": 1,
+      "observations": 1,
+      "changes": 0,
+      "unknown_observations": 0
+    },
+    "rst_ni": {
+      "signal_count": 1,
+      "observations": 2,
+      "changes": 1,
+      "unknown_observations": 0
+    }
+  },
+  "signals": [
+    {
+      "code": "1",
+      "name": "tb_top.clk",
+      "width": 1,
+      "observations": 1881635,
+      "changes": 1881634,
+      "first_time": 0,
+      "first_value": "1",
+      "last_time": 9408170000,
+      "last_value": "1",
+      "first_change_time": 5000,
+      "last_change_time": 9408170000,
+      "unknown_observations": 0,
+      "first_unknown_time": null,
+      "last_unknown_time": null,
+      "scalar_0_to_1": 940817,
+      "scalar_1_to_0": 940817,
+      "active_span": 9408170000,
+      "change_density_per_1m_ticks": 200.0,
+      "has_unknown": false
+    },
+    {
+      "code": "8",
+      "name": "tb_top.fetch_enable",
+      "width": 1,
+      "observations": 1,
+      "changes": 0,
+      "first_time": 0,
+      "first_value": "1",
+      "last_time": 0,
+      "last_value": "1",
+      "first_change_time": null,
+      "last_change_time": null,
+      "unknown_observations": 0,
+      "first_unknown_time": null,
+      "last_unknown_time": null,
+      "scalar_0_to_1": 0,
+      "scalar_1_to_0": 0,
+      "active_span": 0,
+      "change_density_per_1m_ticks": 0.0,
+      "has_unknown": false
+    },
+    {
+      "code": "D",
+      "name": "tb_top.wrapper_i.clk_i",
+      "width": 1,
+      "observations": 1881634,
+      "changes": 1881633,
+      "first_time": 0,
+      "first_value": "1",
+      "last_time": 9408165000,
+      "last_value": "0",
+      "first_change_time": 5000,
+      "last_change_time": 9408165000,
+      "unknown_observations": 0,
+      "first_unknown_time": null,
+      "last_unknown_time": null,
+      "scalar_0_to_1": 940816,
+      "scalar_1_to_0": 940817,
+      "active_span": 9408165000,
+      "change_density_per_1m_ticks": 199.99989370940364,
+      "has_unknown": false
+    },
+    {
+      "code": "`",
+      "name": "tb_top.wrapper_i.core_sleep_o",
+      "width": 1,
+      "observations": 1,
+      "changes": 0,
+      "first_time": 0,
+      "first_value": "0",
+      "last_time": 0,
+      "last_value": "0",
+      "first_change_time": null,
+      "last_change_time": null,
+      "unknown_observations": 0,
+      "first_unknown_time": null,
+      "last_unknown_time": null,
+      "scalar_0_to_1": 0,
+      "scalar_1_to_0": 0,
+      "active_span": 0,
+      "change_density_per_1m_ticks": 0.0,
+      "has_unknown": false
+    },
+    {
+      "code": "F",
+      "name": "tb_top.wrapper_i.fetch_enable_i",
+      "width": 1,
+      "observations": 1,
+      "changes": 0,
+      "first_time": 0,
+      "first_value": "1",
+      "last_time": 0,
+      "last_value": "1",
+      "first_change_time": null,
+      "last_change_time": null,
+      "unknown_observations": 0,
+      "first_unknown_time": null,
+      "last_unknown_time": null,
+      "scalar_0_to_1": 0,
+      "scalar_1_to_0": 0,
+      "active_span": 0,
+      "change_density_per_1m_ticks": 0.0,
+      "has_unknown": false
+    },
+    {
+      "code": "E",
+      "name": "tb_top.wrapper_i.rst_ni",
+      "width": 1,
+      "observations": 2,
+      "changes": 1,
+      "first_time": 0,
+      "first_value": "0",
+      "last_time": 41000,
+      "last_value": "1",
+      "first_change_time": 41000,
+      "last_change_time": 41000,
+      "unknown_observations": 0,
+      "first_unknown_time": null,
+      "last_unknown_time": null,
+      "scalar_0_to_1": 1,
+      "scalar_1_to_0": 0,
+      "active_span": 41000,
+      "change_density_per_1m_ticks": 0.00010629059636464903,
+      "has_unknown": false
+    }
+  ]
+}

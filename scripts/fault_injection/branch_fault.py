@@ -1,19 +1,6 @@
 #!/usr/bin/env python3
 """Create and apply CV32E40P branch stuck-at fault definitions.
 
-Persistent campaign layout:
-
-faults/cv32e40p/branchfault/
-+-- population.json
-+-- selection.json
-+-- BF0001_SA0/
-¦   +-- fault.json
-¦   +-- fault.patch
-+-- BF0001_SA1/
-¦   +-- fault.json
-¦   +-- fault.patch
-+-- ...
-
 A complete faulty netlist is intentionally NOT stored in each BF directory.
 The ``apply`` command reconstructs one run-local faulty netlist from:
 
@@ -65,19 +52,66 @@ DEFAULT_LOGIC_OUTPUT_PINS = {"Z", "ZN", "Y"}
 
 DESIGN_PROFILES: dict[str, dict[str, Any]] = {
     "cv32e40p": {
-        "region_rules": [
-            (r"cs_registers", "csr_debug"),
-            (r"load_store_unit", "lsu"),
+        # A flattened mapped module can contain logic from several architectural
+        # regions. Therefore, classify by source-net name first and use the
+        # module name only as a fallback. Rule order is significant.
+        "signal_region_rules": [
             (
-                r"if_stage|prefetch|obi_interface|aligner|compressed_decoder|fifo",
+                r"(?:^|_)(?:csr|debug|dcsr|dpc|dscratch|trigger|tdata|tinfo|"
+                r"mtvec|mepc|mcause|mstatus|mcount|mhpm|pmp)(?:_|$|\[)",
+                "csr_debug",
+            ),
+            (
+                r"(?:^|_)(?:irq|interrupt|mie|mip)(?:_|$|\[)",
+                "irq_control",
+            ),
+            (
+                r"lsu|load|store|amo|data_(?:addr|req|gnt|rvalid|rdata|"
+                r"wdata|we|be)|mem_",
+                "lsu_mem",
+            ),
+            (
+                r"(?:^|_)(?:if|instr|fetch|prefetch|pc|align|compressed|fifo)"
+                r"(?:_|$|\[)",
                 "if_prefetch",
             ),
             (
-                r"register_file|id_stage|decoder|controller|int_controller",
+                r"(?:^|_)(?:id|decode|decoder|regfile|rf|ctrl|controller)"
+                r"(?:_|$|\[)|operand_[ab]",
                 "id_control_regfile",
             ),
-            (r"alu_div|alu|mult|ex_stage|ff_one|popcnt", "execute"),
-            (r"sleep_unit|clock_gate|core|top", "core_glue_sleep"),
+            (
+                r"(?:^|_)(?:ex|alu|mult|mul|div|rem|mac|wb|writeback|"
+                r"branch|jump|result)(?:_|$|\[)",
+                "execute_wb",
+            ),
+            (
+                r"sleep|clock|clk|core_busy|fetch_enable|apu|pulp|scan|"
+                r"reset|rst",
+                "core_glue_sleep",
+            ),
+        ],
+        "module_region_rules": [
+            (r"cs_registers|csr|debug", "csr_debug"),
+            (r"int_controller|interrupt|irq", "irq_control"),
+            (r"load_store_unit|lsu", "lsu_mem"),
+            (
+                r"if_stage|prefetch|instr_obi|obi_interface|aligner|"
+                r"compressed_decoder|fifo",
+                "if_prefetch",
+            ),
+            (
+                r"register_file|id_stage|decoder|controller",
+                "id_control_regfile",
+            ),
+            (
+                r"alu_div|alu|mult|ex_stage|ff_one|popcnt|writeback|wb_stage",
+                "execute_wb",
+            ),
+            (
+                r"sleep_unit|clock_gate|cv32e40p_core|cv32e40p_top|core|top",
+                "core_glue_sleep",
+            ),
         ],
         "default_region": "unclassified",
     }
@@ -215,10 +249,27 @@ def sink_role(cell_type: str, pin: str) -> str:
     return "combinational_input"
 
 
-def classify_region(module_name: str, profile: dict[str, Any]) -> str:
-    for pattern, region in profile["region_rules"]:
+def classify_region(
+    module_name: str,
+    source_net: str,
+    profile: dict[str, Any],
+) -> str:
+    """Classify a branch site by signal name first, then module name.
+
+    The mapped CV32E40P netlist contains flattened modules whose names alone do
+    not reliably identify the architectural function of every internal net.
+    Signal-first classification prevents nets such as ``csr_access_ex`` from
+    being mislabeled as generic core glue merely because they live in a large
+    ``cv32e40p_core_*`` module.
+    """
+    for pattern, region in profile["signal_region_rules"]:
+        if re.search(pattern, source_net, flags=re.IGNORECASE):
+            return str(region)
+
+    for pattern, region in profile["module_region_rules"]:
         if re.search(pattern, module_name, flags=re.IGNORECASE):
             return str(region)
+
     return str(profile["default_region"])
 
 
@@ -444,20 +495,12 @@ def build_population(netlist_path: Path, design: str) -> dict[str, Any]:
     netlist_text = netlist_path.read_text(encoding="utf-8", errors="strict")
     modules, cells = parse_standard_cells(netlist_text)
 
+    # Module-only values are retained for parser diagnostics. Actual branch
+    # sites are classified below using source-net rules first.
     module_regions = {
-        module: classify_region(module, profile)
+        module: classify_region(module, "", profile)
         for module in modules
     }
-    unclassified = sorted(
-        module
-        for module, region in module_regions.items()
-        if region == profile["default_region"]
-    )
-    if unclassified:
-        raise SystemExit(
-            "ERROR: unclassified modules must be mapped before sampling:\n  "
-            + "\n  ".join(unclassified)
-        )
 
     drivers: dict[tuple[str, str], list[dict[str, str]]] = defaultdict(list)
     sink_candidates: list[dict[str, Any]] = []
@@ -492,7 +535,11 @@ def build_population(netlist_path: Path, design: str) -> dict[str, Any]:
             sink_candidates.append(
                 {
                     "module": cell.module,
-                    "region": module_regions[cell.module],
+                    "region": classify_region(
+                        cell.module,
+                        connection.expression.strip(),
+                        profile,
+                    ),
                     "source_net": connection.expression.strip(),
                     "source_key": canonical_signal(connection.expression),
                     "sink_instance": cell.instance,
@@ -549,6 +596,30 @@ def build_population(netlist_path: Path, design: str) -> dict[str, Any]:
             }
         )
 
+    unclassified_sites = sorted(
+        (
+            site["module"],
+            site["source_net"],
+            site["sink_instance"],
+            site["sink_pin"],
+        )
+        for site in sites
+        if site["region"] == profile["default_region"]
+    )
+    if unclassified_sites:
+        preview = "\n  ".join(
+            "/".join(item) for item in unclassified_sites[:20]
+        )
+        suffix = "" if len(unclassified_sites) <= 20 else (
+            f"\n  ... and {len(unclassified_sites) - 20} more"
+        )
+        raise SystemExit(
+            "ERROR: eligible branch sites remain unclassified. "
+            "Add an explicit signal/module rule before sampling:\n  "
+            + preview
+            + suffix
+        )
+
     sites.sort(
         key=lambda site: (
             site["region"],
@@ -589,6 +660,18 @@ def build_population(netlist_path: Path, design: str) -> dict[str, Any]:
             "strict_branch_min_fanout": STRICT_BRANCH_MIN_FANOUT,
             "excluded_sink_pins": sorted(EXCLUDED_SINK_PINS),
             "stratum": "functional_region|source_class|fanout_bucket",
+            "functional_region_assignment": (
+                "source-net name rules first, then module-name fallback rules"
+            ),
+            "functional_regions": [
+                "csr_debug",
+                "irq_control",
+                "lsu_mem",
+                "if_prefetch",
+                "id_control_regfile",
+                "execute_wb",
+                "core_glue_sleep",
+            ],
         },
         "parser_summary": {
             "module_count": len(modules),
@@ -1355,6 +1438,7 @@ def command_apply(args: argparse.Namespace) -> int:
 
 
 def command_all(args: argparse.Namespace) -> int:
+    """Prepare a campaign without creating any BFxxxx_SAx directories."""
     scan_args = argparse.Namespace(
         netlist=args.netlist,
         design=args.design,
@@ -1366,15 +1450,13 @@ def command_all(args: argparse.Namespace) -> int:
         seed=args.seed,
         force=args.force,
     )
-    materialize_args = argparse.Namespace(
-        output_root=args.output_root,
-        fault_id=None,
-        force=args.force,
-    )
 
     command_scan(scan_args)
     command_select(select_args)
-    command_materialize(materialize_args)
+    print(
+        "Campaign preparation complete: only population.json and "
+        "selection.json were generated."
+    )
     return 0
 
 
@@ -1393,8 +1475,8 @@ def add_seed_argument(parser: argparse.ArgumentParser) -> None:
 def make_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Enumerate, sample, and materialize metadata for paired "
-            "BF0001_SA0/BF0001_SA1 branch stuck-at faults."
+            "Enumerate and sample paired BF0001_SA0/BF0001_SA1 branch "
+            "stuck-at faults, then materialize individual faults on demand."
         )
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -1449,7 +1531,10 @@ def make_parser() -> argparse.ArgumentParser:
 
     all_command = subparsers.add_parser(
         "all",
-        help="run scan, select, and metadata materialization in sequence",
+        help=(
+            "prepare population.json and selection.json only "
+            "(equivalent to scan followed by select)"
+        ),
     )
     all_command.add_argument("--netlist", type=Path, required=True)
     all_command.add_argument(
