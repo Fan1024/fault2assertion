@@ -1,0 +1,126 @@
+Stage 1 Raw Site Enumeration
+================================================================================
+Design              : cv32e40p
+Top module          : cv32e40p_top
+Source netlist      : /raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v
+Source SHA256       : 39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7
+Policy              : cv32e40p_nangate45_stage1
+Policy SHA256       : 854385295893014541cd5c19f4ac0b6cabfbc04cfcb31ba44c2d72e4322edfb3
+
+Parser summary
+--------------------------------------------------------------------------------
+Modules             : 24
+All instances       : 14970
+Standard cells      : 14947
+Hierarchy instances : 23
+Continuous assigns  : 2
+
+Top-level interface
+--------------------------------------------------------------------------------
+PI ports / bits     : 18 / 266
+PO ports / bits     : 13 / 113
+
+Raw-site summary
+--------------------------------------------------------------------------------
+Raw sites           : 19903
+Unique-driver sites : 19903
+Stage-2 inventory   : 19903
+State Q/QN sites    : 2898
+Fanout = 1          : 12326
+Fanout >= 2         : 6574
+Output-only sites   : 1003
+Multiple drivers    : 0
+Unresolved sources  : 137
+  placeholders      : 137
+  non-placeholders  : 0
+Dangling drivers    : 80
+  placeholders      : 75
+  non-placeholders  : 5
+
+By source kind
+--------------------------------------------------------------------------------
+arithmetic_output          : 723
+buffer_or_inverter_output  : 1662
+clock_buffer_output        : 4
+clock_gate_output          : 1
+combinational_output       : 10789
+continuous_assign_constant : 2
+hierarchical_module_output : 1407
+module_input               : 2417
+sequential_output          : 2898
+
+By fanout bucket
+--------------------------------------------------------------------------------
+0    : 1003
+1    : 12326
+2    : 3366
+3_4  : 1818
+5_8  : 627
+gt_8 : 763
+
+Standard-cell families
+--------------------------------------------------------------------------------
+buffer_or_inverter  : 1662
+clock_buffer        : 4
+clock_gate          : 1
+combinational_logic : 10451
+full_adder          : 359
+half_adder          : 3
+mux                 : 338
+sequential          : 2129
+
+Sink roles
+--------------------------------------------------------------------------------
+arithmetic_carry_input      : 359
+arithmetic_input            : 724
+async_reset_n               : 2122
+async_set_n                 : 7
+clock                       : 2130
+clock_buffer_input          : 4
+clock_gate_enable           : 1
+clock_gate_test_enable      : 1
+combinational_input         : 38317
+hierarchical_instance_input : 2316
+module_output               : 1520
+mux_select                  : 338
+scan_enable                 : 491
+scan_input                  : 491
+sequential_data             : 2129
+
+Per-module raw-site counts
+--------------------------------------------------------------------------------
+cv32e40p_aligner                                                                                                                                                                                                             cells=  400  raw=  470  state=  51  unresolved=  0  dangling=  0
+cv32e40p_alu                                                                                                                                                                                                                 cells= 1377  raw= 1534  state=   0  unresolved=  0  dangling=  0
+cv32e40p_alu_div                                                                                                                                                                                                             cells=  857  raw=  947  state= 108  unresolved=  0  dangling=  0
+cv32e40p_clock_gate                                                                                                                                                                                                          cells=    1  raw=    4  state=   0  unresolved=  0  dangling=  0
+cv32e40p_compressed_decoder_FPU0_ZFINX0                                                                                                                                                                                      cells=  303  raw=  335  state=   0  unresolved=  0  dangling=  0
+cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0                                                                                                                                                                          cells=  339  raw=  398  state=  15  unresolved=  0  dangling=  0
+cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1                                                                                                                       cells=   17  raw=  991  state=   0  unresolved= 68  dangling= 44
+cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1                                                             cells= 2359  raw= 2604  state= 494  unresolved=  0  dangling=  0
+cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1                                                                    cells=  299  raw=  334  state=   0  unresolved=  0  dangling=  0
+cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5                                                                                                                          cells=   91  raw=  409  state=   7  unresolved=  2  dangling=  0
+cv32e40p_ff_one                                                                                                                                                                                                              cells=   66  raw=   98  state=   0  unresolved=  0  dangling=  0
+cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2                                                                                                                                                                              cells=  125  raw=  164  state=  70  unresolved=  0  dangling=  0
+cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1  cells= 1284  raw= 1701  state= 283  unresolved= 33  dangling= 26
+cv32e40p_if_stage_COREV_PULP0_PULP_OBI0_PULP_SECURE0_FPU0_ZFINX0                                                                                                                                                             cells=  343  raw=  796  state=  66  unresolved=  3  dangling=  4
+cv32e40p_int_controller_PULP_SECURE0                                                                                                                                                                                         cells=   98  raw=  139  state=  19  unresolved=  0  dangling=  0
+cv32e40p_load_store_unit_PULP_OBI0                                                                                                                                                                                           cells=  691  raw=  835  state=  40  unresolved=  0  dangling=  0
+cv32e40p_mult                                                                                                                                                                                                                cells= 1862  raw= 2275  state=   4  unresolved=  0  dangling=  0
+cv32e40p_obi_interface_TRANS_STABLE0                                                                                                                                                                                         cells=   66  raw=  100  state=  31  unresolved=  0  dangling=  0
+cv32e40p_popcnt                                                                                                                                                                                                              cells=   38  raw=   97  state=   0  unresolved=  0  dangling=  0
+cv32e40p_prefetch_buffer_PULP_OBI0_COREV_PULP0                                                                                                                                                                               cells=   32  raw=  203  state=   0  unresolved=  4  dangling=  4
+cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2                                                                                                                                                                    cells=  312  raw=  355  state=  37  unresolved=  0  dangling=  0
+cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0                                                                                                                                                                  cells= 3979  raw= 4746  state=1671  unresolved=  0  dangling=  0
+cv32e40p_sleep_unit_COREV_CLUSTER0                                                                                                                                                                                           cells=    8  raw=   17  state=   2  unresolved=  0  dangling=  0
+cv32e40p_top                                                                                                                                                                                                                 cells=    0  raw=  351  state=   0  unresolved= 27  dangling=  2
+
+Warnings
+--------------------------------------------------------------------------------
+- 5 non-placeholder nets have drivers but no resolved downstream sink
+
+Stage-1 interpretation
+--------------------------------------------------------------------------------
+This output is a structural inventory only.
+No site is clock/reset/scan safe merely because it appears here.
+No SA0/SA1 polarity has been selected.
+No netlist has been modified.

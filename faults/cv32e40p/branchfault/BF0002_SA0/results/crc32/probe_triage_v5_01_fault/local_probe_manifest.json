@@ -1,0 +1,64 @@
+{
+  "schema_version": "2.1",
+  "generated_at_utc": "2026-07-30T03:29:12.613042+00:00",
+  "fault_id": "BF0002_SA0",
+  "stuck_at": 0,
+  "netlist": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/branchfault/BF0002_SA0/results/crc32/probe_triage_v5_01_fault/work/cv32e40p.mapped.sim.v",
+  "target": {
+    "module": "cv32e40p_ff_one",
+    "sink_instance": "g1234",
+    "sink_cell_type": "NAND3_X1",
+    "sink_pin": "A1",
+    "source_net": "first_one_o[4]"
+  },
+  "signals": [
+    {
+      "name": "f2a_source_original",
+      "probe_port": "probe_source_original_i",
+      "role": "upstream_source",
+      "cell_pin": "",
+      "expression": "first_one_o[4]"
+    },
+    {
+      "name": "f2a_branch_observed",
+      "probe_port": "probe_branch_observed_i",
+      "role": "selected_sink_pin_after_injection",
+      "cell_pin": "A1",
+      "expression": "1'b0"
+    },
+    {
+      "name": "f2a_input_A2",
+      "probe_port": "probe_input_A2_i",
+      "role": "receiver_input",
+      "cell_pin": "A2",
+      "expression": "n_20"
+    },
+    {
+      "name": "f2a_input_A3",
+      "probe_port": "probe_input_A3_i",
+      "role": "receiver_input",
+      "cell_pin": "A3",
+      "expression": "n_47"
+    },
+    {
+      "name": "f2a_output_ZN",
+      "probe_port": "probe_output_ZN_i",
+      "role": "receiver_output",
+      "cell_pin": "ZN",
+      "expression": "n_70"
+    }
+  ],
+  "implementation": {
+    "bind_target": "cv32e40p_ff_one",
+    "bound_monitor_module": "f2a_local_probe",
+    "bound_instance_name": "f2a_local_probe_i",
+    "vcd_owner": "tb_top through +vcd",
+    "vcd_registration_time": "time zero, inactive region (#0)",
+    "vcd_name_policy": "f2a_* are distinct internal procedural logic mirrors; probe_*_i are bind input ports"
+  },
+  "interpretation": {
+    "activation": "For SA0, f2a_source_original must reach 1; for SA1, it must reach 0.",
+    "injection": "In the fault run, f2a_branch_observed must remain at the stuck value.",
+    "propagation": "Compare f2a_output_* traces between golden and fault runs."
+  }
+}

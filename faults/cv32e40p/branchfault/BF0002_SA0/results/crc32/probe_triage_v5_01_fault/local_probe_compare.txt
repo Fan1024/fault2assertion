@@ -1,0 +1,30 @@
+Fault ID: BF0002_SA0
+Stuck-at: SA0
+Classification: LOCALLY_MASKED_AT_RECEIVER
+
+Activation
+----------
+Activated: True
+Required golden source value: 1
+Observed golden source values: 1
+
+Injection
+---------
+Effective: True
+Expected fault branch value: 0
+Observed fault branch values: 0
+Earliest branch divergence time: 0
+
+Local propagation
+-----------------
+Receiver output diverged: False
+Earliest receiver output divergence time: None
+Divergent receiver outputs: 
+
+Per-signal earliest divergence
+------------------------------
+f2a_branch_observed: 0 (1 -> 0)
+f2a_input_A2: None (None -> None)
+f2a_input_A3: None (None -> None)
+f2a_output_ZN: None (None -> None)
+f2a_source_original: None (None -> None)

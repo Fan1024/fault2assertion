@@ -1,0 +1,78 @@
+{
+  "schema_version": "2.1",
+  "generated_at_utc": "2026-07-30T03:19:52.704171+00:00",
+  "fault_id": "BF0001_SA0",
+  "stuck_at": 0,
+  "netlist": "/raid/spring2026/fwu44/research/fault2assertion/golden/cv32e40p/crc32/netlist/probe_BF0001_SA0_triage_v5_01_golden/work/cv32e40p.mapped.sim.v",
+  "target": {
+    "module": "cv32e40p_ff_one",
+    "sink_instance": "g1227",
+    "sink_cell_type": "OAI221_X1",
+    "sink_pin": "C1",
+    "source_net": "first_one_o[4]"
+  },
+  "signals": [
+    {
+      "name": "f2a_source_original",
+      "probe_port": "probe_source_original_i",
+      "role": "upstream_source",
+      "cell_pin": "",
+      "expression": "first_one_o[4]"
+    },
+    {
+      "name": "f2a_branch_observed",
+      "probe_port": "probe_branch_observed_i",
+      "role": "selected_sink_pin_after_injection",
+      "cell_pin": "C1",
+      "expression": "first_one_o[4]"
+    },
+    {
+      "name": "f2a_input_A",
+      "probe_port": "probe_input_A_i",
+      "role": "receiver_input",
+      "cell_pin": "A",
+      "expression": "n_30"
+    },
+    {
+      "name": "f2a_input_B1",
+      "probe_port": "probe_input_B1_i",
+      "role": "receiver_input",
+      "cell_pin": "B1",
+      "expression": "n_68"
+    },
+    {
+      "name": "f2a_input_B2",
+      "probe_port": "probe_input_B2_i",
+      "role": "receiver_input",
+      "cell_pin": "B2",
+      "expression": "n_44"
+    },
+    {
+      "name": "f2a_input_C2",
+      "probe_port": "probe_input_C2_i",
+      "role": "receiver_input",
+      "cell_pin": "C2",
+      "expression": "n_58"
+    },
+    {
+      "name": "f2a_output_ZN",
+      "probe_port": "probe_output_ZN_i",
+      "role": "receiver_output",
+      "cell_pin": "ZN",
+      "expression": "first_one_o[2]"
+    }
+  ],
+  "implementation": {
+    "bind_target": "cv32e40p_ff_one",
+    "bound_monitor_module": "f2a_local_probe",
+    "bound_instance_name": "f2a_local_probe_i",
+    "vcd_owner": "tb_top through +vcd",
+    "vcd_registration_time": "time zero, inactive region (#0)",
+    "vcd_name_policy": "f2a_* are distinct internal procedural logic mirrors; probe_*_i are bind input ports"
+  },
+  "interpretation": {
+    "activation": "For SA0, f2a_source_original must reach 1; for SA1, it must reach 0.",
+    "injection": "In the fault run, f2a_branch_observed must remain at the stuck value.",
+    "propagation": "Compare f2a_output_* traces between golden and fault runs."
+  }
+}

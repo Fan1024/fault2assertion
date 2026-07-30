@@ -41,3 +41,4 @@ runs/
 
 # Build-time simulator workspace
 build/xcelium_work/
+/faults/cv32e40p/site_catalog/stage_04_candidates.json

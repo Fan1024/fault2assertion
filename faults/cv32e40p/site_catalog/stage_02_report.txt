@@ -1,0 +1,153 @@
+Stage 2 Static Safety and Coarse Structural Filtering
+================================================================================
+Design              : cv32e40p
+Top module          : cv32e40p_top
+Source netlist      : /raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v
+Source SHA256       : 39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7
+Stage-1 catalog     : /raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_01_raw_sites.json
+Stage-1 digest      : 9b570d3a2626280fe66e8b130d3c82a10e3177dbbfeec9f8805f238a1d83964d
+Safety policy       : cv32e40p_nangate45_stage2_static_safety
+Safety policy SHA   : 8449a6071f9653c4e4fd5ad119bfb6fd31c858747864fd88f69a3aa7153c8d62
+
+Dependency graph
+--------------------------------------------------------------------------------
+Nodes               : 23641
+Edges               : 44583
+  combinational     : 40780
+  hierarchy         : 3803
+  continuous assign : 0
+Skipped non-simple  : 0
+
+Protected-domain seeds and upstream closures
+--------------------------------------------------------------------------------
+async_reset_set : seeds=   15  closure=   19
+clock_control   : seeds=    2  closure=  260
+clock_signal    : seeds=   18  closure=  285
+
+Stage-2 disposition
+--------------------------------------------------------------------------------
+Raw sites           : 19903
+Activity candidates : 16757
+Excluded            : 3146
+Eligible state sites: 2800
+Scan-touch sites    : 407
+
+Exclusion reasons
+--------------------------------------------------------------------------------
+excluded_source_kind:clock_buffer_output        : 4
+excluded_source_kind:clock_gate_output          : 1
+excluded_source_kind:continuous_assign_constant : 2
+excluded_source_kind:module_input               : 2417
+no_functional_checkpoint_reachable              : 675
+protected_async_reset_set_cone                  : 19
+protected_clock_control_cone                    : 234
+protected_clock_signal_cone                     : 259
+test_only_consumers                             : 169
+
+Eligible sites by source kind
+--------------------------------------------------------------------------------
+arithmetic_output          : 701
+buffer_or_inverter_output  : 1585
+combinational_output       : 10404
+hierarchical_module_output : 1267
+sequential_output          : 2800
+
+Eligible sites by fanout bucket
+--------------------------------------------------------------------------------
+   0 : 925
+   1 : 10336
+   2 : 2932
+ 3_4 : 1473
+ 5_8 : 475
+gt_8 : 616
+
+Coarse observation checkpoints
+--------------------------------------------------------------------------------
+Sequential-D seeds  : 2124
+Top-output seeds    : 113
+Sites reaching D    : 18363
+Sites reaching PO   : 5421
+
+Per-module disposition
+--------------------------------------------------------------------------------
+cv32e40p_aligner                                                                                                                                                                                                             raw=  470  keep=  397  drop=   73  clk=   1  rst=   1
+cv32e40p_alu                                                                                                                                                                                                                 raw= 1534  keep= 1423  drop=  111  clk=   1  rst=   1
+cv32e40p_alu_div                                                                                                                                                                                                             raw=  947  keep=  592  drop=  355  clk=   1  rst=   1
+cv32e40p_clock_gate                                                                                                                                                                                                          raw=    4  keep=    0  drop=    4  clk=   4  rst=   0
+cv32e40p_compressed_decoder_FPU0_ZFINX0                                                                                                                                                                                      raw=  335  keep=  259  drop=   76  clk=   0  rst=   0
+cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0                                                                                                                                                                          raw=  398  keep=  320  drop=   78  clk=  11  rst=   1
+cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1                                                                                                                       raw=  991  keep=  669  drop=  322  clk=  50  rst=   1
+cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1                                                             raw= 2604  keep= 2317  drop=  287  clk=  67  rst=   1
+cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1                                                                    raw=  334  keep=  285  drop=   49  clk=   0  rst=   0
+cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5                                                                                                                          raw=  409  keep=  155  drop=  254  clk=   1  rst=   1
+cv32e40p_ff_one                                                                                                                                                                                                              raw=   98  keep=   66  drop=   32  clk=   0  rst=   0
+cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2                                                                                                                                                                              raw=  164  keep=  126  drop=   38  clk=   1  rst=   1
+cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1  raw= 1701  keep= 1422  drop=  279  clk=  46  rst=   1
+cv32e40p_if_stage_COREV_PULP0_PULP_OBI0_PULP_SECURE0_FPU0_ZFINX0                                                                                                                                                             raw=  796  keep=  436  drop=  360  clk=   1  rst=   1
+cv32e40p_int_controller_PULP_SECURE0                                                                                                                                                                                         raw=  139  keep=   85  drop=   54  clk=  51  rst=   1
+cv32e40p_load_store_unit_PULP_OBI0                                                                                                                                                                                           raw=  835  keep=  695  drop=  140  clk=   1  rst=   1
+cv32e40p_mult                                                                                                                                                                                                                raw= 2275  keep= 2170  drop=  105  clk=   1  rst=   1
+cv32e40p_obi_interface_TRANS_STABLE0                                                                                                                                                                                         raw=  100  keep=   63  drop=   37  clk=   1  rst=   1
+cv32e40p_popcnt                                                                                                                                                                                                              raw=   97  keep=   65  drop=   32  clk=   0  rst=   0
+cv32e40p_prefetch_buffer_PULP_OBI0_COREV_PULP0                                                                                                                                                                               raw=  203  keep=  130  drop=   73  clk=   1  rst=   1
+cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2                                                                                                                                                                    raw=  355  keep=  310  drop=   45  clk=   1  rst=   1
+cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0                                                                                                                                                                  raw= 4746  keep= 4658  drop=   88  clk=   1  rst=   1
+cv32e40p_sleep_unit_COREV_CLUSTER0                                                                                                                                                                                           raw=   17  keep=    3  drop=   14  clk=   9  rst=   1
+cv32e40p_top                                                                                                                                                                                                                 raw=  351  keep=  111  drop=  240  clk=   9  rst=   1
+
+Clock/reset safety examples
+--------------------------------------------------------------------------------
+RS000134  cv32e40p_aligner|clk  [clock_signal]
+RS000469  cv32e40p_aligner|rst_n  [async_reset_set]
+RS000862  cv32e40p_alu|clk  [clock_signal]
+RS001971  cv32e40p_alu|rst_n  [async_reset_set]
+RS002069  cv32e40p_alu_div|Clk_CI  [clock_signal]
+RS002220  cv32e40p_alu_div|Rst_RBI  [async_reset_set]
+RS002952  cv32e40p_clock_gate|clk_i  [clock_signal]
+RS002953  cv32e40p_clock_gate|clk_o  [clock_signal]
+RS002954  cv32e40p_clock_gate|en_i  [clock_control,clock_signal]
+RS002955  cv32e40p_clock_gate|scan_cg_en_i  [clock_control,clock_signal]
+RS003292  cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0|clk  [clock_signal]
+RS003293  cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0|clk_ungated_i  [clock_signal]
+RS003324  cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0|debug_req_i  [clock_control,clock_signal]
+RS003325  cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0|debug_req_q  [clock_control,clock_signal]
+RS003357  cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0|irq_wu_ctrl_i  [clock_control,clock_signal]
+RS003364  cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0|n_0  [clock_control,clock_signal]
+RS003387  cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0|n_12  [clock_control,clock_signal]
+RS003420  cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0|n_153  [clock_control,clock_signal]
+RS003566  cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0|n_299  [clock_control,clock_signal]
+RS003569  cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0|n_300  [clock_control,clock_signal]
+
+First retained activity candidates
+--------------------------------------------------------------------------------
+RS000001  cv32e40p_aligner|\add_63_26/n_1  kind=combinational_output  fanout=3  dD=3  dPO=None
+RS000002  cv32e40p_aligner|\add_63_26/n_10  kind=buffer_or_inverter_output  fanout=4  dD=3  dPO=None
+RS000003  cv32e40p_aligner|\add_63_26/n_11  kind=buffer_or_inverter_output  fanout=2  dD=3  dPO=None
+RS000004  cv32e40p_aligner|\add_63_26/n_12  kind=buffer_or_inverter_output  fanout=4  dD=3  dPO=None
+RS000005  cv32e40p_aligner|\add_63_26/n_13  kind=buffer_or_inverter_output  fanout=4  dD=3  dPO=None
+RS000006  cv32e40p_aligner|\add_63_26/n_14  kind=buffer_or_inverter_output  fanout=4  dD=3  dPO=None
+RS000007  cv32e40p_aligner|\add_63_26/n_15  kind=buffer_or_inverter_output  fanout=4  dD=3  dPO=None
+RS000008  cv32e40p_aligner|\add_63_26/n_16  kind=combinational_output  fanout=2  dD=3  dPO=None
+RS000009  cv32e40p_aligner|\add_63_26/n_19  kind=combinational_output  fanout=2  dD=3  dPO=None
+RS000010  cv32e40p_aligner|\add_63_26/n_2  kind=buffer_or_inverter_output  fanout=4  dD=3  dPO=None
+RS000011  cv32e40p_aligner|\add_63_26/n_20  kind=combinational_output  fanout=3  dD=3  dPO=None
+RS000012  cv32e40p_aligner|\add_63_26/n_22  kind=combinational_output  fanout=3  dD=3  dPO=None
+RS000013  cv32e40p_aligner|\add_63_26/n_23  kind=combinational_output  fanout=1  dD=3  dPO=None
+RS000014  cv32e40p_aligner|\add_63_26/n_25  kind=combinational_output  fanout=3  dD=3  dPO=None
+RS000015  cv32e40p_aligner|\add_63_26/n_27  kind=combinational_output  fanout=3  dD=3  dPO=None
+RS000016  cv32e40p_aligner|\add_63_26/n_28  kind=combinational_output  fanout=1  dD=3  dPO=None
+RS000017  cv32e40p_aligner|\add_63_26/n_3  kind=buffer_or_inverter_output  fanout=4  dD=3  dPO=None
+RS000018  cv32e40p_aligner|\add_63_26/n_30  kind=combinational_output  fanout=3  dD=3  dPO=None
+RS000019  cv32e40p_aligner|\add_63_26/n_32  kind=combinational_output  fanout=3  dD=3  dPO=None
+RS000020  cv32e40p_aligner|\add_63_26/n_33  kind=combinational_output  fanout=1  dD=3  dPO=None
+
+Warnings
+--------------------------------------------------------------------------------
+- 407 sites touch scan pins; sites with additional functional consumers were retained and flagged
+
+Stage-2 interpretation
+--------------------------------------------------------------------------------
+No workload activity has been measured yet.
+No SA0/SA1 polarity has been selected.
+No fault instance or faulty netlist has been generated.
+Only sites marked eligible_for_activity_profile enter Stage 3.

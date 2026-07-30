@@ -1,6 +1,6 @@
 {
   "schema_version": "1.3",
-  "generated_at_utc": "2026-07-29T21:41:02.875306+00:00",
+  "generated_at_utc": "2026-07-30T00:29:26.694723+00:00",
   "design": "cv32e40p",
   "fault_model": "branch_stuck_at",
   "source_netlist": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",

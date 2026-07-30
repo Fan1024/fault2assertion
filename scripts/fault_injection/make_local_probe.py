@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 """Generate a bind-based local VCD probe for one branch fault site.
 
-The generated SystemVerilog does not modify functional design behavior.
+The generated SystemVerilog is observation-only and does not drive functional
+signals in the design.
 
-Important implementation detail
--------------------------------
-The receiver/source expressions are connected to probe input ports named
-``probe_*_i``.  The monitor then mirrors them into distinct internal procedural
-variables named ``f2a_*``.
+The selected source expression, selected receiver pin, other receiver inputs,
+and receiver outputs are connected to probe input ports named ``probe_*_i``.
+The monitor mirrors those ports into distinct procedural variables named
+``f2a_*``.  The distinct procedural variables prevent the simulator from
+collapsing the probe names onto the original design nets.
 
-Using distinct internal variables is intentional.  Simulators may collapse
-input-port aliases onto the connected design nets, causing the alias names to
-disappear from the VCD.  Procedural ``logic f2a_*`` mirrors remain separate VCD
-objects and can therefore be found reliably by compare_local_probe.py.
+VCD registration is performed with ``#0`` rather than a positive delay.  The
+ordinary testbench opens ``riscy_tb.vcd`` in the active region at time zero;
+the probe then registers its variables in the following delta cycle, still at
+time zero and before the VCD header is finalized.
 """
 
 from __future__ import annotations
@@ -269,12 +270,10 @@ def build_probe(
         for item in signals
     )
 
-    # Internal procedural variables are deliberately distinct from input ports.
-    # This prevents Xcelium from collapsing the f2a_* VCD names into the
-    # connected original net names.
+    # Procedural mirrors deliberately remain distinct from input ports.
     internal_declarations = "\n".join(
         (
-            "  (* keep = \"true\" *) "
+            "  (* keep = \"true\", preserve = \"true\" *) "
             f"logic {item['signal_name']};"
         )
         for item in signals
@@ -312,9 +311,9 @@ def build_probe(
 //
 // This monitor is observation-only. It does not drive design signals.
 //
-// The probe input ports use probe_* names. Distinct procedural logic variables
-// use f2a_* names so Xcelium cannot collapse their VCD names into the original
-// connected net names.
+// tb_top owns riscy_tb.vcd through +vcd.  This monitor waits one delta cycle
+// (#0), still at simulation time zero, and then adds its f2a_* variables before
+// the VCD header is finalized.
 module f2a_local_probe (
 {port_declarations}
 );
@@ -330,17 +329,17 @@ module f2a_local_probe (
     if ($test$plusargs("local_probe")) begin
       $display("[F2A_PROBE] active fault={fault_id} module={module_name} sink={sink_instance}/{sink_pin}");
 
-      // tb_top normally starts riscy_tb.vcd at time zero. Waiting one
-      // precision tick ensures that dumpfile setup has completed.
-      #1ps;
+      // tb_top calls $dumpfile/$dumpvars in the active region at time zero.
+      // Move to the inactive region at the same simulation time before adding
+      // these variables.  A positive delay would be too late for the VCD header.
+      #0;
 
-      // These calls are kept as an explicit fallback. The ordinary recursive
-      // tb_top dump should already include the internal f2a_* variables.
 {dump_calls}
 
       $display(
         "[F2A_PROBE] requested VCD variables: {signal_name_list}"
       );
+      $display("[F2A_PROBE] VCD registration completed at time %0t", $time);
     end
   end
 
@@ -363,7 +362,7 @@ bind {module_ref} f2a_local_probe f2a_local_probe_i (
     ]
 
     manifest = {
-        "schema_version": "2.0",
+        "schema_version": "2.1",
         "generated_at_utc": utc_now(),
         "fault_id": fault_id,
         "stuck_at": stuck_at,
@@ -380,6 +379,8 @@ bind {module_ref} f2a_local_probe f2a_local_probe_i (
             "bind_target": module_name,
             "bound_monitor_module": "f2a_local_probe",
             "bound_instance_name": "f2a_local_probe_i",
+            "vcd_owner": "tb_top through +vcd",
+            "vcd_registration_time": "time zero, inactive region (#0)",
             "vcd_name_policy": (
                 "f2a_* are distinct internal procedural logic mirrors; "
                 "probe_*_i are bind input ports"

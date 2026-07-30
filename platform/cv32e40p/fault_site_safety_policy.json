@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0",
+  "policy_name": "cv32e40p_nangate45_stage2_static_safety",
+  "description": "Stage-2 fail-closed static safety and coarse structural-observability policy. It never selects SA0/SA1 and never modifies a netlist.",
+  "required_stage1": {
+    "schema_version": "1.0",
+    "stage": "stage_01_raw_site_enumeration",
+    "require_unique_driver_status": true
+  },
+  "protected_domains": {
+    "clock_signal": {
+      "seed_sink_roles": [
+        "clock"
+      ],
+      "seed_source_kinds": [
+        "clock_gate_output"
+      ],
+      "propagate_upstream": true,
+      "description": "Clock nets and all combinational or hierarchical logic that can drive a sequential clock pin or a clock-gate output."
+    },
+    "clock_control": {
+      "seed_sink_roles": [
+        "clock_gate_enable",
+        "clock_gate_test_enable"
+      ],
+      "seed_source_kinds": [],
+      "propagate_upstream": true,
+      "description": "Logic that can control whether a gated clock is enabled, including test overrides."
+    },
+    "async_reset_set": {
+      "seed_sink_roles": [
+        "async_reset_n",
+        "async_set_n"
+      ],
+      "seed_source_kinds": [],
+      "propagate_upstream": true,
+      "description": "Asynchronous reset/set nets and all combinational or hierarchical logic that can drive them."
+    }
+  },
+  "direct_exclusions": {
+    "source_kinds": [
+      "module_input",
+      "continuous_assign_constant",
+      "clock_buffer_output",
+      "clock_gate_output"
+    ],
+    "generated_unconnected_placeholders": true,
+    "multiple_driver_sites": true,
+    "description": "Module-input sites are hierarchy-boundary branch locations rather than one locally driven stem. Constant sites are not functional candidates. All CLKBUF/CLKGATE outputs are excluded conservatively even when graph reachability does not prove that a particular synthesized buffer is on a clock path."
+  },
+  "scan_test_handling": {
+    "flag_sink_roles": [
+      "scan_enable",
+      "scan_input"
+    ],
+    "test_only_sink_roles": [
+      "scan_enable",
+      "scan_input",
+      "clock_gate_test_enable"
+    ],
+    "exclude_if_all_nonboundary_sinks_are_test_only": true,
+    "description": "A net that also has functional consumers is retained but flagged when it touches scan pins. A net whose only non-boundary consumers are scan/test pins is excluded."
+  },
+  "coarse_observability": {
+    "sequential_checkpoint_sink_roles": [
+      "sequential_data"
+    ],
+    "include_top_level_outputs": true,
+    "require_reachable_checkpoint": true,
+    "description": "A retained site must reach a functional sequential D pin or a top-level output without crossing a sequential Q boundary."
+  },
+  "stage2_rules": {
+    "accept_fanout_one": true,
+    "allow_hierarchical_module_output_driver": true,
+    "allow_standard_cell_output_driver": true,
+    "allow_sequential_q_qn_driver": true,
+    "exclude_module_input_driver": true,
+    "exclude_dangling_or_unobservable": true,
+    "stop_functional_dependency_at_sequential_cells": true,
+    "fail_on_unknown_policy_role": true,
+    "fail_closed_on_unsupported_connectivity": true
+  }
+}

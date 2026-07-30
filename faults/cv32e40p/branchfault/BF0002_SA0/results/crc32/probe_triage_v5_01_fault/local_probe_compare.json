@@ -1,0 +1,188 @@
+{
+  "schema_version": "1.0",
+  "generated_at_utc": "2026-07-30T03:30:57.020430+00:00",
+  "fault_id": "BF0002_SA0",
+  "stuck_at": 0,
+  "golden_vcd": "/raid/spring2026/fwu44/research/fault2assertion/golden/cv32e40p/crc32/netlist/probe_BF0002_SA0_triage_v5_01_golden/work/riscy_tb.vcd",
+  "fault_vcd": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/branchfault/BF0002_SA0/results/crc32/probe_triage_v5_01_fault/work/riscy_tb.vcd",
+  "classification": "LOCALLY_MASKED_AT_RECEIVER",
+  "activation": {
+    "activated": true,
+    "required_source_value": "1",
+    "observed_golden_source_values": [
+      "1"
+    ]
+  },
+  "injection": {
+    "effective": true,
+    "expected_fault_branch_value": "0",
+    "observed_fault_branch_values": [
+      "0"
+    ],
+    "earliest_branch_divergence_time": 0
+  },
+  "local_propagation": {
+    "receiver_output_diverged": false,
+    "earliest_receiver_output_divergence_time": null,
+    "divergent_receiver_outputs": []
+  },
+  "signals_only_in_golden": [],
+  "signals_only_in_fault": [],
+  "comparisons": [
+    {
+      "signal": "f2a_branch_observed",
+      "role": "selected_branch",
+      "earliest_divergence_time": 0,
+      "golden_value": "1",
+      "fault_value": "0",
+      "golden": {
+        "name": "tb_top.wrapper_i.top_i.core_i.ex_stage_i.alu_i.f2a_local_probe_i.f2a_branch_observed",
+        "width": 1,
+        "event_count": 1,
+        "first_time": 0,
+        "first_value": "1",
+        "last_time": 0,
+        "last_value": "1",
+        "known_values": [
+          "1"
+        ]
+      },
+      "fault": {
+        "name": "tb_top.wrapper_i.top_i.core_i.ex_stage_i.alu_i.f2a_local_probe_i.f2a_branch_observed",
+        "width": 1,
+        "event_count": 1,
+        "first_time": 0,
+        "first_value": "0",
+        "last_time": 0,
+        "last_value": "0",
+        "known_values": [
+          "0"
+        ]
+      }
+    },
+    {
+      "signal": "f2a_input_A2",
+      "role": "receiver_input",
+      "earliest_divergence_time": null,
+      "golden_value": null,
+      "fault_value": null,
+      "golden": {
+        "name": "tb_top.wrapper_i.top_i.core_i.ex_stage_i.alu_i.f2a_local_probe_i.f2a_input_A2",
+        "width": 1,
+        "event_count": 1,
+        "first_time": 0,
+        "first_value": "1",
+        "last_time": 0,
+        "last_value": "1",
+        "known_values": [
+          "1"
+        ]
+      },
+      "fault": {
+        "name": "tb_top.wrapper_i.top_i.core_i.ex_stage_i.alu_i.f2a_local_probe_i.f2a_input_A2",
+        "width": 1,
+        "event_count": 1,
+        "first_time": 0,
+        "first_value": "1",
+        "last_time": 0,
+        "last_value": "1",
+        "known_values": [
+          "1"
+        ]
+      }
+    },
+    {
+      "signal": "f2a_input_A3",
+      "role": "receiver_input",
+      "earliest_divergence_time": null,
+      "golden_value": null,
+      "fault_value": null,
+      "golden": {
+        "name": "tb_top.wrapper_i.top_i.core_i.ex_stage_i.alu_i.f2a_local_probe_i.f2a_input_A3",
+        "width": 1,
+        "event_count": 1,
+        "first_time": 0,
+        "first_value": "0",
+        "last_time": 0,
+        "last_value": "0",
+        "known_values": [
+          "0"
+        ]
+      },
+      "fault": {
+        "name": "tb_top.wrapper_i.top_i.core_i.ex_stage_i.alu_i.f2a_local_probe_i.f2a_input_A3",
+        "width": 1,
+        "event_count": 1,
+        "first_time": 0,
+        "first_value": "0",
+        "last_time": 0,
+        "last_value": "0",
+        "known_values": [
+          "0"
+        ]
+      }
+    },
+    {
+      "signal": "f2a_output_ZN",
+      "role": "receiver_output",
+      "earliest_divergence_time": null,
+      "golden_value": null,
+      "fault_value": null,
+      "golden": {
+        "name": "tb_top.wrapper_i.top_i.core_i.ex_stage_i.alu_i.f2a_local_probe_i.f2a_output_ZN",
+        "width": 1,
+        "event_count": 1,
+        "first_time": 0,
+        "first_value": "1",
+        "last_time": 0,
+        "last_value": "1",
+        "known_values": [
+          "1"
+        ]
+      },
+      "fault": {
+        "name": "tb_top.wrapper_i.top_i.core_i.ex_stage_i.alu_i.f2a_local_probe_i.f2a_output_ZN",
+        "width": 1,
+        "event_count": 1,
+        "first_time": 0,
+        "first_value": "1",
+        "last_time": 0,
+        "last_value": "1",
+        "known_values": [
+          "1"
+        ]
+      }
+    },
+    {
+      "signal": "f2a_source_original",
+      "role": "source",
+      "earliest_divergence_time": null,
+      "golden_value": null,
+      "fault_value": null,
+      "golden": {
+        "name": "tb_top.wrapper_i.top_i.core_i.ex_stage_i.alu_i.f2a_local_probe_i.f2a_source_original",
+        "width": 1,
+        "event_count": 1,
+        "first_time": 0,
+        "first_value": "1",
+        "last_time": 0,
+        "last_value": "1",
+        "known_values": [
+          "1"
+        ]
+      },
+      "fault": {
+        "name": "tb_top.wrapper_i.top_i.core_i.ex_stage_i.alu_i.f2a_local_probe_i.f2a_source_original",
+        "width": 1,
+        "event_count": 1,
+        "first_time": 0,
+        "first_value": "1",
+        "last_time": 0,
+        "last_value": "1",
+        "known_values": [
+          "1"
+        ]
+      }
+    }
+  ]
+}

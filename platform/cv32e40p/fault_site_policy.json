@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0",
+  "policy_name": "cv32e40p_nangate45_stage1",
+  "description": "Stage-1 structural inventory policy for CV32E40P mapped with the Nangate Open Cell Library. This policy enumerates connectivity only; it does not approve fault injection sites.",
+  "standard_cell_type_regex": "^[A-Z][A-Z0-9_]*_X[0-9]+$",
+  "cell_families": [
+    {
+      "name": "sequential",
+      "type_regex": "^(?:SDFF|DFF)",
+      "output_pins": ["Q", "QN"],
+      "special_input_roles": {
+        "CK": "clock",
+        "D": "sequential_data",
+        "RN": "async_reset_n",
+        "SN": "async_set_n",
+        "SE": "scan_enable",
+        "SI": "scan_input"
+      }
+    },
+    {
+      "name": "clock_gate",
+      "type_regex": "^CLKGATE",
+      "output_pins": ["GCK"],
+      "special_input_roles": {
+        "CK": "clock",
+        "E": "clock_gate_enable",
+        "EN": "clock_gate_enable",
+        "SE": "clock_gate_test_enable"
+      }
+    },
+    {
+      "name": "clock_buffer",
+      "type_regex": "^CLKBUF",
+      "output_pins": ["Z", "ZN", "Y"],
+      "special_input_roles": {
+        "A": "clock_buffer_input"
+      }
+    },
+    {
+      "name": "full_adder",
+      "type_regex": "^FA_",
+      "output_pins": ["S", "CO"],
+      "special_input_roles": {
+        "A": "arithmetic_input",
+        "B": "arithmetic_input",
+        "CI": "arithmetic_carry_input"
+      }
+    },
+    {
+      "name": "half_adder",
+      "type_regex": "^HA_",
+      "output_pins": ["S", "CO"],
+      "special_input_roles": {
+        "A": "arithmetic_input",
+        "B": "arithmetic_input"
+      }
+    },
+    {
+      "name": "mux",
+      "type_regex": "^MUX",
+      "output_pins": ["Z", "ZN", "Y"],
+      "special_input_roles": {
+        "S": "mux_select"
+      }
+    },
+    {
+      "name": "buffer_or_inverter",
+      "type_regex": "^(?:BUF|INV)",
+      "output_pins": ["Z", "ZN", "Y"],
+      "special_input_roles": {}
+    },
+    {
+      "name": "combinational_logic",
+      "type_regex": ".*",
+      "output_pins": ["Z", "ZN", "Y"],
+      "special_input_roles": {}
+    }
+  ],
+  "generic_input_roles": {
+    "CK": "clock",
+    "RN": "async_reset_n",
+    "SN": "async_set_n",
+    "SE": "scan_enable",
+    "SI": "scan_input"
+  },
+  "stage1_rules": {
+    "accept_fanout_one": true,
+    "include_module_boundary_drivers": true,
+    "include_module_output_observers": true,
+    "include_hierarchical_instance_connections": true,
+    "include_continuous_assignments": true,
+    "require_named_instance_connections": true,
+    "strict_unknown_hierarchy_port": true,
+    "strict_standard_cell_output_resolution": true
+  }
+}

@@ -1,0 +1,17 @@
+ M faults/cv32e40p/branchfault/population.json
+ M faults/cv32e40p/branchfault/selection.json
+ M scripts/fault_injection/make_local_probe.py
+ M scripts/lib/xrun_common.sh
+ M scripts/run_branch_probe.sh
+?? faults/cv32e40p/branchfault/BF0001_SA0/
+?? faults/cv32e40p/branchfault/BF0001_SA1/
+?? faults/cv32e40p/branchfault/BF0002_SA0/
+?? faults/cv32e40p/site_catalog/
+?? golden/cv32e40p/crc32/netlist/probe_BF0001_SA0_triage_v5_01_golden/
+?? golden/cv32e40p/crc32/netlist/probe_BF0002_SA0_triage_v5_01_golden/
+?? golden/cv32e40p/crc32/netlist/stage3_activity_crc32_v1/
+?? golden/cv32e40p/crc32/netlist/stage3_activity_crc32_v2/
+?? platform/cv32e40p/fault_site_policy.json
+?? platform/cv32e40p/fault_site_safety_policy.json
+?? scripts/fault_sites/
+?? scripts/run_site_activity.sh

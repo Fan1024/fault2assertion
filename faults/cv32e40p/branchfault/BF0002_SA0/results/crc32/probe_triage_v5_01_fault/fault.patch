@@ -1,0 +1,11 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/BF0002_SA0/fault_netlist.v
+@@ -7168,7 +7168,7 @@
+        .ZN (n_72));
+   NOR4_X1 g1233(.A1 (n_61), .A2 (n_59), .A3 (n_60), .A4 (n_62), .ZN
+        (n_71));
+-  NAND3_X1 g1234(.A1 (first_one_o[4]), .A2 (n_20), .A3 (n_47), .ZN
++  NAND3_X1 g1234(.A1 (1'b0), .A2 (n_20), .A3 (n_47), .ZN
+        (n_70));
+   NAND3_X1 g1235(.A1 (first_one_o[4]), .A2 (n_20), .A3 (n_46), .ZN
+        (n_30));

@@ -58,6 +58,19 @@ f2a_run_xrun() {
     local local_probe="${LOCAL_PROBE:-0}"
     local requested_probe_fault_json="${PROBE_FAULT_JSON:-}"
 
+    # Optional observation-only Stage-3 activity monitor.
+    #
+    #   F2A_ACTIVITY=1
+    #   EXTRA_SV_SOURCE=/absolute/path/stage_03_activity_monitor.sv
+    #   F2A_ACTIVITY_OUTPUT=/absolute/path/stage_03_activity_raw.tsv
+    #   VCD=0
+    #
+    # The hook is generic: EXTRA_SV_SOURCE may also be used by future
+    # observation-only monitors when F2A_ACTIVITY=0.
+    local f2a_activity="${F2A_ACTIVITY:-0}"
+    local extra_sv_source="${EXTRA_SV_SOURCE:-}"
+    local f2a_activity_output="${F2A_ACTIVITY_OUTPUT:-}"
+
     case "${RUN_KIND}" in
         golden|fault) ;;
         *)
@@ -101,6 +114,14 @@ f2a_run_xrun() {
             ;;
     esac
 
+    case "${f2a_activity}" in
+        0|1) ;;
+        *)
+            f2a_die "F2A_ACTIVITY must be 0 or 1; got ${f2a_activity}"
+            return 1
+            ;;
+    esac
+
     if [[ "${local_probe}" == "1" && "${SIM_LEVEL}" != "netlist" ]]; then
         f2a_die "LOCAL_PROBE=1 currently supports netlist simulation only"
         return 1
@@ -109,6 +130,34 @@ f2a_run_xrun() {
     if [[ "${local_probe}" == "1" && "${vcd}" != "1" ]]; then
         f2a_die "LOCAL_PROBE=1 requires VCD=1"
         return 1
+    fi
+
+    if [[ "${f2a_activity}" == "1" ]]; then
+        if [[ "${RUN_KIND}" != "golden" || "${SIM_LEVEL}" != "netlist" ]]; then
+            f2a_die \
+                "F2A_ACTIVITY=1 requires a golden netlist simulation"
+            return 1
+        fi
+        if [[ "${vcd}" != "0" ]]; then
+            f2a_die "F2A_ACTIVITY=1 requires VCD=0"
+            return 1
+        fi
+        if [[ "${local_probe}" != "0" ]]; then
+            f2a_die "F2A_ACTIVITY=1 cannot be combined with LOCAL_PROBE=1"
+            return 1
+        fi
+        if [[ -z "${extra_sv_source}" ]]; then
+            f2a_die "F2A_ACTIVITY=1 requires EXTRA_SV_SOURCE"
+            return 1
+        fi
+        if [[ -z "${f2a_activity_output}" ]]; then
+            f2a_die "F2A_ACTIVITY=1 requires F2A_ACTIVITY_OUTPUT"
+            return 1
+        fi
+        if [[ "${f2a_activity_output}" != /* ]]; then
+            f2a_die "F2A_ACTIVITY_OUTPUT must be an absolute path"
+            return 1
+        fi
     fi
 
     local setup_script="${F2A_ROOT}/scripts/setup_env.sh"
@@ -350,6 +399,25 @@ f2a_run_xrun() {
         fi
     fi
 
+    # --------------------------------------------------------------
+    # Optional generic extra SystemVerilog source.
+    # --------------------------------------------------------------
+    if [[ -n "${extra_sv_source}" ]]; then
+        f2a_require_file "${extra_sv_source}" "extra SystemVerilog source" \
+            || return 1
+        tb_sources+=("${extra_sv_source}")
+        cp "${extra_sv_source}" "${RUN_DIR}/extra_monitor.sv"
+        sha256sum "${extra_sv_source}" > "${RUN_DIR}/extra_monitor.sha256"
+    fi
+
+    if [[ "${f2a_activity}" == "1" ]]; then
+        mkdir -p "$(dirname -- "${f2a_activity_output}")"
+        if [[ -e "${f2a_activity_output}" ]]; then
+            f2a_die "activity output already exists: ${f2a_activity_output}"
+            return 1
+        fi
+    fi
+
     git -C "${cv32e40p_home}" rev-parse HEAD \
         > "${RUN_DIR}/cv32e40p_commit.txt" 2>/dev/null || true
 
@@ -383,6 +451,9 @@ maxcycles=${maxcycles}
 local_probe=${local_probe}
 probe_fault_json=${effective_probe_fault_json}
 probe_source=${probe_source}
+extra_sv_source=${extra_sv_source}
+f2a_activity=${f2a_activity}
+f2a_activity_output=${f2a_activity_output}
 vcd=${vcd}
 verbose=${verbose}
 keep_work=${keep_work}
@@ -439,6 +510,13 @@ MANIFEST
         xrun_args+=(+local_probe)
     fi
 
+    if [[ "${f2a_activity}" == "1" ]]; then
+        xrun_args+=(
+            +f2a_activity
+            "+f2a_activity_output=${f2a_activity_output}"
+        )
+    fi
+
     if [[ "${verbose}" == "1" ]]; then
         xrun_args+=(+verbose)
     fi
@@ -474,10 +552,19 @@ MANIFEST
     echo "Maximum cycles : ${maxcycles}"
     echo "VCD enabled    : ${vcd}"
     echo "Local probe    : ${local_probe}"
+    echo "Activity mode  : ${f2a_activity}"
 
     if [[ "${local_probe}" == "1" ]]; then
         echo "Probe metadata : ${effective_probe_fault_json}"
         echo "Probe source   : ${probe_source}"
+    fi
+
+    if [[ -n "${extra_sv_source}" ]]; then
+        echo "Extra SV source: ${extra_sv_source}"
+    fi
+
+    if [[ "${f2a_activity}" == "1" ]]; then
+        echo "Activity output: ${f2a_activity_output}"
     fi
 
     echo "Xcelium        : $(command -v xrun)"
@@ -510,6 +597,12 @@ MANIFEST
     elif [[ ${xrun_status} -ne 0 ]]; then
         final_status="ERROR"
         exit_status=${xrun_status}
+    elif [[ "${f2a_activity}" == "1" && ! -s "${f2a_activity_output}" ]]; then
+        final_status="ERROR"
+        exit_status=4
+        echo \
+            "ERROR: compact activity output was not generated: ${f2a_activity_output}" \
+            >&2
     elif [[ "${WORKLOAD}" == "crc32" ]] \
         && grep -Eqi \
             "CRC32 PASS:.*vector=cbf43926.*signature=2d6352b3" \
@@ -552,6 +645,10 @@ MANIFEST
 
     if [[ -f "${work_dir}/riscy_tb.vcd" ]]; then
         echo "VCD : ${work_dir}/riscy_tb.vcd"
+    fi
+
+    if [[ "${f2a_activity}" == "1" && -f "${f2a_activity_output}" ]]; then
+        echo "Activity: ${f2a_activity_output}"
     fi
 
     # KEEP_WORK=0 is mainly used by VCD=0 batch screening. For probe runs,
