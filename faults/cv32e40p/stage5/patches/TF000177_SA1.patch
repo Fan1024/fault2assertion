@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000177_SA1/fault_netlist.v
+@@ -20524,7 +20524,7 @@
+   DFFR_X1 debug_mode_q_reg(.RN (rst_n), .CK (clk), .D (n_57), .QN
+        (n_0));
+   DFFR_X1 debug_req_entry_q_reg(.RN (rst_n), .CK (clk), .D (n_91), .Q
+-       (debug_req_entry_q));
++       (f2a_pre_tf000177_sa1));
+   SDFFR_X1 debug_req_q_reg(.RN (rst_n), .CK (clk_ungated_i), .D
+        (debug_req_i), .SE (n_17), .SI (debug_req_q), .Q (debug_req_q));
+   DFFR_X1 illegal_insn_q_reg(.RN (rst_n), .CK (clk), .D (n_105), .Q
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000177_SA1 run-local driver split
++  wire f2a_pre_tf000177_sa1;
++  assign debug_req_entry_q = 1'b1;
+ endmodule
+ 
+ module

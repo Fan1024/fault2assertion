@@ -1,0 +1,14 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000317_SA1/fault_netlist.v
+@@ -37625,6 +37625,10 @@
+        (irq_ack_o), .irq_id_o (irq_id_o), .debug_req_i (debug_req_i),
+        .debug_havereset_o (debug_havereset_o), .debug_running_o
+        (debug_running_o), .debug_halted_o (debug_halted_o),
+-       .fetch_enable_i (fetch_enable_i), .core_sleep_o (core_sleep_o));
++       .fetch_enable_i (fetch_enable_i), .core_sleep_o (f2a_pre_tf000317_sa1));
++
++  // Fault2Assertion Stage-5 fault TF000317_SA1 run-local driver split
++  wire f2a_pre_tf000317_sa1;
++  assign core_sleep_o = 1'b1;
+ endmodule
+ 

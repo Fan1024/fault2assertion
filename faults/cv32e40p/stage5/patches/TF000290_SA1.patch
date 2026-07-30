@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000290_SA1/fault_netlist.v
+@@ -20848,7 +20848,7 @@
+        (regfile_alu_we_o));
+   NOR2_X1 g4723(.A1 (deassert_we_i), .A2 (n_262), .ZN (mult_int_en_o));
+   AND2_X1 g4724(.A1 (n_232), .A2 (ctrl_transfer_insn_in_dec_o[1]), .ZN
+-       (ctrl_transfer_insn_in_id_o[1]));
++       (f2a_pre_tf000290_sa1));
+   AND2_X1 g4725(.A1 (n_232), .A2 (n_259), .ZN (data_req_o));
+   NOR2_X1 g4726(.A1 (deassert_we_i), .A2 (n_256), .ZN
+        (ctrl_transfer_insn_in_id_o[0]));
+@@ -21252,6 +21252,10 @@
+        (instr_rdata_i[23]), .ZN (n_354));
+   AOI211_X1 g8768(.A (n_52), .B (n_167), .C1 (n_91), .C2 (n_56), .ZN
+        (n_355));
++
++  // Fault2Assertion Stage-5 fault TF000290_SA1 run-local driver split
++  wire f2a_pre_tf000290_sa1;
++  assign ctrl_transfer_insn_in_id_o[1] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_int_controller_PULP_SECURE0(clk, rst_n, irq_i,

@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000492_SA0/fault_netlist.v
+@@ -34707,7 +34707,7 @@
+        (trans_addr_q[4]), .ZN (n_172));
+   AND4_X1 \inc_add_138_56/g501 (.A1 (\inc_add_138_56/n_13 ), .A2
+        (\inc_add_138_56/n_3 ), .A3 (trans_addr_q[9]), .A4
+-       (trans_addr_q[8]), .ZN (\inc_add_138_56/n_16 ));
++       (trans_addr_q[8]), .ZN (f2a_pre_tf000492_sa0 ));
+   AND2_X1 \inc_add_138_56/g502 (.A1 (\inc_add_138_56/n_13 ), .A2
+        (\inc_add_138_56/n_3 ), .ZN (\inc_add_138_56/n_15 ));
+   NAND2_X1 \inc_add_138_56/g503 (.A1 (\inc_add_138_56/n_13 ), .A2
+@@ -34790,6 +34790,10 @@
+   NAND2_X1 g132(.A1 (req_i), .A2 (n_95), .ZN (n_276));
+   OAI21_X1 g126(.A (n_270), .B1 (n_263), .B2 (n_276), .ZN
+        (trans_valid_o));
++
++  // Fault2Assertion Stage-5 fault TF000492_SA0 run-local driver split
++  wire f2a_pre_tf000492_sa0;
++  assign \inc_add_138_56/n_16  = 1'b0;
+ endmodule
+ 
+ module cv32e40p_prefetch_buffer_PULP_OBI0_COREV_PULP0(clk, rst_n,

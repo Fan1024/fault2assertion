@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000041_SA0/fault_netlist.v
+@@ -29987,7 +29987,7 @@
+   DFFR_X1 \alu_operand_a_ex_o_reg[12] (.RN (rst_n), .CK (clk), .D
+        (n_640), .QN (n_743));
+   DFFR_X1 \alu_operand_a_ex_o_reg[13] (.RN (rst_n), .CK (clk), .D
+-       (n_632), .Q (alu_operand_a_ex_o[13]), .QN (n_744));
++       (n_632), .Q (f2a_pre_tf000041_sa0), .QN (n_744));
+   DFFR_X1 \alu_operand_a_ex_o_reg[14] (.RN (rst_n), .CK (clk), .D
+        (n_630), .Q (alu_operand_a_ex_o[14]), .QN (n_745));
+   DFFR_X1 \alu_operand_a_ex_o_reg[15] (.RN (rst_n), .CK (clk), .D
+@@ -32489,6 +32489,10 @@
+        (n_1168));
+   XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
+        (n_1169));
++
++  // Fault2Assertion Stage-5 fault TF000041_SA0 run-local driver split
++  wire f2a_pre_tf000041_sa0;
++  assign alu_operand_a_ex_o[13] = 1'b0;
+ endmodule
+ 
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,

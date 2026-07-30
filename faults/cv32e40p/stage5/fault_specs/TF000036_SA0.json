@@ -1,0 +1,607 @@
+{
+  "schema_version": "1.0",
+  "program_version": "1.0.4",
+  "generated_at_utc": "2026-07-30T14:34:05.917661+00:00",
+  "stage": "stage_05_fault_materialization",
+  "fault_id": "TF000036_SA0",
+  "selection_id": "TS000036",
+  "selection_rank": 36,
+  "site_id": "RS008286",
+  "site_key": "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2|read_pointer_q",
+  "design": "cv32e40p",
+  "workload": "crc32",
+  "fault_class": "sequential_state",
+  "injection_kind": "state_output_stuck_at",
+  "polarity": "SA0",
+  "stuck_at": 0,
+  "source_stage4": {
+    "candidates_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_candidates.json",
+    "candidates_sha256": "e15abab45ff12b46a766fe3e5004fac7ef632a7a31581b3d8a341be682fb1578",
+    "candidate_digest_sha256": "5c5ec529eb3cb9fffb69246e0e7beb433c871d20d2f0981bcd905b1e65739da2",
+    "selection_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_selection.json",
+    "selection_sha256": "9a85dca7226b16cc5eaf37a72b37ca45cb247b0883127e2721a833f871269c28",
+    "selection_digest_sha256": "8f20e4f98ce4f549cccf90af317d337b4374e8d6d319d66edb74da7c329d58a9"
+  },
+  "mapped_netlist": {
+    "path": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",
+    "sha256": "39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7",
+    "storage_policy": "immutable golden source; a faulty copy exists only in a run-local temporary directory"
+  },
+  "site": {
+    "module": "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2",
+    "source_net": "read_pointer_q",
+    "source_key": "read_pointer_q",
+    "source_kind": "sequential_output",
+    "state_site": true,
+    "logic_fanout": 33,
+    "fanout_bucket": "gt_8",
+    "classification": {
+      "primary_class": "sequential_state",
+      "injection_kind": "state_output_stuck_at",
+      "semantic_tags": [
+        "control_module",
+        "control_state_semantics",
+        "mux_control_reachable",
+        "sequential_state"
+      ],
+      "control_semantic_score_raw": 6.5,
+      "data_semantic_score_raw": 1.0,
+      "semantic_confidence": 0.770833,
+      "evidence": {
+        "control_name_match_count": 0,
+        "data_name_match_count": 0,
+        "control_module_match_count": 1,
+        "data_module_match_count": 0,
+        "generated_name_match_count": 0,
+        "direct_mux_select_consumer": true,
+        "distance_to_mux_select": 0,
+        "arithmetic_signal": false,
+        "name_and_module_text": "read_pointer_q cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2"
+      }
+    },
+    "scores": {
+      "assertion_relevance_score": 0.983333,
+      "failure_impact_score": 0.823844,
+      "selection_score": 0.911563
+    },
+    "activity": {
+      "instance_count": 1,
+      "seen_0": true,
+      "seen_1": true,
+      "unknown_seen": false,
+      "value_change_count": 421216,
+      "binary_toggle_count": 421216,
+      "first_observation_cycle": 1,
+      "first_change_cycle": 32,
+      "last_change_cycle": 940805,
+      "first_observation_time": 50,
+      "first_change_time": 360,
+      "last_change_time": 9408090,
+      "last_value": "0"
+    },
+    "detailed_structure": {
+      "max_depth_limit": 16,
+      "max_node_limit": 4096,
+      "truncated": false,
+      "maximum_depth_reached": 13,
+      "tfo_node_count_bounded": 736,
+      "tfo_edge_count_bounded": 1350,
+      "reachable_sequential_checkpoint_count_bounded": 75,
+      "reachable_top_output_count_bounded": 0,
+      "reconvergent_node_count_bounded": 462,
+      "branching_node_count_bounded": 193,
+      "reachable_sink_role_counts_bounded": {
+        "clock_buffer_input": 1,
+        "combinational_input": 477,
+        "mux_select": 3,
+        "scan_enable": 2,
+        "scan_input": 7,
+        "sequential_data": 75
+      },
+      "distance_to_mux_select": 0,
+      "distance_to_sequential_data": 2,
+      "distance_to_arithmetic_input": null,
+      "distance_to_arithmetic_carry_input": null
+    },
+    "driver": {
+      "kind": "standard_cell_output",
+      "module": "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2",
+      "instance": "\\read_pointer_q_reg[0]",
+      "cell_type": "DFFR_X2",
+      "pin": "Q",
+      "role": "driver",
+      "expression": "read_pointer_q",
+      "metadata": {
+        "cell_family": "sequential"
+      }
+    }
+  },
+  "receiver_signals": [
+    {
+      "receiver_index": 0,
+      "expression": "data_o[9]",
+      "source_key": "data_o[9]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2458",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R000"
+    },
+    {
+      "receiver_index": 1,
+      "expression": "data_o[7]",
+      "source_key": "data_o[7]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2459",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R001"
+    },
+    {
+      "receiver_index": 2,
+      "expression": "data_o[6]",
+      "source_key": "data_o[6]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2460",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R002"
+    },
+    {
+      "receiver_index": 3,
+      "expression": "data_o[4]",
+      "source_key": "data_o[4]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2461",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R003"
+    },
+    {
+      "receiver_index": 4,
+      "expression": "data_o[3]",
+      "source_key": "data_o[3]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2462",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R004"
+    },
+    {
+      "receiver_index": 5,
+      "expression": "data_o[2]",
+      "source_key": "data_o[2]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2463",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R005"
+    },
+    {
+      "receiver_index": 6,
+      "expression": "data_o[8]",
+      "source_key": "data_o[8]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2464",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R006"
+    },
+    {
+      "receiver_index": 7,
+      "expression": "data_o[5]",
+      "source_key": "data_o[5]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2465",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R007"
+    },
+    {
+      "receiver_index": 8,
+      "expression": "data_o[18]",
+      "source_key": "data_o[18]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2466",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R008"
+    },
+    {
+      "receiver_index": 9,
+      "expression": "data_o[24]",
+      "source_key": "data_o[24]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2467",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R009"
+    },
+    {
+      "receiver_index": 10,
+      "expression": "data_o[20]",
+      "source_key": "data_o[20]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2468",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R010"
+    },
+    {
+      "receiver_index": 11,
+      "expression": "data_o[22]",
+      "source_key": "data_o[22]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2469",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R011"
+    },
+    {
+      "receiver_index": 12,
+      "expression": "data_o[19]",
+      "source_key": "data_o[19]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2470",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R012"
+    },
+    {
+      "receiver_index": 13,
+      "expression": "data_o[15]",
+      "source_key": "data_o[15]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2471",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R013"
+    },
+    {
+      "receiver_index": 14,
+      "expression": "data_o[21]",
+      "source_key": "data_o[21]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2472",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R014"
+    },
+    {
+      "receiver_index": 15,
+      "expression": "data_o[23]",
+      "source_key": "data_o[23]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2473",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R015"
+    },
+    {
+      "receiver_index": 16,
+      "expression": "data_o[16]",
+      "source_key": "data_o[16]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2474",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R016"
+    },
+    {
+      "receiver_index": 17,
+      "expression": "data_o[10]",
+      "source_key": "data_o[10]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2475",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R017"
+    },
+    {
+      "receiver_index": 18,
+      "expression": "data_o[25]",
+      "source_key": "data_o[25]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2476",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R018"
+    },
+    {
+      "receiver_index": 19,
+      "expression": "data_o[31]",
+      "source_key": "data_o[31]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2477",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R019"
+    },
+    {
+      "receiver_index": 20,
+      "expression": "data_o[12]",
+      "source_key": "data_o[12]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2478",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R020"
+    },
+    {
+      "receiver_index": 21,
+      "expression": "data_o[11]",
+      "source_key": "data_o[11]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2479",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R021"
+    },
+    {
+      "receiver_index": 22,
+      "expression": "data_o[29]",
+      "source_key": "data_o[29]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2480",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R022"
+    },
+    {
+      "receiver_index": 23,
+      "expression": "data_o[28]",
+      "source_key": "data_o[28]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2481",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R023"
+    },
+    {
+      "receiver_index": 24,
+      "expression": "data_o[27]",
+      "source_key": "data_o[27]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2482",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R024"
+    },
+    {
+      "receiver_index": 25,
+      "expression": "data_o[14]",
+      "source_key": "data_o[14]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2483",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R025"
+    },
+    {
+      "receiver_index": 26,
+      "expression": "data_o[26]",
+      "source_key": "data_o[26]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2484",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R026"
+    },
+    {
+      "receiver_index": 27,
+      "expression": "data_o[30]",
+      "source_key": "data_o[30]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2485",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R027"
+    },
+    {
+      "receiver_index": 28,
+      "expression": "data_o[1]",
+      "source_key": "data_o[1]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2486",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R028"
+    },
+    {
+      "receiver_index": 29,
+      "expression": "data_o[0]",
+      "source_key": "data_o[0]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2487",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R029"
+    },
+    {
+      "receiver_index": 30,
+      "expression": "data_o[17]",
+      "source_key": "data_o[17]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2488",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R030"
+    },
+    {
+      "receiver_index": 31,
+      "expression": "data_o[13]",
+      "source_key": "data_o[13]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2489",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "S",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "mux_select"
+      },
+      "receiver_id": "R031"
+    },
+    {
+      "receiver_index": 32,
+      "expression": "n_15",
+      "source_key": "n_15",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3720",
+        "receiver_cell_type": "XOR2_X1",
+        "receiver_input_pin": "B",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R032"
+    }
+  ],
+  "modification": {
+    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "temporary_pre_fault_net": "f2a_pre_tf000036_sa0",
+    "stuck_at_assignment": "assign read_pointer_q = 1'b0;",
+    "driver_connection": {
+      "kind": "standard_cell_output",
+      "module": "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2",
+      "instance": "\\read_pointer_q_reg[0]",
+      "cell_type": "DFFR_X2",
+      "pin": "Q",
+      "original_connection": "read_pointer_q",
+      "replacement_connection": "f2a_pre_tf000036_sa0",
+      "connection_start": 1798595,
+      "connection_end": 1798609
+    },
+    "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
+  },
+  "artifacts": {
+    "fault_spec": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/fault_specs/TF000036_SA0.json",
+    "patch": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/patches/TF000036_SA0.patch",
+    "faulty_netlist": "temporary_only",
+    "vcd": "not_generated_by_default"
+  },
+  "fault_spec_digest_sha256": "21eccb2133c18615860c15063dc8fab7268f08aec2434cf418898fe68f467cf0"
+}

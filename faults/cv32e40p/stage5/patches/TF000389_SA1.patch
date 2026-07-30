@@ -1,0 +1,15 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000389_SA1/fault_netlist.v
+@@ -37123,7 +37123,11 @@
+   NOR2_X1 g16(.A1 (cnt_q[1]), .A2 (cnt_q[0]), .ZN (n_582));
+   NAND2_X1 g15(.A1 (n_582), .A2 (n_583), .ZN (busy_o));
+   INV_X1 g17(.A (data_req_ex_i), .ZN (n_583));
+-  OR2_X1 g14(.A1 (data_rvalid_i), .A2 (n_582), .ZN (lsu_ready_wb_o));
++  OR2_X1 g14(.A1 (data_rvalid_i), .A2 (n_582), .ZN (f2a_pre_tf000389_sa1));
++
++  // Fault2Assertion Stage-5 fault TF000389_SA1 run-local driver split
++  wire f2a_pre_tf000389_sa1;
++  assign lsu_ready_wb_o = 1'b1;
+ endmodule
+ 
+ module cv32e40p_clock_gate(clk_i, en_i, scan_cg_en_i, clk_o);

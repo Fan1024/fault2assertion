@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000583_SA0/fault_netlist.v
+@@ -5417,7 +5417,7 @@
+        (n_220));
+   OR4_X1 g3874(.A1 (n_212), .A2 (n_211), .A3 (n_210), .A4 (n_207), .ZN
+        (n_219));
+-  OR2_X1 g3875(.A1 (OpBIsZero_SI), .A2 (n_209), .ZN (n_218));
++  OR2_X1 g3875(.A1 (OpBIsZero_SI), .A2 (n_209), .ZN (f2a_pre_tf000583_sa0));
+   OR4_X1 g3876(.A1 (n_200), .A2 (n_205), .A3 (n_179), .A4 (n_204), .ZN
+        (n_217));
+   MUX2_X1 g3877(.A (OpA_DI[11]), .B (BReg_DP[11]), .S (n_3), .Z
+@@ -7134,6 +7134,10 @@
+   OAI211_X1 g58(.A (n_530), .B (ResInv_SP), .C1 (\minus_102_33/n_81 ),
+        .C2 (n_529), .ZN (n_532));
+   XOR2_X1 g2(.A (n_522), .B (n_524), .Z (Res_DO[31]));
++
++  // Fault2Assertion Stage-5 fault TF000583_SA0 run-local driver split
++  wire f2a_pre_tf000583_sa0;
++  assign n_218 = 1'b0;
+ endmodule
+ 
+ module cv32e40p_ff_one(in_i, first_one_o, no_ones_o);

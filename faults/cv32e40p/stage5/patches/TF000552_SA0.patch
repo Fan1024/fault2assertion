@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000552_SA0/fault_netlist.v
+@@ -20077,7 +20077,7 @@
+   NAND2_X1 g2510(.A1 (csr_rdata_i[25]), .A2 (csr_access_i), .ZN (n_9));
+   NAND2_X1 g2511(.A1 (csr_rdata_i[30]), .A2 (csr_access_i), .ZN (n_8));
+   AND2_X1 g2512(.A1 (mult_ready), .A2 (alu_ready), .ZN (n_13));
+-  AND2_X2 g2513(.A1 (mult_en_i), .A2 (n_5), .ZN (n_12));
++  AND2_X2 g2513(.A1 (mult_en_i), .A2 (n_5), .ZN (f2a_pre_tf000552_sa0));
+   INV_X1 g2514(.A (branch_in_ex_i), .ZN (n_7));
+   INV_X1 g2515(.A (mult_en_i), .ZN (n_6));
+   INV_X1 g2516(.A (csr_access_i), .ZN (n_5));
+@@ -20104,6 +20104,10 @@
+   AOI222_X1 g2(.A1 (alu_result[31]), .A2 (n_20), .B1 (mult_result[31]),
+        .B2 (n_12), .C1 (csr_rdata_i[31]), .C2 (csr_access_i), .ZN
+        (n_383));
++
++  // Fault2Assertion Stage-5 fault TF000552_SA0 run-local driver split
++  wire f2a_pre_tf000552_sa0;
++  assign n_12 = 1'b0;
+ endmodule
+ 
+ module cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0(clk,

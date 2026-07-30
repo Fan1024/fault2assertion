@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000575_SA0/fault_netlist.v
+@@ -12302,7 +12302,7 @@
+   MUX2_X1 g1918(.A (op_b_i[0]), .B (op_b_i[16]), .S (n_1331), .Z
+        (n_138));
+   MUX2_X1 g1919(.A (op_b_i[1]), .B (op_b_i[17]), .S (n_1331), .Z
+-       (n_139));
++       (f2a_pre_tf000575_sa0));
+   NAND2_X1 g1921(.A1 (n_72), .A2 (n_169), .ZN (n_66));
+   AND2_X1 g1922(.A1 (n_72), .A2 (n_62), .ZN (n_65));
+   MUX2_X1 g1923(.A (mulh_carry_q), .B (op_c_i[31]), .S (n_61), .Z
+@@ -19820,6 +19820,10 @@
+        .ZN (n_1366));
+   XOR2_X1 g210(.A (n_1332), .B (n_1347), .Z (n_1365));
+   NAND2_X1 g206(.A1 (n_1365), .A2 (n_1352), .ZN (n_1367));
++
++  // Fault2Assertion Stage-5 fault TF000575_SA0 run-local driver split
++  wire f2a_pre_tf000575_sa0;
++  assign n_139 = 1'b0;
+ endmodule
+ 
+ module

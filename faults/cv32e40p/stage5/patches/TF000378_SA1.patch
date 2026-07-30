@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000378_SA1/fault_netlist.v
+@@ -9572,7 +9572,7 @@
+   OAI221_X1 \srl_300_44/g4797 (.A (\srl_300_44/n_238 ), .B1
+        (\srl_300_44/n_79 ), .B2 (\srl_300_44/n_73 ), .C1
+        (\srl_300_44/n_80 ), .C2 (\srl_300_44/n_47 ), .ZN
+-       (shift_left_result[0]));
++       (f2a_pre_tf000378_sa1));
+   OAI221_X1 \srl_300_44/g4798 (.A (\srl_300_44/n_233 ), .B1
+        (\srl_300_44/n_79 ), .B2 (\srl_300_44/n_77 ), .C1
+        (\srl_300_44/n_80 ), .C2 (\srl_300_44/n_45 ), .ZN
+@@ -10275,6 +10275,10 @@
+   AOI21_X1 g220(.A (n_1079), .B1 (n_1076), .B2 (n_1078), .ZN (n_1088));
+   XNOR2_X1 g224(.A (n_605), .B (n_1074), .ZN (n_1089));
+   XNOR2_X1 g217(.A (n_1079), .B (n_1082), .ZN (n_1090));
++
++  // Fault2Assertion Stage-5 fault TF000378_SA1 run-local driver split
++  wire f2a_pre_tf000378_sa1;
++  assign shift_left_result[0] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_mult(clk, rst_n, enable_i, operator_i, short_subword_i,

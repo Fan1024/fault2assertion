@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000521_SA0/fault_netlist.v
+@@ -29956,7 +29956,7 @@
+   NAND2_X1 g16355(.A1 (ctrl_transfer_target_mux_sel[0]), .A2
+        (ctrl_transfer_target_mux_sel[1]), .ZN (n_766));
+   NOR2_X1 g16356(.A1 (n_763), .A2 (ctrl_transfer_target_mux_sel[1]),
+-       .ZN (n_765));
++       .ZN (f2a_pre_tf000521_sa0));
+   INV_X1 g16357(.A (ctrl_transfer_target_mux_sel[0]), .ZN (n_763));
+   DFFR_X1 alu_en_ex_o_reg(.RN (rst_n), .CK (clk), .D (n_328), .Q
+        (alu_en_ex_o), .QN (n_4));
+@@ -32489,6 +32489,10 @@
+        (n_1168));
+   XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
+        (n_1169));
++
++  // Fault2Assertion Stage-5 fault TF000521_SA0 run-local driver split
++  wire f2a_pre_tf000521_sa0;
++  assign n_765 = 1'b0;
+ endmodule
+ 
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,

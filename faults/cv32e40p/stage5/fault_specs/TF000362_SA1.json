@@ -1,0 +1,176 @@
+{
+  "schema_version": "1.0",
+  "program_version": "1.0.4",
+  "generated_at_utc": "2026-07-30T14:37:26.858913+00:00",
+  "stage": "stage_05_fault_materialization",
+  "fault_id": "TF000362_SA1",
+  "selection_id": "TS000362",
+  "selection_rank": 362,
+  "site_id": "RS009900",
+  "site_key": "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1|regfile_data_ra_id[3]",
+  "design": "cv32e40p",
+  "workload": "crc32",
+  "fault_class": "architectural_data",
+  "injection_kind": "net_stuck_at",
+  "polarity": "SA1",
+  "stuck_at": 1,
+  "source_stage4": {
+    "candidates_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_candidates.json",
+    "candidates_sha256": "e15abab45ff12b46a766fe3e5004fac7ef632a7a31581b3d8a341be682fb1578",
+    "candidate_digest_sha256": "5c5ec529eb3cb9fffb69246e0e7beb433c871d20d2f0981bcd905b1e65739da2",
+    "selection_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_selection.json",
+    "selection_sha256": "9a85dca7226b16cc5eaf37a72b37ca45cb247b0883127e2721a833f871269c28",
+    "selection_digest_sha256": "8f20e4f98ce4f549cccf90af317d337b4374e8d6d319d66edb74da7c329d58a9"
+  },
+  "mapped_netlist": {
+    "path": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",
+    "sha256": "39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7",
+    "storage_policy": "immutable golden source; a faulty copy exists only in a run-local temporary directory"
+  },
+  "site": {
+    "module": "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1",
+    "source_net": "regfile_data_ra_id[3]",
+    "source_key": "regfile_data_ra_id[3]",
+    "source_kind": "hierarchical_module_output",
+    "state_site": false,
+    "logic_fanout": 2,
+    "fanout_bucket": "2",
+    "classification": {
+      "primary_class": "architectural_data",
+      "injection_kind": "net_stuck_at",
+      "semantic_tags": [
+        "architectural_data_name",
+        "arithmetic_path",
+        "data_module",
+        "top_output_reachable"
+      ],
+      "control_semantic_score_raw": 0.0,
+      "data_semantic_score_raw": 7.5,
+      "semantic_confidence": 0.9375,
+      "evidence": {
+        "control_name_match_count": 0,
+        "data_name_match_count": 1,
+        "control_module_match_count": 0,
+        "data_module_match_count": 1,
+        "generated_name_match_count": 0,
+        "direct_mux_select_consumer": false,
+        "distance_to_mux_select": null,
+        "arithmetic_signal": true,
+        "name_and_module_text": "regfile_data_ra_id[3] cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1"
+      }
+    },
+    "scores": {
+      "assertion_relevance_score": 0.633333,
+      "failure_impact_score": 0.862313,
+      "selection_score": 0.736374
+    },
+    "activity": {
+      "instance_count": 1,
+      "seen_0": true,
+      "seen_1": true,
+      "unknown_seen": false,
+      "value_change_count": 325468,
+      "binary_toggle_count": 325468,
+      "first_observation_cycle": 1,
+      "first_change_cycle": 36,
+      "last_change_cycle": 940807,
+      "first_observation_time": 50,
+      "first_change_time": 400,
+      "last_change_time": 9408110,
+      "last_value": "0"
+    },
+    "detailed_structure": {
+      "max_depth_limit": 16,
+      "max_node_limit": 4096,
+      "truncated": true,
+      "maximum_depth_reached": 16,
+      "tfo_node_count_bounded": 447,
+      "tfo_edge_count_bounded": 452,
+      "reachable_sequential_checkpoint_count_bounded": 81,
+      "reachable_top_output_count_bounded": 0,
+      "reconvergent_node_count_bounded": 285,
+      "branching_node_count_bounded": 93,
+      "reachable_sink_role_counts_bounded": {
+        "arithmetic_carry_input": 1,
+        "combinational_input": 299,
+        "scan_input": 6,
+        "sequential_data": 81
+      },
+      "distance_to_mux_select": null,
+      "distance_to_sequential_data": 2,
+      "distance_to_arithmetic_input": null,
+      "distance_to_arithmetic_carry_input": 12
+    },
+    "driver": {
+      "kind": "hierarchical_instance_output",
+      "module": "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1",
+      "instance": "register_file_i",
+      "cell_type": "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0",
+      "pin": "rdata_a_o",
+      "role": "driver",
+      "expression": "regfile_data_ra_id[3]",
+      "metadata": {
+        "child_module": "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0",
+        "child_port_direction": "output",
+        "child_port_width": 32,
+        "vector_connection": true,
+        "connection_bit_position_from_msb": 3,
+        "original_connection_expression": "regfile_data_ra_id"
+      }
+    }
+  },
+  "receiver_signals": [
+    {
+      "receiver_index": 0,
+      "expression": "n_827",
+      "source_key": "n_827",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g16346",
+        "receiver_cell_type": "MUX2_X1",
+        "receiver_input_pin": "A",
+        "receiver_output_pin": "Z",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R000"
+    },
+    {
+      "receiver_index": 1,
+      "expression": "n_288",
+      "source_key": "n_288",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g27878",
+        "receiver_cell_type": "AOI222_X1",
+        "receiver_input_pin": "B2",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R001"
+    }
+  ],
+  "modification": {
+    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "temporary_pre_fault_net": "f2a_pre_tf000362_sa1",
+    "stuck_at_assignment": "assign regfile_data_ra_id[3] = 1'b1;",
+    "driver_connection": {
+      "kind": "hierarchical_instance_output",
+      "module": "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1",
+      "instance": "register_file_i",
+      "cell_type": "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0",
+      "pin": "rdata_a_o",
+      "original_connection": "regfile_data_ra_id",
+      "replacement_connection": "{regfile_data_ra_id[0], regfile_data_ra_id[1], regfile_data_ra_id[2], f2a_pre_tf000362_sa1, regfile_data_ra_id[4], regfile_data_ra_id[5], regfile_data_ra_id[6], regfile_data_ra_id[7], regfile_data_ra_id[8], regfile_data_ra_id[9], regfile_data_ra_id[10], regfile_data_ra_id[11], regfile_data_ra_id[12], regfile_data_ra_id[13], regfile_data_ra_id[14], regfile_data_ra_id[15], regfile_data_ra_id[16], regfile_data_ra_id[17], regfile_data_ra_id[18], regfile_data_ra_id[19], regfile_data_ra_id[20], regfile_data_ra_id[21], regfile_data_ra_id[22], regfile_data_ra_id[23], regfile_data_ra_id[24], regfile_data_ra_id[25], regfile_data_ra_id[26], regfile_data_ra_id[27], regfile_data_ra_id[28], regfile_data_ra_id[29], regfile_data_ra_id[30], regfile_data_ra_id[31]}",
+      "connection_start": 1570932,
+      "connection_end": 1570950
+    },
+    "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
+  },
+  "artifacts": {
+    "fault_spec": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/fault_specs/TF000362_SA1.json",
+    "patch": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/patches/TF000362_SA1.patch",
+    "faulty_netlist": "temporary_only",
+    "vcd": "not_generated_by_default"
+  },
+  "fault_spec_digest_sha256": "b67e86e98cc9716347b4989d72c77a9ea404b614107d80e945ba0b0e28be6c89"
+}

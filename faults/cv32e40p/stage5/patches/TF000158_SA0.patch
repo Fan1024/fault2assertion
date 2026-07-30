@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000158_SA0/fault_netlist.v
+@@ -20518,7 +20518,7 @@
+   DFFS_X1 \debug_fsm_cs_reg[0] (.SN (rst_n), .CK (clk), .D (n_138), .Q
+        (debug_havereset_o));
+   DFFR_X1 \debug_fsm_cs_reg[1] (.RN (rst_n), .CK (clk), .D (n_133), .Q
+-       (debug_running_o));
++       (f2a_pre_tf000158_sa0));
+   DFFR_X1 \debug_fsm_cs_reg[2] (.RN (rst_n), .CK (clk), .D (n_121), .Q
+        (debug_halted_o));
+   DFFR_X1 debug_mode_q_reg(.RN (rst_n), .CK (clk), .D (n_57), .QN
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000158_SA0 run-local driver split
++  wire f2a_pre_tf000158_sa0;
++  assign debug_running_o = 1'b0;
+ endmodule
+ 
+ module

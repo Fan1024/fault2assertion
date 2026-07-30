@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000438_SA1/fault_netlist.v
+@@ -20263,7 +20263,7 @@
+   OR4_X4 g9847(.A1 (n_266), .A2 (n_158), .A3 (n_249), .A4 (n_260), .ZN
+        (pc_set_o));
+   NAND4_X1 g9848(.A1 (n_244), .A2 (n_148), .A3 (n_280), .A4 (n_259),
+-       .ZN (pc_mux_o[2]));
++       .ZN (f2a_pre_tf000438_sa1));
+   NOR2_X1 g9849(.A1 (n_206), .A2 (n_265), .ZN (load_stall_o));
+   NAND3_X1 g9850(.A1 (n_258), .A2 (n_261), .A3 (n_236), .ZN
+        (halt_if_o));
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000438_SA1 run-local driver split
++  wire f2a_pre_tf000438_sa1;
++  assign pc_mux_o[2] = 1'b1;
+ endmodule
+ 
+ module

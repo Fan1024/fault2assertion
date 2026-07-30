@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000513_SA0/fault_netlist.v
+@@ -20456,7 +20456,7 @@
+   NAND2_X1 g10001(.A1 (trigger_match_i), .A2 (n_0), .ZN (n_273));
+   NAND2_X1 g10002(.A1 (reg_d_wb_is_reg_a_i), .A2 (regfile_we_wb_i), .ZN
+        (n_188));
+-  NAND2_X1 g10003(.A1 (n_175), .A2 (instr_valid_i), .ZN (n_297));
++  NAND2_X1 g10003(.A1 (n_175), .A2 (instr_valid_i), .ZN (f2a_pre_tf000513_sa0));
+   NAND2_X1 g10004(.A1 (irq_req_ctrl_i), .A2 (n_0), .ZN (n_302));
+   OR2_X1 g10006(.A1 (ebrk_insn_i), .A2 (ecall_insn_i), .ZN (n_291));
+   INV_X1 g10007(.A (n_179), .ZN (n_180));
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000513_SA0 run-local driver split
++  wire f2a_pre_tf000513_sa0;
++  assign n_297 = 1'b0;
+ endmodule
+ 
+ module

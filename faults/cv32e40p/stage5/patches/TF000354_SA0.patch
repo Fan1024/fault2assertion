@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000354_SA0/fault_netlist.v
+@@ -37418,7 +37418,7 @@
+        exc_pc_mux_id[1:0]}), .pc_id_i ({pc_id[31:1],
+        UNCONNECTED_HIER_Z1265}), .halt_if_o (halt_if), .id_ready_o
+        (id_ready), .ex_ready_i (ex_ready), .wb_ready_i (lsu_ready_wb),
+-       .ex_valid_i (ex_valid), .alu_operand_a_ex_o (alu_operand_a_ex),
++       .ex_valid_i (ex_valid), .alu_operand_a_ex_o ({alu_operand_a_ex[0], f2a_pre_tf000354_sa0, alu_operand_a_ex[2], alu_operand_a_ex[3], alu_operand_a_ex[4], alu_operand_a_ex[5], alu_operand_a_ex[6], alu_operand_a_ex[7], alu_operand_a_ex[8], alu_operand_a_ex[9], alu_operand_a_ex[10], alu_operand_a_ex[11], alu_operand_a_ex[12], alu_operand_a_ex[13], alu_operand_a_ex[14], alu_operand_a_ex[15], alu_operand_a_ex[16], alu_operand_a_ex[17], alu_operand_a_ex[18], alu_operand_a_ex[19], alu_operand_a_ex[20], alu_operand_a_ex[21], alu_operand_a_ex[22], alu_operand_a_ex[23], alu_operand_a_ex[24], alu_operand_a_ex[25], alu_operand_a_ex[26], alu_operand_a_ex[27], alu_operand_a_ex[28], alu_operand_a_ex[29], alu_operand_a_ex[30], alu_operand_a_ex[31]}),
+        .alu_operand_b_ex_o (alu_operand_b_ex), .alu_operand_c_ex_o
+        (alu_operand_c_ex), .regfile_waddr_ex_o ({UNCONNECTED1724,
+        regfile_waddr_ex[4:0]}), .regfile_we_ex_o (regfile_we_ex),
+@@ -37557,6 +37557,10 @@
+        (csr_addr[8]));
+   AND2_X1 g162(.A1 (alu_operand_b_ex[6]), .A2 (csr_access_ex), .ZN
+        (csr_addr[6]));
++
++  // Fault2Assertion Stage-5 fault TF000354_SA0 run-local driver split
++  wire f2a_pre_tf000354_sa0;
++  assign alu_operand_a_ex[1] = 1'b0;
+ endmodule
+ 
+ module cv32e40p_top(clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i,

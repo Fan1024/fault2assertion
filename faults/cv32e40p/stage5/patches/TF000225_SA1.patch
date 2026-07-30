@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000225_SA1/fault_netlist.v
+@@ -20259,7 +20259,7 @@
+   wire n_296, n_297, n_298, n_299, n_300, n_301, n_302, n_303;
+   wire n_304, n_305, n_306, n_307, n_411, n_412, n_413;
+   OR4_X1 g9846(.A1 (load_stall_o), .A2 (n_239), .A3 (jr_stall_o), .A4
+-       (illegal_insn_i), .ZN (deassert_we_o));
++       (illegal_insn_i), .ZN (f2a_pre_tf000225_sa1));
+   OR4_X4 g9847(.A1 (n_266), .A2 (n_158), .A3 (n_249), .A4 (n_260), .ZN
+        (pc_set_o));
+   NAND4_X1 g9848(.A1 (n_244), .A2 (n_148), .A3 (n_280), .A4 (n_259),
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000225_SA1 run-local driver split
++  wire f2a_pre_tf000225_sa1;
++  assign deassert_we_o = 1'b1;
+ endmodule
+ 
+ module

@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000548_SA1/fault_netlist.v
+@@ -32698,7 +32698,7 @@
+   INV_X1 g4064(.A (fetch_valid_i), .ZN (n_129));
+   INV_X1 g4065(.A (fetch_rdata_i[17]), .ZN (n_128));
+   INV_X1 g4066(.A (pc_o[1]), .ZN (n_127));
+-  INV_X1 g4067(.A (state[1]), .ZN (n_126));
++  INV_X1 g4067(.A (state[1]), .ZN (f2a_pre_tf000548_sa1));
+   CLKBUF_X1 fopt3(.A (n_120), .Z (n_124));
+   OAI21_X1 g2(.A (pc_o[1]), .B1 (n_164), .B2 (n_131), .ZN (n_120));
+   SDFFR_X1 aligner_ready_q_reg(.RN (rst_n), .CK (clk), .D
+@@ -33273,6 +33273,10 @@
+        (\add_64_26/n_14 ));
+   OR2_X1 \add_64_26/g410 (.A1 (pc_o[2]), .A2 (pc_o[3]), .ZN
+        (\add_64_26/n_13 ));
++
++  // Fault2Assertion Stage-5 fault TF000548_SA1 run-local driver split
++  wire f2a_pre_tf000548_sa1;
++  assign n_126 = 1'b1;
+ endmodule
+ 
+ module cv32e40p_compressed_decoder_FPU0_ZFINX0(instr_i, instr_o,

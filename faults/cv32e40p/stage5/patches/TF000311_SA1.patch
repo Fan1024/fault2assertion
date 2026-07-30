@@ -1,0 +1,15 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000311_SA1/fault_netlist.v
+@@ -37624,7 +37624,11 @@
+        UNCONNECTED_HIER_Z1530, UNCONNECTED_HIER_Z1529}), .irq_ack_o
+        (irq_ack_o), .irq_id_o (irq_id_o), .debug_req_i (debug_req_i),
+        .debug_havereset_o (debug_havereset_o), .debug_running_o
+-       (debug_running_o), .debug_halted_o (debug_halted_o),
++       (f2a_pre_tf000311_sa1), .debug_halted_o (debug_halted_o),
+        .fetch_enable_i (fetch_enable_i), .core_sleep_o (core_sleep_o));
++
++  // Fault2Assertion Stage-5 fault TF000311_SA1 run-local driver split
++  wire f2a_pre_tf000311_sa1;
++  assign debug_running_o = 1'b1;
+ endmodule
+ 

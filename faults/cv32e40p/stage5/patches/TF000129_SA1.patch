@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000129_SA1/fault_netlist.v
+@@ -5667,7 +5667,7 @@
+   SDFFR_X1 \AReg_DP_reg[16] (.RN (Rst_RBI), .CK (Clk_CI), .D
+        (AReg_DP[16]), .SE (n_366), .SI (n_286), .Q (AReg_DP[16]));
+   SDFFR_X1 \AReg_DP_reg[17] (.RN (Rst_RBI), .CK (Clk_CI), .D
+-       (AReg_DP[17]), .SE (n_366), .SI (n_287), .Q (AReg_DP[17]));
++       (AReg_DP[17]), .SE (n_366), .SI (n_287), .Q (f2a_pre_tf000129_sa1));
+   SDFFR_X1 \AReg_DP_reg[18] (.RN (Rst_RBI), .CK (Clk_CI), .D
+        (AReg_DP[18]), .SE (n_366), .SI (n_288), .Q (AReg_DP[18]));
+   SDFFR_X1 \AReg_DP_reg[19] (.RN (Rst_RBI), .CK (Clk_CI), .D
+@@ -7134,6 +7134,10 @@
+   OAI211_X1 g58(.A (n_530), .B (ResInv_SP), .C1 (\minus_102_33/n_81 ),
+        .C2 (n_529), .ZN (n_532));
+   XOR2_X1 g2(.A (n_522), .B (n_524), .Z (Res_DO[31]));
++
++  // Fault2Assertion Stage-5 fault TF000129_SA1 run-local driver split
++  wire f2a_pre_tf000129_sa1;
++  assign AReg_DP[17] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_ff_one(in_i, first_one_o, no_ones_o);

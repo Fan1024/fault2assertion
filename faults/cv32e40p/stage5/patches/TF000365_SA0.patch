@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000365_SA0/fault_netlist.v
+@@ -26590,7 +26590,7 @@
+   OR4_X1 g3421(.A1 (n_2962), .A2 (n_2961), .A3 (n_2970), .A4 (n_2969),
+        .ZN (rdata_a_o[12]));
+   OR4_X1 g3422(.A1 (n_2954), .A2 (n_2953), .A3 (n_2959), .A4 (n_2960),
+-       .ZN (rdata_a_o[1]));
++       .ZN (f2a_pre_tf000365_sa0));
+   OR4_X1 g3423(.A1 (n_2952), .A2 (n_2951), .A3 (n_2957), .A4 (n_2958),
+        .ZN (rdata_a_o[0]));
+   OR4_X1 g3424(.A1 (n_3009), .A2 (n_3014), .A3 (n_3010), .A4 (n_3013),
+@@ -29162,6 +29162,10 @@
+   OR2_X1 g172(.A1 (n_85), .A2 (n_3750), .ZN (n_3751));
+   INV_X1 g190(.A (n_3737), .ZN (n_3750));
+   NAND2_X1 g175(.A1 (n_3732), .A2 (n_3739), .ZN (n_3752));
++
++  // Fault2Assertion Stage-5 fault TF000365_SA0 run-local driver split
++  wire f2a_pre_tf000365_sa0;
++  assign rdata_a_o[1] = 1'b0;
+ endmodule
+ 
+ module

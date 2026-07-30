@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000103_SA0/fault_netlist.v
+@@ -36506,7 +36506,7 @@
+   DFFR_X1 \rdata_q_reg[27] (.RN (rst_n), .CK (clk), .D (n_69), .Q
+        (rdata_q[27]));
+   DFFR_X1 \rdata_q_reg[28] (.RN (rst_n), .CK (clk), .D (n_68), .Q
+-       (rdata_q[28]));
++       (f2a_pre_tf000103_sa0));
+   DFFR_X1 \rdata_q_reg[29] (.RN (rst_n), .CK (clk), .D (n_67), .Q
+        (rdata_q[29]));
+   DFFR_X1 \rdata_q_reg[30] (.RN (rst_n), .CK (clk), .D (n_66), .Q
+@@ -37124,6 +37124,10 @@
+   NAND2_X1 g15(.A1 (n_582), .A2 (n_583), .ZN (busy_o));
+   INV_X1 g17(.A (data_req_ex_i), .ZN (n_583));
+   OR2_X1 g14(.A1 (data_rvalid_i), .A2 (n_582), .ZN (lsu_ready_wb_o));
++
++  // Fault2Assertion Stage-5 fault TF000103_SA0 run-local driver split
++  wire f2a_pre_tf000103_sa0;
++  assign rdata_q[28] = 1'b0;
+ endmodule
+ 
+ module cv32e40p_clock_gate(clk_i, en_i, scan_cg_en_i, clk_o);

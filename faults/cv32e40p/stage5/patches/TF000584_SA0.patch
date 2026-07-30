@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000584_SA0/fault_netlist.v
+@@ -7155,7 +7155,7 @@
+        (n_30), .C2 (n_52), .ZN (first_one_o[0]));
+   OAI221_X1 g1224(.A (n_78), .B1 (first_one_o[4]), .B2 (n_66), .C1
+        (n_68), .C2 (n_53), .ZN (first_one_o[1]));
+-  AND2_X1 g1225(.A1 (n_74), .A2 (n_41), .ZN (no_ones_o));
++  AND2_X1 g1225(.A1 (n_74), .A2 (n_41), .ZN (f2a_pre_tf000584_sa0));
+   NOR2_X1 g1226(.A1 (n_74), .A2 (n_73), .ZN (n_78));
+   OAI221_X1 g1227(.A (n_30), .B1 (n_68), .B2 (n_44), .C1
+        (first_one_o[4]), .C2 (n_58), .ZN (first_one_o[2]));
+@@ -7233,6 +7233,10 @@
+   NOR2_X1 g1310(.A1 (in_i[7]), .A2 (in_i[6]), .ZN (n_16));
+   INV_X1 g1312(.A (n_39), .ZN (n_13));
+   INV_X1 fopt2(.A (n_9), .ZN (n_10));
++
++  // Fault2Assertion Stage-5 fault TF000584_SA0 run-local driver split
++  wire f2a_pre_tf000584_sa0;
++  assign no_ones_o = 1'b0;
+ endmodule
+ 
+ module cv32e40p_popcnt(in_i, result_o);

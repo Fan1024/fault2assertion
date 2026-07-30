@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000355_SA1/fault_netlist.v
+@@ -37489,7 +37489,7 @@
+        UNCONNECTED1898, UNCONNECTED1897}), .instr_gnt_i (instr_gnt_i),
+        .instr_rvalid_i (instr_rvalid_i), .instr_rdata_i
+        (instr_rdata_i), .instr_valid_id_o (instr_valid_id),
+-       .instr_rdata_id_o ({instr_rdata_id[31:1], UNCONNECTED1899}),
++       .instr_rdata_id_o ({instr_rdata_id[31], instr_rdata_id[30], instr_rdata_id[29], instr_rdata_id[28], instr_rdata_id[27], instr_rdata_id[26], instr_rdata_id[25], f2a_pre_tf000355_sa1, instr_rdata_id[23], instr_rdata_id[22], instr_rdata_id[21], instr_rdata_id[20], instr_rdata_id[19], instr_rdata_id[18], instr_rdata_id[17], instr_rdata_id[16], instr_rdata_id[15], instr_rdata_id[14], instr_rdata_id[13], instr_rdata_id[12], instr_rdata_id[11], instr_rdata_id[10], instr_rdata_id[9], instr_rdata_id[8], instr_rdata_id[7], instr_rdata_id[6], instr_rdata_id[5], instr_rdata_id[4], instr_rdata_id[3], instr_rdata_id[2], instr_rdata_id[1], UNCONNECTED1899}),
+        .is_compressed_id_o (is_compressed_id), .illegal_c_insn_id_o
+        (illegal_c_insn_id), .pc_if_o ({pc_if[31:1], UNCONNECTED1900}),
+        .pc_id_o ({pc_id[31:1], UNCONNECTED1901}), .clear_instr_valid_i
+@@ -37557,6 +37557,10 @@
+        (csr_addr[8]));
+   AND2_X1 g162(.A1 (alu_operand_b_ex[6]), .A2 (csr_access_ex), .ZN
+        (csr_addr[6]));
++
++  // Fault2Assertion Stage-5 fault TF000355_SA1 run-local driver split
++  wire f2a_pre_tf000355_sa1;
++  assign instr_rdata_id[24] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_top(clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i,

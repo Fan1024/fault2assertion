@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000189_SA0/fault_netlist.v
+@@ -19926,7 +19926,7 @@
+        .operator_i ({UNCONNECTED_HIER_Z, alu_operator_i[5:0]}),
+        .operand_a_i (alu_operand_a_i), .operand_b_i (alu_operand_b_i),
+        .operand_c_i (alu_operand_c_i), .result_o (alu_result),
+-       .comparison_result_o (branch_decision_o), .ready_o (alu_ready),
++       .comparison_result_o (f2a_pre_tf000189_sa0), .ready_o (alu_ready),
+        .ex_ready_i (ex_ready_o));
+   cv32e40p_mult mult_i(.clk (clk), .rst_n (rst_n), .enable_i
+        (mult_en_i), .operator_i ({mult_operator_i[2:1],
+@@ -20104,6 +20104,10 @@
+   AOI222_X1 g2(.A1 (alu_result[31]), .A2 (n_20), .B1 (mult_result[31]),
+        .B2 (n_12), .C1 (csr_rdata_i[31]), .C2 (csr_access_i), .ZN
+        (n_383));
++
++  // Fault2Assertion Stage-5 fault TF000189_SA0 run-local driver split
++  wire f2a_pre_tf000189_sa0;
++  assign branch_decision_o = 1'b0;
+ endmodule
+ 
+ module cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0(clk,

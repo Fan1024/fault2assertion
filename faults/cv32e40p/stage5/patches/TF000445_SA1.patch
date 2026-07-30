@@ -1,0 +1,21 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000445_SA1/fault_netlist.v
+@@ -37613,7 +37613,7 @@
+        UNCONNECTED1905, UNCONNECTED1904}), .instr_rdata_i
+        (instr_rdata_i), .data_req_o (data_req_o), .data_gnt_i
+        (data_gnt_i), .data_rvalid_i (data_rvalid_i), .data_we_o
+-       (data_we_o), .data_be_o (data_be_o), .data_addr_o (data_addr_o),
++       (data_we_o), .data_be_o (data_be_o), .data_addr_o ({data_addr_o[0], data_addr_o[1], data_addr_o[2], data_addr_o[3], data_addr_o[4], data_addr_o[5], data_addr_o[6], data_addr_o[7], data_addr_o[8], data_addr_o[9], data_addr_o[10], data_addr_o[11], data_addr_o[12], data_addr_o[13], f2a_pre_tf000445_sa1, data_addr_o[15], data_addr_o[16], data_addr_o[17], data_addr_o[18], data_addr_o[19], data_addr_o[20], data_addr_o[21], data_addr_o[22], data_addr_o[23], data_addr_o[24], data_addr_o[25], data_addr_o[26], data_addr_o[27], data_addr_o[28], data_addr_o[29], data_addr_o[30], data_addr_o[31]}),
+        .data_wdata_o (data_wdata_o), .data_rdata_i (data_rdata_i),
+        .irq_i ({irq_i[31:16], UNCONNECTED_HIER_Z1541,
+        UNCONNECTED_HIER_Z1540, UNCONNECTED_HIER_Z1539,
+@@ -37626,5 +37626,9 @@
+        .debug_havereset_o (debug_havereset_o), .debug_running_o
+        (debug_running_o), .debug_halted_o (debug_halted_o),
+        .fetch_enable_i (fetch_enable_i), .core_sleep_o (core_sleep_o));
++
++  // Fault2Assertion Stage-5 fault TF000445_SA1 run-local driver split
++  wire f2a_pre_tf000445_sa1;
++  assign data_addr_o[14] = 1'b1;
+ endmodule
+ 

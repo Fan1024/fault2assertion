@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000497_SA0/fault_netlist.v
+@@ -34813,7 +34813,7 @@
+   wire fifo_empty, fifo_pop, fifo_push, resp_err, trans_ready,
+        trans_valid;
+   cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2 fifo_i(.clk_i (clk),
+-       .rst_ni (rst_n), .flush_i (branch_i), .empty_o (fifo_empty),
++       .rst_ni (rst_n), .flush_i (branch_i), .empty_o (f2a_pre_tf000497_sa0),
+        .cnt_o (fifo_cnt), .data_i (instr_rdata_i), .push_i (fifo_push),
+        .data_o (fifo_rdata), .pop_i (fifo_pop));
+   cv32e40p_obi_interface_TRANS_STABLE0 instruction_obi_i(.clk (clk),
+@@ -34896,6 +34896,10 @@
+        (fifo_empty), .Z (fetch_rdata_o[0]));
+   MUX2_X1 g848(.A (fifo_rdata[22]), .B (instr_rdata_i[22]), .S
+        (fifo_empty), .Z (fetch_rdata_o[22]));
++
++  // Fault2Assertion Stage-5 fault TF000497_SA0 run-local driver split
++  wire f2a_pre_tf000497_sa0;
++  assign fifo_empty = 1'b0;
+ endmodule
+ 
+ module

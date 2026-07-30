@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000525_SA0/fault_netlist.v
+@@ -31980,7 +31980,7 @@
+        (\add_576_38_Y_add_575_38_Y_add_579_49/n_144 ));
+   FA_X1 \add_576_38_Y_add_575_38_Y_add_579_49/g1273 (.A (n_825), .B
+        (n_857), .CI (\add_576_38_Y_add_575_38_Y_add_579_49/n_7 ), .CO
+-       (\add_576_38_Y_add_575_38_Y_add_579_49/n_143 ), .S
++       (f2a_pre_tf000525_sa0 ), .S
+        (jump_target_o[1]));
+   OAI211_X1 \add_576_38_Y_add_575_38_Y_add_579_49/g1274 (.A
+        (\add_576_38_Y_add_575_38_Y_add_579_49/n_135 ), .B
+@@ -32489,6 +32489,10 @@
+        (n_1168));
+   XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
+        (n_1169));
++
++  // Fault2Assertion Stage-5 fault TF000525_SA0 run-local driver split
++  wire f2a_pre_tf000525_sa0;
++  assign \add_576_38_Y_add_575_38_Y_add_579_49/n_143  = 1'b0;
+ endmodule
+ 
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,

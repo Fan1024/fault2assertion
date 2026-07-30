@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000364_SA0/fault_netlist.v
+@@ -8516,7 +8516,7 @@
+   NAND2_X1 g27714(.A1 (comparison_result_o), .A2 (n_216), .ZN (n_435));
+   NAND2_X1 g27715(.A1 (n_413), .A2 (n_430), .ZN (n_434));
+   OAI21_X1 g27716(.A (n_432), .B1 (n_406), .B2 (n_0), .ZN
+-       (comparison_result_o));
++       (f2a_pre_tf000364_sa0));
+   AND2_X2 g27717(.A1 (n_431), .A2 (n_67), .ZN (n_433));
+   AOI221_X1 g27718(.A (n_400), .B1 (n_388), .B2 (n_217), .C1 (n_0), .C2
+        (n_191), .ZN (n_432));
+@@ -10275,6 +10275,10 @@
+   AOI21_X1 g220(.A (n_1079), .B1 (n_1076), .B2 (n_1078), .ZN (n_1088));
+   XNOR2_X1 g224(.A (n_605), .B (n_1074), .ZN (n_1089));
+   XNOR2_X1 g217(.A (n_1079), .B (n_1082), .ZN (n_1090));
++
++  // Fault2Assertion Stage-5 fault TF000364_SA0 run-local driver split
++  wire f2a_pre_tf000364_sa0;
++  assign comparison_result_o = 1'b0;
+ endmodule
+ 
+ module cv32e40p_mult(clk, rst_n, enable_i, operator_i, short_subword_i,

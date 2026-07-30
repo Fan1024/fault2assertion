@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000288_SA1/fault_netlist.v
+@@ -20307,7 +20307,7 @@
+   AND4_X1 g9877(.A1 (n_174), .A2 (regfile_we_id_i), .A3 (n_223), .A4
+        (n_195), .ZN (n_256));
+   AND2_X1 g9878(.A1 (n_245), .A2 (n_269), .ZN (n_258));
+-  NAND2_X1 g9879(.A1 (n_245), .A2 (n_244), .ZN (irq_ack_o));
++  NAND2_X1 g9879(.A1 (n_245), .A2 (n_244), .ZN (f2a_pre_tf000288_sa1));
+   INV_X1 g9880(.A (n_254), .ZN (n_255));
+   INV_X1 g9881(.A (n_253), .ZN (n_252));
+   OAI211_X1 g9882(.A (n_214), .B (n_217), .C1 (n_231), .C2 (n_295), .ZN
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000288_SA1 run-local driver split
++  wire f2a_pre_tf000288_sa1;
++  assign irq_ack_o = 1'b1;
+ endmodule
+ 
+ module

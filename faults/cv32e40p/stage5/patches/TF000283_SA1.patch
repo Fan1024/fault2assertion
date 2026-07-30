@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000283_SA1/fault_netlist.v
+@@ -35345,7 +35345,7 @@
+   NAND2_X1 g6172(.A1 (mepc_i[1]), .A2 (n_29), .ZN (n_43));
+   NAND2_X1 g6173(.A1 (depc_i[1]), .A2 (n_33), .ZN (n_42));
+   AND4_X1 g6174(.A1 (if_valid), .A2 (aligner_ready), .A3 (n_21), .A4
+-       (req_i), .ZN (fetch_ready));
++       (req_i), .ZN (f2a_pre_tf000283_sa1));
+   NOR2_X1 g6175(.A1 (n_30), .A2 (pc_id_o[2]), .ZN (n_41));
+   NOR2_X1 g6176(.A1 (n_34), .A2 (n_21), .ZN (csr_mtvec_init_o));
+   AND2_X2 g6177(.A1 (n_32), .A2 (n_22), .ZN (n_40));
+@@ -35711,6 +35711,10 @@
+        (n_184));
+   XOR2_X1 \add_167_42/g787 (.A (\add_167_42/n_2 ), .B (pc_id_o[12]), .Z
+        (n_176));
++
++  // Fault2Assertion Stage-5 fault TF000283_SA1 run-local driver split
++  wire f2a_pre_tf000283_sa1;
++  assign fetch_ready = 1'b1;
+ endmodule
+ 
+ module cv32e40p_load_store_unit_PULP_OBI0(clk, rst_n, data_req_o,

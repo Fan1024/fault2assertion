@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000297_SA1/fault_netlist.v
+@@ -20342,7 +20342,7 @@
+   AND3_X1 g9903(.A1 (mret_dec_i), .A2 (n_225), .A3 (n_0), .ZN
+        (csr_restore_mret_id_o));
+   OAI21_X1 g9904(.A (n_234), .B1 (n_149), .B2 (wfi_i), .ZN (n_236));
+-  NAND2_X1 g9905(.A1 (n_226), .A2 (n_301), .ZN (debug_csr_save_o));
++  NAND2_X1 g9905(.A1 (n_226), .A2 (n_301), .ZN (f2a_pre_tf000297_sa1));
+   NOR2_X1 g9907(.A1 (n_227), .A2 (n_178), .ZN (n_268));
+   NOR2_X1 g9908(.A1 (n_147), .A2 (n_279), .ZN (is_decoding_o));
+   NOR2_X1 g9911(.A1 (n_295), .A2 (debug_mode_o), .ZN (n_234));
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000297_SA1 run-local driver split
++  wire f2a_pre_tf000297_sa1;
++  assign debug_csr_save_o = 1'b1;
+ endmodule
+ 
+ module

@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000586_SA1/fault_netlist.v
+@@ -5350,7 +5350,7 @@
+   wire n_510, n_511, n_512, n_513, n_514, n_515, n_516, n_517;
+   wire n_518, n_519, n_520, n_521, n_522, n_524, n_526, n_528;
+   wire n_529, n_530, n_531, n_532, n_3505_BAR;
+-  INV_X4 g2714(.A (n_2), .ZN (n_226));
++  INV_X4 g2714(.A (n_2), .ZN (f2a_pre_tf000586_sa1));
+   MUX2_X1 g2986(.A (ResReg_DP[15]), .B (AReg_DP[16]), .S (RemSel_SP),
+        .Z (n_382));
+   MUX2_X1 g2988(.A (ResReg_DP[5]), .B (AReg_DP[26]), .S (RemSel_SP), .Z
+@@ -7134,6 +7134,10 @@
+   OAI211_X1 g58(.A (n_530), .B (ResInv_SP), .C1 (\minus_102_33/n_81 ),
+        .C2 (n_529), .ZN (n_532));
+   XOR2_X1 g2(.A (n_522), .B (n_524), .Z (Res_DO[31]));
++
++  // Fault2Assertion Stage-5 fault TF000586_SA1 run-local driver split
++  wire f2a_pre_tf000586_sa1;
++  assign n_226 = 1'b1;
+ endmodule
+ 
+ module cv32e40p_ff_one(in_i, first_one_o, no_ones_o);

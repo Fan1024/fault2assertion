@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000498_SA0/fault_netlist.v
+@@ -35357,7 +35357,7 @@
+   AND3_X1 g6181(.A1 (id_ready_i), .A2 (fetch_valid), .A3 (n_24), .ZN
+        (if_valid));
+   AND2_X2 g6182(.A1 (n_26), .A2 (pc_mux_i[1]), .ZN (n_37));
+-  AND2_X2 g6183(.A1 (n_25), .A2 (n_20), .ZN (n_36));
++  AND2_X2 g6183(.A1 (n_25), .A2 (n_20), .ZN (f2a_pre_tf000498_sa0));
+   AND2_X2 g6184(.A1 (n_26), .A2 (n_18), .ZN (n_35));
+   AND2_X2 g6185(.A1 (n_25), .A2 (pc_mux_i[2]), .ZN (n_33));
+   INV_X1 g6186(.A (n_31), .ZN (n_30));
+@@ -35711,6 +35711,10 @@
+        (n_184));
+   XOR2_X1 \add_167_42/g787 (.A (\add_167_42/n_2 ), .B (pc_id_o[12]), .Z
+        (n_176));
++
++  // Fault2Assertion Stage-5 fault TF000498_SA0 run-local driver split
++  wire f2a_pre_tf000498_sa0;
++  assign n_36 = 1'b0;
+ endmodule
+ 
+ module cv32e40p_load_store_unit_PULP_OBI0(clk, rst_n, data_req_o,

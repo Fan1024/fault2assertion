@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000356_SA1/fault_netlist.v
+@@ -21211,7 +21211,7 @@
+   INV_X1 g8715(.A (n_255), .ZN (n_41));
+   INV_X1 g8716(.A (n_250), .ZN (n_40));
+   INV_X1 g8717(.A (n_7), .ZN (n_39));
+-  INV_X1 g8718(.A (n_252), .ZN (alu_op_c_mux_sel_o[0]));
++  INV_X1 g8718(.A (n_252), .ZN (f2a_pre_tf000356_sa1));
+   INV_X1 g8719(.A (n_247), .ZN (alu_op_c_mux_sel_o[1]));
+   INV_X1 g8720(.A (n_249), .ZN (n_37));
+   INV_X1 g8721(.A (instr_rdata_i[30]), .ZN (n_36));
+@@ -21252,6 +21252,10 @@
+        (instr_rdata_i[23]), .ZN (n_354));
+   AOI211_X1 g8768(.A (n_52), .B (n_167), .C1 (n_91), .C2 (n_56), .ZN
+        (n_355));
++
++  // Fault2Assertion Stage-5 fault TF000356_SA1 run-local driver split
++  wire f2a_pre_tf000356_sa1;
++  assign alu_op_c_mux_sel_o[0] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_int_controller_PULP_SECURE0(clk, rst_n, irq_i,

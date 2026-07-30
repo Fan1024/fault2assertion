@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000278_SA1/fault_netlist.v
+@@ -20297,7 +20297,7 @@
+   AOI21_X1 g9869(.A (n_251), .B1 (n_232), .B2 (n_153), .ZN (n_261));
+   NAND2_X1 g9870(.A1 (n_255), .A2 (n_250), .ZN (pc_mux_o[0]));
+   OAI211_X1 g9871(.A (n_258), .B (n_217), .C1 (n_166), .C2 (n_279), .ZN
+-       (halt_id_o));
++       (f2a_pre_tf000278_sa1));
+   OR2_X1 g9872(.A1 (n_224), .A2 (n_252), .ZN (n_260));
+   NAND2_X1 g9873(.A1 (n_253), .A2 (n_222), .ZN (exc_pc_mux_o[1]));
+   AND2_X1 g9874(.A1 (n_253), .A2 (n_305), .ZN (n_259));
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000278_SA1 run-local driver split
++  wire f2a_pre_tf000278_sa1;
++  assign halt_id_o = 1'b1;
+ endmodule
+ 
+ module

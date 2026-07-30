@@ -42,3 +42,53 @@ runs/
 # Build-time simulator workspace
 build/xcelium_work/
 /faults/cv32e40p/site_catalog/stage_04_candidates.json
+
+# Fault2Assertion Stage-5 simulator scratch
+/runs/stage5/
+*.vcd
+fault_netlist.v
+*.mapped.sim.v
+
+
+# ============================================================
+# Large simulation and Stage-5 generated artifacts
+# ============================================================
+
+# Raw waveform databases
+*.vcd
+*.vcd.gz
+*.fsdb
+*.fst
+*.wlf
+*.wdb
+*.trn
+*.dsn
+*.shm
+*.shm/
+
+# Full raw traces
+**/golden_all.trace.tsv
+**/fault_all.trace.tsv
+**/*_all.trace.tsv
+**/golden_cache/
+
+# Generated simulation workspaces
+**/xrun/
+**/work/
+**/xcelium.d/
+**/INCA_libs/
+**/waves/
+**/simvision/
+**/cov_work/
+
+# Temporary fault netlists and generated monitors
+**/fault_netlist.v
+**/temporary_netlist.v
+**/stage5_golden_monitor.sv
+**/stage5_fault_monitor.sv
+
+# Xcelium runtime artifacts
+**/xrun.key
+**/xrun.history
+**/env.d/
+**/env.history.*

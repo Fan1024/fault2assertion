@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000183_SA1/fault_netlist.v
+@@ -29850,7 +29850,7 @@
+   XNOR2_X1 g16013(.A (\regfile_alu_waddr_ex_o[4]_3589 ), .B
+        (instr_rdata_i[19]), .ZN (n_778));
+   AND2_X1 g16014(.A1 (branch_decision_i), .A2 (branch_in_ex_o), .ZN
+-       (branch_taken_ex));
++       (f2a_pre_tf000183_sa1));
+   MUX2_X1 g16297(.A (instr_rdata_i[31]), .B (n_768), .S
+        (ctrl_transfer_target_mux_sel[0]), .Z (n_861));
+   INV_X1 g16298(.A (n_777), .ZN (n_868));
+@@ -32489,6 +32489,10 @@
+        (n_1168));
+   XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
+        (n_1169));
++
++  // Fault2Assertion Stage-5 fault TF000183_SA1 run-local driver split
++  wire f2a_pre_tf000183_sa1;
++  assign branch_taken_ex = 1'b1;
+ endmodule
+ 
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,

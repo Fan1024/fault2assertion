@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000116_SA1/fault_netlist.v
+@@ -20528,7 +20528,7 @@
+   SDFFR_X1 debug_req_q_reg(.RN (rst_n), .CK (clk_ungated_i), .D
+        (debug_req_i), .SE (n_17), .SI (debug_req_q), .Q (debug_req_q));
+   DFFR_X1 illegal_insn_q_reg(.RN (rst_n), .CK (clk), .D (n_105), .Q
+-       (illegal_insn_q));
++       (f2a_pre_tf000116_sa1));
+   DFFR_X1 jump_done_q_reg(.RN (rst_n), .CK (clk), .D (n_103), .Q
+        (jump_done_q));
+   NAND4_X1 g10513(.A1 (n_114), .A2 (n_131), .A3 (n_36), .A4 (n_141),
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000116_SA1 run-local driver split
++  wire f2a_pre_tf000116_sa1;
++  assign illegal_insn_q = 1'b1;
+ endmodule
+ 
+ module

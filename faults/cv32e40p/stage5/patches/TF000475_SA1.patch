@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000475_SA1/fault_netlist.v
+@@ -6866,7 +6866,7 @@
+   NOR2_X1 \gt_105_58/g1485 (.A1 (\gt_105_58/n_34 ), .A2 (BReg_DP[15]),
+        .ZN (\gt_105_58/n_52 ));
+   AND2_X1 \gt_105_58/g1486 (.A1 (\gt_105_58/n_22 ), .A2 (AReg_DP[23]),
+-       .ZN (\gt_105_58/n_51 ));
++       .ZN (f2a_pre_tf000475_sa1 ));
+   NOR2_X1 \gt_105_58/g1487 (.A1 (\gt_105_58/n_18 ), .A2 (BReg_DP[21]),
+        .ZN (\gt_105_58/n_50 ));
+   NAND2_X1 \gt_105_58/g1488 (.A1 (\gt_105_58/n_15 ), .A2 (AReg_DP[25]),
+@@ -7134,6 +7134,10 @@
+   OAI211_X1 g58(.A (n_530), .B (ResInv_SP), .C1 (\minus_102_33/n_81 ),
+        .C2 (n_529), .ZN (n_532));
+   XOR2_X1 g2(.A (n_522), .B (n_524), .Z (Res_DO[31]));
++
++  // Fault2Assertion Stage-5 fault TF000475_SA1 run-local driver split
++  wire f2a_pre_tf000475_sa1;
++  assign \gt_105_58/n_51  = 1'b1;
+ endmodule
+ 
+ module cv32e40p_ff_one(in_i, first_one_o, no_ones_o);

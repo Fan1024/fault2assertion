@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000279_SA1/fault_netlist.v
+@@ -1403,7 +1403,7 @@
+   OAI21_X1 g42722__2398(.A (csr_op_i[0]), .B1 (n_847), .B2
+        (csr_wdata_i[11]), .ZN (n_1386));
+   NOR2_X1 g42723__5107(.A1 (n_924), .A2 (n_1397), .ZN (n_949));
+-  INV_X1 g42724(.A (n_936), .ZN (m_irq_enable_o));
++  INV_X1 g42724(.A (n_936), .ZN (f2a_pre_tf000279_sa1));
+   XNOR2_X1 g42727__8428(.A (pc_id_i[1]), .B
+        (\gen_trigger_regs.tmatch_value_q [1]), .ZN (n_943));
+   XOR2_X1 g42732__2802(.A (pc_id_i[4]), .B
+@@ -5121,6 +5121,10 @@
+        (\gen_trigger_regs.tmatch_value_q [31]), .ZN (n_1870));
+   XOR2_X1 g485(.A (pc_id_i[28]), .B
+        (\gen_trigger_regs.tmatch_value_q [28]), .Z (n_1872));
++
++  // Fault2Assertion Stage-5 fault TF000279_SA1 run-local driver split
++  wire f2a_pre_tf000279_sa1;
++  assign m_irq_enable_o = 1'b1;
+ endmodule
+ 
+ module cv32e40p_alu_div(Clk_CI, Rst_RBI, OpA_DI, OpB_DI, OpBShift_DI,

@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000373_SA1/fault_netlist.v
+@@ -21128,7 +21128,7 @@
+   NAND2_X1 g8645(.A1 (n_75), .A2 (instr_rdata_i[12]), .ZN (n_108));
+   NOR2_X1 g8646(.A1 (n_74), .A2 (n_249), .ZN (n_107));
+   NAND2_X1 g8647(.A1 (n_20), .A2 (n_50), .ZN (n_106));
+-  NOR2_X1 g8648(.A1 (n_72), .A2 (n_7), .ZN (csr_access_o));
++  NOR2_X1 g8648(.A1 (n_72), .A2 (n_7), .ZN (f2a_pre_tf000373_sa1));
+   INV_X1 g8649(.A (n_98), .ZN (n_99));
+   INV_X1 g8650(.A (n_96), .ZN (n_95));
+   OAI21_X1 g8651(.A (instr_rdata_i[22]), .B1 (n_28), .B2 (n_30), .ZN
+@@ -21252,6 +21252,10 @@
+        (instr_rdata_i[23]), .ZN (n_354));
+   AOI211_X1 g8768(.A (n_52), .B (n_167), .C1 (n_91), .C2 (n_56), .ZN
+        (n_355));
++
++  // Fault2Assertion Stage-5 fault TF000373_SA1 run-local driver split
++  wire f2a_pre_tf000373_sa1;
++  assign csr_access_o = 1'b1;
+ endmodule
+ 
+ module cv32e40p_int_controller_PULP_SECURE0(clk, rst_n, irq_i,

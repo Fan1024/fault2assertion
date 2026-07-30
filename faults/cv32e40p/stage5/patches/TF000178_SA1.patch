@@ -1,0 +1,21 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000178_SA1/fault_netlist.v
+@@ -20097,13 +20097,17 @@
+        (regfile_waddr_i[2]), .SE (n_1), .SI (regfile_waddr_wb_o[2]), .Q
+        (regfile_waddr_wb_o[2]));
+   DFFR_X1 regfile_we_lsu_reg(.RN (rst_n), .CK (clk), .D (n_2), .Q
+-       (regfile_we_wb_o), .QN (n_0));
++       (regfile_we_wb_o), .QN (f2a_pre_tf000178_sa1));
+   OAI21_X1 g1258(.A (n_1), .B1 (wb_ready_i), .B2 (n_0), .ZN (n_2));
+   NAND2_X1 g1259(.A1 (ex_valid_o), .A2 (regfile_we_i), .ZN (n_1));
+   INV_X2 g2517(.A (n_383), .ZN (regfile_alu_wdata_fw_o[31]));
+   AOI222_X1 g2(.A1 (alu_result[31]), .A2 (n_20), .B1 (mult_result[31]),
+        .B2 (n_12), .C1 (csr_rdata_i[31]), .C2 (csr_access_i), .ZN
+        (n_383));
++
++  // Fault2Assertion Stage-5 fault TF000178_SA1 run-local driver split
++  wire f2a_pre_tf000178_sa1;
++  assign n_0 = 1'b1;
+ endmodule
+ 
+ module cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0(clk,

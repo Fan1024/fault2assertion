@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000405_SA1/fault_netlist.v
+@@ -34815,7 +34815,7 @@
+   cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2 fifo_i(.clk_i (clk),
+        .rst_ni (rst_n), .flush_i (branch_i), .empty_o (fifo_empty),
+        .cnt_o (fifo_cnt), .data_i (instr_rdata_i), .push_i (fifo_push),
+-       .data_o (fifo_rdata), .pop_i (fifo_pop));
++       .data_o ({fifo_rdata[0], fifo_rdata[1], fifo_rdata[2], fifo_rdata[3], fifo_rdata[4], fifo_rdata[5], fifo_rdata[6], fifo_rdata[7], fifo_rdata[8], fifo_rdata[9], fifo_rdata[10], fifo_rdata[11], fifo_rdata[12], fifo_rdata[13], fifo_rdata[14], fifo_rdata[15], fifo_rdata[16], fifo_rdata[17], fifo_rdata[18], fifo_rdata[19], fifo_rdata[20], fifo_rdata[21], fifo_rdata[22], fifo_rdata[23], fifo_rdata[24], fifo_rdata[25], fifo_rdata[26], fifo_rdata[27], fifo_rdata[28], fifo_rdata[29], fifo_rdata[30], f2a_pre_tf000405_sa1}), .pop_i (fifo_pop));
+   cv32e40p_obi_interface_TRANS_STABLE0 instruction_obi_i(.clk (clk),
+        .rst_n (rst_n), .trans_valid_i (trans_valid), .trans_ready_o
+        (trans_ready), .trans_addr_i ({trans_addr[31:2],
+@@ -34896,6 +34896,10 @@
+        (fifo_empty), .Z (fetch_rdata_o[0]));
+   MUX2_X1 g848(.A (fifo_rdata[22]), .B (instr_rdata_i[22]), .S
+        (fifo_empty), .Z (fetch_rdata_o[22]));
++
++  // Fault2Assertion Stage-5 fault TF000405_SA1 run-local driver split
++  wire f2a_pre_tf000405_sa1;
++  assign fifo_rdata[31] = 1'b1;
+ endmodule
+ 
+ module

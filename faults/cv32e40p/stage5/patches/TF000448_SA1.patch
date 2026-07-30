@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000448_SA1/fault_netlist.v
+@@ -493,7 +493,7 @@
+   NAND4_X1 g42232__8428(.A1 (n_1370), .A2 (n_1249), .A3 (n_1213), .A4
+        (n_1053), .ZN (csr_rdata_o[20]));
+   NAND4_X1 g42233__5526(.A1 (n_1369), .A2 (n_1247), .A3 (n_1211), .A4
+-       (n_1048), .ZN (csr_rdata_o[26]));
++       (n_1048), .ZN (f2a_pre_tf000448_sa1));
+   NAND4_X1 g42234__6783(.A1 (n_1329), .A2 (n_1353), .A3 (n_1276), .A4
+        (n_1046), .ZN (csr_rdata_o[3]));
+   NAND4_X1 g42235__3680(.A1 (n_1362), .A2 (n_1240), .A3 (n_1204), .A4
+@@ -5121,6 +5121,10 @@
+        (\gen_trigger_regs.tmatch_value_q [31]), .ZN (n_1870));
+   XOR2_X1 g485(.A (pc_id_i[28]), .B
+        (\gen_trigger_regs.tmatch_value_q [28]), .Z (n_1872));
++
++  // Fault2Assertion Stage-5 fault TF000448_SA1 run-local driver split
++  wire f2a_pre_tf000448_sa1;
++  assign csr_rdata_o[26] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_alu_div(Clk_CI, Rst_RBI, OpA_DI, OpB_DI, OpBShift_DI,

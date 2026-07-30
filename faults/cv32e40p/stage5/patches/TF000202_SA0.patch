@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000202_SA0/fault_netlist.v
+@@ -19936,7 +19936,7 @@
+        (mult_multicycle_o), .ready_o (mult_ready), .ex_ready_i
+        (ex_ready_o));
+   AND4_X1 g2433(.A1 (wb_ready_i), .A2 (lsu_ready_ex_i), .A3 (n_13), .A4
+-       (n_21), .ZN (ex_valid_o));
++       (n_21), .ZN (f2a_pre_tf000202_sa0));
+   INV_X1 g2434(.A (n_53), .ZN (regfile_alu_wdata_fw_o[14]));
+   INV_X1 g2435(.A (n_52), .ZN (regfile_alu_wdata_fw_o[21]));
+   INV_X1 g2436(.A (n_51), .ZN (regfile_alu_wdata_fw_o[20]));
+@@ -20104,6 +20104,10 @@
+   AOI222_X1 g2(.A1 (alu_result[31]), .A2 (n_20), .B1 (mult_result[31]),
+        .B2 (n_12), .C1 (csr_rdata_i[31]), .C2 (csr_access_i), .ZN
+        (n_383));
++
++  // Fault2Assertion Stage-5 fault TF000202_SA0 run-local driver split
++  wire f2a_pre_tf000202_sa0;
++  assign ex_valid_o = 1'b0;
+ endmodule
+ 
+ module cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0(clk,

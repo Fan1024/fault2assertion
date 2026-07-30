@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000137_SA1/fault_netlist.v
+@@ -32723,7 +32723,7 @@
+   DFFR_X1 \pc_q_reg[10] (.RN (rst_n), .CK (clk), .D (n_107), .Q
+        (pc_o[10]));
+   DFFR_X1 \pc_q_reg[11] (.RN (rst_n), .CK (clk), .D (n_111), .Q
+-       (pc_o[11]));
++       (f2a_pre_tf000137_sa1));
+   DFFR_X1 \pc_q_reg[12] (.RN (rst_n), .CK (clk), .D (n_106), .Q
+        (pc_o[12]));
+   DFFR_X1 \pc_q_reg[13] (.RN (rst_n), .CK (clk), .D (n_105), .Q
+@@ -33273,6 +33273,10 @@
+        (\add_64_26/n_14 ));
+   OR2_X1 \add_64_26/g410 (.A1 (pc_o[2]), .A2 (pc_o[3]), .ZN
+        (\add_64_26/n_13 ));
++
++  // Fault2Assertion Stage-5 fault TF000137_SA1 run-local driver split
++  wire f2a_pre_tf000137_sa1;
++  assign pc_o[11] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_compressed_decoder_FPU0_ZFINX0(instr_i, instr_o,

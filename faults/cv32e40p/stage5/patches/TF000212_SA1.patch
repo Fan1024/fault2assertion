@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000212_SA1/fault_netlist.v
+@@ -32666,7 +32666,7 @@
+   MUX2_X1 g4038(.A (fetch_rdata_i[21]), .B (fetch_rdata_i[5]), .S
+        (n_137), .Z (instr_aligned_o[21]));
+   NAND2_X1 g4039(.A1 (fetch_valid_i), .A2 (n_138), .ZN
+-       (aligner_ready_o));
++       (f2a_pre_tf000212_sa1));
+   NAND3_X1 g4041(.A1 (n_128), .A2 (fetch_rdata_i[16]), .A3 (n_134), .ZN
+        (n_145));
+   OR3_X1 g4042(.A1 (n_128), .A2 (fetch_rdata_i[16]), .A3 (n_133), .ZN
+@@ -33273,6 +33273,10 @@
+        (\add_64_26/n_14 ));
+   OR2_X1 \add_64_26/g410 (.A1 (pc_o[2]), .A2 (pc_o[3]), .ZN
+        (\add_64_26/n_13 ));
++
++  // Fault2Assertion Stage-5 fault TF000212_SA1 run-local driver split
++  wire f2a_pre_tf000212_sa1;
++  assign aligner_ready_o = 1'b1;
+ endmodule
+ 
+ module cv32e40p_compressed_decoder_FPU0_ZFINX0(instr_i, instr_o,

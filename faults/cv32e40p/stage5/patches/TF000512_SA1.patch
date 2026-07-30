@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000512_SA1/fault_netlist.v
+@@ -20353,7 +20353,7 @@
+   AOI211_X1 g9915(.A (illegal_insn_i), .B (n_274), .C1 (n_0), .C2
+        (debug_single_step_i), .ZN (n_231));
+   NAND2_X1 g9917(.A1 (ex_valid_i), .A2 (n_216), .ZN (n_235));
+-  OR2_X1 g9918(.A1 (n_297), .A2 (n_307), .ZN (n_279));
++  OR2_X1 g9918(.A1 (n_297), .A2 (n_307), .ZN (f2a_pre_tf000512_sa1));
+   INV_X1 g9920(.A (n_227), .ZN (n_228));
+   INV_X1 g9921(.A (n_225), .ZN (n_285));
+   NOR3_X1 g9922(.A1 (n_205), .A2 (csr_status_i), .A3 (n_304), .ZN
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000512_SA1 run-local driver split
++  wire f2a_pre_tf000512_sa1;
++  assign n_279 = 1'b1;
+ endmodule
+ 
+ module

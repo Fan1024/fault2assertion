@@ -1,0 +1,284 @@
+{
+  "schema_version": "1.0",
+  "program_version": "1.0.4",
+  "generated_at_utc": "2026-07-30T14:38:54.564896+00:00",
+  "stage": "stage_05_fault_materialization",
+  "fault_id": "TF000484_SA1",
+  "selection_id": "TS000484",
+  "selection_rank": 484,
+  "site_id": "RS007539",
+  "site_key": "cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1|n_34",
+  "design": "cv32e40p",
+  "workload": "crc32",
+  "fault_class": "generic_observable",
+  "injection_kind": "net_stuck_at",
+  "polarity": "SA1",
+  "stuck_at": 1,
+  "source_stage4": {
+    "candidates_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_candidates.json",
+    "candidates_sha256": "e15abab45ff12b46a766fe3e5004fac7ef632a7a31581b3d8a341be682fb1578",
+    "candidate_digest_sha256": "5c5ec529eb3cb9fffb69246e0e7beb433c871d20d2f0981bcd905b1e65739da2",
+    "selection_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_selection.json",
+    "selection_sha256": "9a85dca7226b16cc5eaf37a72b37ca45cb247b0883127e2721a833f871269c28",
+    "selection_digest_sha256": "8f20e4f98ce4f549cccf90af317d337b4374e8d6d319d66edb74da7c329d58a9"
+  },
+  "mapped_netlist": {
+    "path": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",
+    "sha256": "39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7",
+    "storage_policy": "immutable golden source; a faulty copy exists only in a run-local temporary directory"
+  },
+  "site": {
+    "module": "cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1",
+    "source_net": "n_34",
+    "source_key": "n_34",
+    "source_kind": "buffer_or_inverter_output",
+    "state_site": false,
+    "logic_fanout": 10,
+    "fanout_bucket": "gt_8",
+    "classification": {
+      "primary_class": "generic_observable",
+      "injection_kind": "net_stuck_at",
+      "semantic_tags": [
+        "control_module",
+        "generated_name",
+        "mux_control_reachable",
+        "top_output_reachable"
+      ],
+      "control_semantic_score_raw": 0.0,
+      "data_semantic_score_raw": 0.0,
+      "semantic_confidence": 1.0,
+      "evidence": {
+        "control_name_match_count": 0,
+        "data_name_match_count": 0,
+        "control_module_match_count": 1,
+        "data_module_match_count": 0,
+        "generated_name_match_count": 1,
+        "direct_mux_select_consumer": false,
+        "distance_to_mux_select": 14,
+        "arithmetic_signal": false,
+        "name_and_module_text": "n_34 cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1"
+      }
+    },
+    "scores": {
+      "assertion_relevance_score": 0.333333,
+      "failure_impact_score": 0.948648,
+      "selection_score": 0.610225
+    },
+    "activity": {
+      "instance_count": 1,
+      "seen_0": true,
+      "seen_1": true,
+      "unknown_seen": false,
+      "value_change_count": 411228,
+      "binary_toggle_count": 411228,
+      "first_observation_cycle": 1,
+      "first_change_cycle": 23,
+      "last_change_cycle": 940810,
+      "first_observation_time": 50,
+      "first_change_time": 270,
+      "last_change_time": 9408140,
+      "last_value": "1"
+    },
+    "detailed_structure": {
+      "max_depth_limit": 16,
+      "max_node_limit": 4096,
+      "truncated": true,
+      "maximum_depth_reached": 16,
+      "tfo_node_count_bounded": 1206,
+      "tfo_edge_count_bounded": 2089,
+      "reachable_sequential_checkpoint_count_bounded": 202,
+      "reachable_top_output_count_bounded": 0,
+      "reconvergent_node_count_bounded": 940,
+      "branching_node_count_bounded": 224,
+      "reachable_sink_role_counts_bounded": {
+        "combinational_input": 830,
+        "mux_select": 3,
+        "scan_enable": 13,
+        "scan_input": 63,
+        "sequential_data": 202
+      },
+      "distance_to_mux_select": 14,
+      "distance_to_sequential_data": 2,
+      "distance_to_arithmetic_input": null,
+      "distance_to_arithmetic_carry_input": null
+    },
+    "driver": {
+      "kind": "standard_cell_output",
+      "module": "cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1",
+      "instance": "g8723",
+      "cell_type": "INV_X1",
+      "pin": "ZN",
+      "role": "driver",
+      "expression": "n_34",
+      "metadata": {
+        "cell_family": "buffer_or_inverter"
+      }
+    }
+  },
+  "receiver_signals": [
+    {
+      "receiver_index": 0,
+      "expression": "n_246",
+      "source_key": "n_246",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g4826",
+        "receiver_cell_type": "NAND2_X1",
+        "receiver_input_pin": "A2",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R000"
+    },
+    {
+      "receiver_index": 1,
+      "expression": "n_202",
+      "source_key": "n_202",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g8510",
+        "receiver_cell_type": "OAI221_X1",
+        "receiver_input_pin": "C2",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R001"
+    },
+    {
+      "receiver_index": 2,
+      "expression": "alu_op_a_mux_sel_o[1]",
+      "source_key": "alu_op_a_mux_sel_o[1]",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g8519",
+        "receiver_cell_type": "OAI221_X1",
+        "receiver_input_pin": "C1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R002"
+    },
+    {
+      "receiver_index": 3,
+      "expression": "n_129",
+      "source_key": "n_129",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g8611",
+        "receiver_cell_type": "NOR2_X1",
+        "receiver_input_pin": "A2",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R003"
+    },
+    {
+      "receiver_index": 4,
+      "expression": "n_116",
+      "source_key": "n_116",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g8623",
+        "receiver_cell_type": "AOI211_X1",
+        "receiver_input_pin": "C1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R004"
+    },
+    {
+      "receiver_index": 5,
+      "expression": "n_104",
+      "source_key": "n_104",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g8638",
+        "receiver_cell_type": "AOI21_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R005"
+    },
+    {
+      "receiver_index": 6,
+      "expression": "data_we_o",
+      "source_key": "data_we_o",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g8644",
+        "receiver_cell_type": "AND3_X1",
+        "receiver_input_pin": "A3",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R006"
+    },
+    {
+      "receiver_index": 7,
+      "expression": "n_87",
+      "source_key": "n_87",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g8673",
+        "receiver_cell_type": "NAND2_X1",
+        "receiver_input_pin": "A2",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R007"
+    },
+    {
+      "receiver_index": 8,
+      "expression": "n_77",
+      "source_key": "n_77",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g8681",
+        "receiver_cell_type": "NOR2_X1",
+        "receiver_input_pin": "A2",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R008"
+    },
+    {
+      "receiver_index": 9,
+      "expression": "n_76",
+      "source_key": "n_76",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g8682",
+        "receiver_cell_type": "NAND2_X1",
+        "receiver_input_pin": "A1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R009"
+    }
+  ],
+  "modification": {
+    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "temporary_pre_fault_net": "f2a_pre_tf000484_sa1",
+    "stuck_at_assignment": "assign n_34 = 1'b1;",
+    "driver_connection": {
+      "kind": "standard_cell_output",
+      "module": "cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1",
+      "instance": "g8723",
+      "cell_type": "INV_X1",
+      "pin": "ZN",
+      "original_connection": "n_34",
+      "replacement_connection": "f2a_pre_tf000484_sa1",
+      "connection_start": 1100285,
+      "connection_end": 1100289
+    },
+    "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
+  },
+  "artifacts": {
+    "fault_spec": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/fault_specs/TF000484_SA1.json",
+    "patch": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/patches/TF000484_SA1.patch",
+    "faulty_netlist": "temporary_only",
+    "vcd": "not_generated_by_default"
+  },
+  "fault_spec_digest_sha256": "862951619db89b280d3c7a17bf7e9418231d8ae8b9d42797b482d32322b82d50"
+}

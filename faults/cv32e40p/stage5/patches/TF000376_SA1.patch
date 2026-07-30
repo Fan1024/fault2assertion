@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000376_SA1/fault_netlist.v
+@@ -20276,7 +20276,7 @@
+        .ZN (csr_save_cause_o));
+   AOI211_X1 g9856(.A (reg_d_ex_is_reg_b_i), .B (reg_d_ex_is_reg_a_i),
+        .C1 (n_256), .C2 (is_decoding_o), .ZN (n_265));
+-  NAND2_X1 g9857(.A1 (n_257), .A2 (n_262), .ZN (pc_mux_o[1]));
++  NAND2_X1 g9857(.A1 (n_257), .A2 (n_262), .ZN (f2a_pre_tf000376_sa1));
+   INV_X1 g9858(.A (n_264), .ZN (irq_id_o[3]));
+   AND2_X1 g9859(.A1 (irq_ack_o), .A2 (irq_id_ctrl_i[2]), .ZN
+        (irq_id_o[2]));
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000376_SA1 run-local driver split
++  wire f2a_pre_tf000376_sa1;
++  assign pc_mux_o[1] = 1'b1;
+ endmodule
+ 
+ module

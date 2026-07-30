@@ -1,0 +1,18 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000553_SA0/fault_netlist.v
+@@ -33711,10 +33711,14 @@
+   INV_X1 g9774(.A (instr_i[13]), .ZN (n_4));
+   INV_X1 g9775(.A (instr_i[15]), .ZN (n_3));
+   INV_X1 g9776(.A (instr_i[12]), .ZN (n_2));
+-  INV_X1 g9777(.A (instr_i[0]), .ZN (n_1));
++  INV_X1 g9777(.A (instr_i[0]), .ZN (f2a_pre_tf000553_sa0));
+   INV_X1 g9778(.A (instr_i[14]), .ZN (n_0));
+   AOI21_X1 g2(.A (n_1), .B1 (n_336), .B2 (n_150), .ZN (n_337));
+   NAND2_X1 g3(.A1 (n_29), .A2 (n_2), .ZN (n_336));
++
++  // Fault2Assertion Stage-5 fault TF000553_SA0 run-local driver split
++  wire f2a_pre_tf000553_sa0;
++  assign n_1 = 1'b0;
+ endmodule
+ 
+ module cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2(clk_i, rst_ni,

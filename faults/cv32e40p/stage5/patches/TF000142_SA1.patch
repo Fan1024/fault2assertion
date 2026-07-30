@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000142_SA1/fault_netlist.v
+@@ -21327,7 +21327,7 @@
+   DFFR_X1 \irq_q_reg[30] (.RN (rst_n), .CK (clk), .D (irq_i[30]), .Q
+        (mip_o[30]));
+   DFFR_X1 \irq_q_reg[11] (.RN (rst_n), .CK (clk), .D (irq_i[11]), .Q
+-       (mip_o[11]));
++       (f2a_pre_tf000142_sa1));
+   DFFR_X1 \irq_q_reg[16] (.RN (rst_n), .CK (clk), .D (irq_i[16]), .Q
+        (mip_o[16]));
+   DFFR_X1 \irq_q_reg[17] (.RN (rst_n), .CK (clk), .D (irq_i[17]), .Q
+@@ -21415,6 +21415,10 @@
+        (irq_i[30]), .B2 (mie_bypass_i[30]), .ZN (n_181));
+   AOI22_X1 g162(.A1 (irq_i[29]), .A2 (mie_bypass_i[29]), .B1
+        (irq_i[28]), .B2 (mie_bypass_i[28]), .ZN (n_182));
++
++  // Fault2Assertion Stage-5 fault TF000142_SA1 run-local driver split
++  wire f2a_pre_tf000142_sa1;
++  assign mip_o[11] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0(clk,

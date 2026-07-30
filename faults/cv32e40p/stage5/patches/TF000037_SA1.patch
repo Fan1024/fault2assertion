@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000037_SA1/fault_netlist.v
+@@ -30549,7 +30549,7 @@
+        (instr_rdata_i[11]), .SE (n_270), .SI (regfile_waddr_ex_o[4]),
+        .Q (regfile_waddr_ex_o[4]));
+   DFFR_X1 regfile_we_ex_o_reg(.RN (rst_n), .CK (clk), .D (n_330), .Q
+-       (regfile_we_ex_o), .QN (n_5));
++       (f2a_pre_tf000037_sa1), .QN (n_5));
+   OAI22_X1 g27252(.A1 (n_267), .A2 (n_540), .B1 (n_277), .B2 (n_700),
+        .ZN (n_686));
+   OAI211_X1 g27253(.A (n_683), .B (n_61), .C1 (n_276), .C2 (n_701), .ZN
+@@ -32489,6 +32489,10 @@
+        (n_1168));
+   XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
+        (n_1169));
++
++  // Fault2Assertion Stage-5 fault TF000037_SA1 run-local driver split
++  wire f2a_pre_tf000037_sa1;
++  assign regfile_we_ex_o = 1'b1;
+ endmodule
+ 
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,

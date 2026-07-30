@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000159_SA1/fault_netlist.v
+@@ -32815,7 +32815,7 @@
+   DFFR_X1 \state_reg[0] (.RN (rst_n), .CK (clk), .D (n_49), .Q
+        (pc_o[1]), .QN (n_0));
+   SDFFR_X1 \state_reg[1] (.RN (rst_n), .CK (clk), .D (n_9), .SE (n_22),
+-       .SI (state[1]), .Q (state[1]), .QN (n_1));
++       .SI (state[1]), .Q (state[1]), .QN (f2a_pre_tf000159_sa1));
+   OAI211_X1 g4975(.A (n_85), .B (n_4), .C1 (n_24), .C2 (pc_o[2]), .ZN
+        (n_118));
+   NAND2_X1 g4976(.A1 (n_38), .A2 (n_82), .ZN (n_117));
+@@ -33273,6 +33273,10 @@
+        (\add_64_26/n_14 ));
+   OR2_X1 \add_64_26/g410 (.A1 (pc_o[2]), .A2 (pc_o[3]), .ZN
+        (\add_64_26/n_13 ));
++
++  // Fault2Assertion Stage-5 fault TF000159_SA1 run-local driver split
++  wire f2a_pre_tf000159_sa1;
++  assign n_1 = 1'b1;
+ endmodule
+ 
+ module cv32e40p_compressed_decoder_FPU0_ZFINX0(instr_i, instr_o,

@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000337_SA0/fault_netlist.v
+@@ -29672,7 +29672,7 @@
+   wire regfile_alu_we_id, regfile_we_id, uret_dec, wfi_insn_dec;
+   cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0 controller_i(.clk
+        (clk), .clk_ungated_i (clk_ungated_i), .rst_n (rst_n),
+-       .fetch_enable_i (fetch_enable_i), .ctrl_busy_o (ctrl_busy_o),
++       .fetch_enable_i (fetch_enable_i), .ctrl_busy_o (f2a_pre_tf000337_sa0),
+        .is_decoding_o (n_924), .deassert_we_o (deassert_we),
+        .illegal_insn_i (illegal_insn_dec), .ecall_insn_i
+        (ecall_insn_dec), .dret_insn_i (dret_insn_dec), .mret_dec_i
+@@ -32489,6 +32489,10 @@
+        (n_1168));
+   XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
+        (n_1169));
++
++  // Fault2Assertion Stage-5 fault TF000337_SA0 run-local driver split
++  wire f2a_pre_tf000337_sa0;
++  assign ctrl_busy_o = 1'b0;
+ endmodule
+ 
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,

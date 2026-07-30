@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000015_SA1/fault_netlist.v
+@@ -35434,7 +35434,7 @@
+        .QN (n_12));
+   SDFFR_X1 \instr_rdata_id_o_reg[18] (.RN (rst_n), .CK (clk), .D
+        (instr_rdata_id_o[18]), .SE (n_2), .SI (instr_decompressed[18]),
+-       .Q (instr_rdata_id_o[18]));
++       .Q (f2a_pre_tf000015_sa1));
+   DFFR_X1 \instr_rdata_id_o_reg[19] (.RN (rst_n), .CK (clk), .D (n_8),
+        .QN (n_13));
+   DFFR_X1 \instr_rdata_id_o_reg[20] (.RN (rst_n), .CK (clk), .D (n_7),
+@@ -35711,6 +35711,10 @@
+        (n_184));
+   XOR2_X1 \add_167_42/g787 (.A (\add_167_42/n_2 ), .B (pc_id_o[12]), .Z
+        (n_176));
++
++  // Fault2Assertion Stage-5 fault TF000015_SA1 run-local driver split
++  wire f2a_pre_tf000015_sa1;
++  assign instr_rdata_id_o[18] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_load_store_unit_PULP_OBI0(clk, rst_n, data_req_o,

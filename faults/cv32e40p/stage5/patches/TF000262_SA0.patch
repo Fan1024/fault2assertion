@@ -1,0 +1,16 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000262_SA0/fault_netlist.v
+@@ -34206,8 +34206,12 @@
+        .ZN (n_2));
+   AND2_X1 g1263(.A1 (n_0), .A2 (obi_req_o), .ZN (n_1));
+   INV_X1 g1264(.A (obi_gnt_i), .ZN (n_0));
+-  NAND2_X1 g4(.A1 (n_149), .A2 (trans_ready_o), .ZN (obi_req_o));
++  NAND2_X1 g4(.A1 (n_149), .A2 (trans_ready_o), .ZN (f2a_pre_tf000262_sa0));
+   INV_X1 g5(.A (trans_valid_i), .ZN (n_149));
++
++  // Fault2Assertion Stage-5 fault TF000262_SA0 run-local driver split
++  wire f2a_pre_tf000262_sa0;
++  assign obi_req_o = 1'b0;
+ endmodule
+ 
+ module cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2(clk,

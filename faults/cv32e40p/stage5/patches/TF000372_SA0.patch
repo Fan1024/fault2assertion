@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000372_SA0/fault_netlist.v
+@@ -20261,7 +20261,7 @@
+   OR4_X1 g9846(.A1 (load_stall_o), .A2 (n_239), .A3 (jr_stall_o), .A4
+        (illegal_insn_i), .ZN (deassert_we_o));
+   OR4_X4 g9847(.A1 (n_266), .A2 (n_158), .A3 (n_249), .A4 (n_260), .ZN
+-       (pc_set_o));
++       (f2a_pre_tf000372_sa0));
+   NAND4_X1 g9848(.A1 (n_244), .A2 (n_148), .A3 (n_280), .A4 (n_259),
+        .ZN (pc_mux_o[2]));
+   NOR2_X1 g9849(.A1 (n_206), .A2 (n_265), .ZN (load_stall_o));
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000372_SA0 run-local driver split
++  wire f2a_pre_tf000372_sa0;
++  assign pc_set_o = 1'b0;
+ endmodule
+ 
+ module

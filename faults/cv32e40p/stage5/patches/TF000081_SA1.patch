@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000081_SA1/fault_netlist.v
+@@ -33895,7 +33895,7 @@
+        (\mem_q[0] [28]));
+   SDFFR_X1 \mem_q_reg[0][29] (.RN (rst_ni), .CK (clk_i), .D
+        (\mem_q[0] [29]), .SE (n_16), .SI (data_i[29]), .Q
+-       (\mem_q[0] [29]));
++       (f2a_pre_tf000081_sa1));
+   SDFFR_X1 \mem_q_reg[0][30] (.RN (rst_ni), .CK (clk_i), .D
+        (\mem_q[0] [30]), .SE (n_16), .SI (data_i[30]), .Q
+        (\mem_q[0] [30]));
+@@ -34023,6 +34023,10 @@
+   INV_X1 g3733(.A (pop_i), .ZN (n_4));
+   INV_X1 g3734(.A (push_i), .ZN (n_3));
+   INV_X1 g3735(.A (flush_i), .ZN (n_2));
++
++  // Fault2Assertion Stage-5 fault TF000081_SA1 run-local driver split
++  wire f2a_pre_tf000081_sa1;
++  assign \mem_q[0] [29] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_obi_interface_TRANS_STABLE0(clk, rst_n, trans_valid_i,

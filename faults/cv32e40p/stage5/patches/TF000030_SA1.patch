@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000030_SA1/fault_netlist.v
+@@ -20512,7 +20512,7 @@
+   DFFR_X1 \ctrl_fsm_cs_reg[2] (.RN (rst_n), .CK (clk), .D (n_139), .Q
+        (ctrl_fsm_cs[2]));
+   DFFR_X1 \ctrl_fsm_cs_reg[3] (.RN (rst_n), .CK (clk), .D (n_140), .Q
+-       (ctrl_fsm_cs[3]), .QN (n_143));
++       (f2a_pre_tf000030_sa1), .QN (n_143));
+   DFFR_X1 debug_force_wakeup_q_reg(.RN (rst_n), .CK (clk), .D (n_113),
+        .Q (debug_force_wakeup_q));
+   DFFS_X1 \debug_fsm_cs_reg[0] (.SN (rst_n), .CK (clk), .D (n_138), .Q
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000030_SA1 run-local driver split
++  wire f2a_pre_tf000030_sa1;
++  assign ctrl_fsm_cs[3] = 1'b1;
+ endmodule
+ 
+ module

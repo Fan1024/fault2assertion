@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000210_SA0/fault_netlist.v
+@@ -20364,7 +20364,7 @@
+   OAI211_X1 g9925(.A (n_196), .B (debug_mode_o), .C1 (ecall_insn_i),
+        .C2 (illegal_insn_q), .ZN (n_222));
+   NAND2_X1 g9926(.A1 (n_210), .A2 (instr_valid_i), .ZN (n_229));
+-  NOR2_X1 g9927(.A1 (n_213), .A2 (n_180), .ZN (jr_stall_o));
++  NOR2_X1 g9927(.A1 (n_213), .A2 (n_180), .ZN (f2a_pre_tf000210_sa0));
+   OAI211_X1 g9928(.A (n_298), .B (ctrl_fsm_cs[3]), .C1 (n_159), .C2
+        (ctrl_fsm_cs[0]), .ZN (n_227));
+   OR2_X1 g9929(.A1 (n_305), .A2 (ctrl_fsm_cs[0]), .ZN (n_270));
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000210_SA0 run-local driver split
++  wire f2a_pre_tf000210_sa0;
++  assign jr_stall_o = 1'b0;
+ endmodule
+ 
+ module

@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000182_SA1/fault_netlist.v
+@@ -20715,7 +20715,7 @@
+   INV_X1 g10658(.A (illegal_insn_i), .ZN (n_9));
+   INV_X1 g10660(.A (mret_dec_i), .ZN (n_7));
+   INV_X1 g10661(.A (n_282), .ZN (n_6));
+-  INV_X1 g10662(.A (n_145), .ZN (ctrl_fsm_cs[0]));
++  INV_X1 g10662(.A (n_145), .ZN (f2a_pre_tf000182_sa1));
+   INV_X1 g10663(.A (n_298), .ZN (n_5));
+   INV_X1 g10665(.A (n_294), .ZN (n_4));
+   INV_X1 g10666(.A (wfi_i), .ZN (n_3));
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000182_SA1 run-local driver split
++  wire f2a_pre_tf000182_sa1;
++  assign ctrl_fsm_cs[0] = 1'b1;
+ endmodule
+ 
+ module

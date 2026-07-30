@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000195_SA0/fault_netlist.v
+@@ -20047,7 +20047,7 @@
+        (mult_result[29]), .B2 (n_12), .ZN (n_31));
+   AOI22_X1 g2489(.A1 (alu_result[30]), .A2 (n_20), .B1
+        (mult_result[30]), .B2 (n_12), .ZN (n_30));
+-  NAND2_X1 g2490(.A1 (n_22), .A2 (n_7), .ZN (ex_ready_o));
++  NAND2_X1 g2490(.A1 (n_22), .A2 (n_7), .ZN (f2a_pre_tf000195_sa0));
+   AOI22_X1 g2491(.A1 (alu_result[27]), .A2 (n_20), .B1
+        (mult_result[27]), .B2 (n_12), .ZN (n_29));
+   AOI22_X1 g2492(.A1 (alu_result[24]), .A2 (n_20), .B1
+@@ -20104,6 +20104,10 @@
+   AOI222_X1 g2(.A1 (alu_result[31]), .A2 (n_20), .B1 (mult_result[31]),
+        .B2 (n_12), .C1 (csr_rdata_i[31]), .C2 (csr_access_i), .ZN
+        (n_383));
++
++  // Fault2Assertion Stage-5 fault TF000195_SA0 run-local driver split
++  wire f2a_pre_tf000195_sa0;
++  assign ex_ready_o = 1'b0;
+ endmodule
+ 
+ module cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0(clk,

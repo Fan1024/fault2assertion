@@ -1,0 +1,167 @@
+{
+  "schema_version": "1.0",
+  "program_version": "1.0.4",
+  "generated_at_utc": "2026-07-30T14:36:27.706192+00:00",
+  "stage": "stage_05_fault_materialization",
+  "fault_id": "TF000262_SA0",
+  "selection_id": "TS000262",
+  "selection_rank": 262,
+  "site_id": "RS014101",
+  "site_key": "cv32e40p_obi_interface_TRANS_STABLE0|obi_req_o",
+  "design": "cv32e40p",
+  "workload": "crc32",
+  "fault_class": "control_path",
+  "injection_kind": "net_stuck_at",
+  "polarity": "SA0",
+  "stuck_at": 0,
+  "source_stage4": {
+    "candidates_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_candidates.json",
+    "candidates_sha256": "e15abab45ff12b46a766fe3e5004fac7ef632a7a31581b3d8a341be682fb1578",
+    "candidate_digest_sha256": "5c5ec529eb3cb9fffb69246e0e7beb433c871d20d2f0981bcd905b1e65739da2",
+    "selection_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_selection.json",
+    "selection_sha256": "9a85dca7226b16cc5eaf37a72b37ca45cb247b0883127e2721a833f871269c28",
+    "selection_digest_sha256": "8f20e4f98ce4f549cccf90af317d337b4374e8d6d319d66edb74da7c329d58a9"
+  },
+  "mapped_netlist": {
+    "path": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",
+    "sha256": "39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7",
+    "storage_policy": "immutable golden source; a faulty copy exists only in a run-local temporary directory"
+  },
+  "site": {
+    "module": "cv32e40p_obi_interface_TRANS_STABLE0",
+    "source_net": "obi_req_o",
+    "source_key": "obi_req_o",
+    "source_kind": "combinational_output",
+    "state_site": false,
+    "logic_fanout": 1,
+    "fanout_bucket": "1",
+    "classification": {
+      "primary_class": "control_path",
+      "injection_kind": "net_stuck_at",
+      "semantic_tags": [
+        "control_module",
+        "control_name",
+        "top_output_reachable"
+      ],
+      "control_semantic_score_raw": 5.5,
+      "data_semantic_score_raw": 0.0,
+      "semantic_confidence": 0.6875,
+      "evidence": {
+        "control_name_match_count": 1,
+        "data_name_match_count": 0,
+        "control_module_match_count": 1,
+        "data_module_match_count": 0,
+        "generated_name_match_count": 0,
+        "direct_mux_select_consumer": false,
+        "distance_to_mux_select": null,
+        "arithmetic_signal": false,
+        "name_and_module_text": "obi_req_o cv32e40p_obi_interface_TRANS_STABLE0"
+      }
+    },
+    "scores": {
+      "assertion_relevance_score": 0.75,
+      "failure_impact_score": 0.527489,
+      "selection_score": 0.64987
+    },
+    "activity": {
+      "instance_count": 1,
+      "seen_0": true,
+      "seen_1": true,
+      "unknown_seen": false,
+      "value_change_count": 421641,
+      "binary_toggle_count": 421641,
+      "first_observation_cycle": 1,
+      "first_change_cycle": 19,
+      "last_change_cycle": 940805,
+      "first_observation_time": 50,
+      "first_change_time": 230,
+      "last_change_time": 9408090,
+      "last_value": "1"
+    },
+    "detailed_structure": {
+      "max_depth_limit": 16,
+      "max_node_limit": 4096,
+      "truncated": false,
+      "maximum_depth_reached": 4,
+      "tfo_node_count_bounded": 5,
+      "tfo_edge_count_bounded": 5,
+      "reachable_sequential_checkpoint_count_bounded": 1,
+      "reachable_top_output_count_bounded": 1,
+      "reconvergent_node_count_bounded": 2,
+      "branching_node_count_bounded": 1,
+      "reachable_sink_role_counts_bounded": {
+        "combinational_input": 1,
+        "sequential_data": 1
+      },
+      "distance_to_mux_select": null,
+      "distance_to_sequential_data": 1,
+      "distance_to_arithmetic_input": null,
+      "distance_to_arithmetic_carry_input": null
+    },
+    "driver": {
+      "kind": "standard_cell_output",
+      "module": "cv32e40p_obi_interface_TRANS_STABLE0",
+      "instance": "g4",
+      "cell_type": "NAND2_X1",
+      "pin": "ZN",
+      "role": "driver",
+      "expression": "obi_req_o",
+      "metadata": {
+        "cell_family": "combinational_logic"
+      }
+    }
+  },
+  "receiver_signals": [
+    {
+      "receiver_index": 0,
+      "expression": "obi_req_o",
+      "source_key": "obi_req_o",
+      "role": "hierarchy_or_output_boundary",
+      "metadata": {
+        "sink_kind": "module_output",
+        "sink_instance": null,
+        "sink_pin": "obi_req_o",
+        "sink_role": "module_output"
+      },
+      "receiver_id": "R000"
+    },
+    {
+      "receiver_index": 1,
+      "expression": "n_1",
+      "source_key": "n_1",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g1263",
+        "receiver_cell_type": "AND2_X1",
+        "receiver_input_pin": "A2",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R001"
+    }
+  ],
+  "modification": {
+    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "temporary_pre_fault_net": "f2a_pre_tf000262_sa0",
+    "stuck_at_assignment": "assign obi_req_o = 1'b0;",
+    "driver_connection": {
+      "kind": "standard_cell_output",
+      "module": "cv32e40p_obi_interface_TRANS_STABLE0",
+      "instance": "g4",
+      "cell_type": "NAND2_X1",
+      "pin": "ZN",
+      "original_connection": "obi_req_o",
+      "replacement_connection": "f2a_pre_tf000262_sa0",
+      "connection_start": 1812003,
+      "connection_end": 1812012
+    },
+    "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
+  },
+  "artifacts": {
+    "fault_spec": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/fault_specs/TF000262_SA0.json",
+    "patch": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/patches/TF000262_SA0.patch",
+    "faulty_netlist": "temporary_only",
+    "vcd": "not_generated_by_default"
+  },
+  "fault_spec_digest_sha256": "15c3936018313569c1bdfe7d10f555787efba51598ec86685c4e3db8c2a5ec58"
+}

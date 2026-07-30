@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000256_SA0/fault_netlist.v
+@@ -37412,7 +37412,7 @@
+        .is_compressed_i (is_compressed_id), .illegal_c_insn_i
+        (illegal_c_insn_id), .branch_in_ex_o (branch_in_ex),
+        .branch_decision_i (branch_decision), .jump_target_o
+-       (jump_target_id), .clear_instr_valid_o (clear_instr_valid),
++       ({jump_target_id[0], jump_target_id[1], jump_target_id[2], jump_target_id[3], jump_target_id[4], jump_target_id[5], jump_target_id[6], jump_target_id[7], jump_target_id[8], jump_target_id[9], jump_target_id[10], jump_target_id[11], jump_target_id[12], jump_target_id[13], jump_target_id[14], jump_target_id[15], jump_target_id[16], jump_target_id[17], jump_target_id[18], jump_target_id[19], f2a_pre_tf000256_sa0, jump_target_id[21], jump_target_id[22], jump_target_id[23], jump_target_id[24], jump_target_id[25], jump_target_id[26], jump_target_id[27], jump_target_id[28], jump_target_id[29], jump_target_id[30], jump_target_id[31]}), .clear_instr_valid_o (clear_instr_valid),
+        .pc_set_o (pc_set), .pc_mux_o ({UNCONNECTED1707,
+        pc_mux_id[2:0]}), .exc_pc_mux_o ({UNCONNECTED1708,
+        exc_pc_mux_id[1:0]}), .pc_id_i ({pc_id[31:1],
+@@ -37557,6 +37557,10 @@
+        (csr_addr[8]));
+   AND2_X1 g162(.A1 (alu_operand_b_ex[6]), .A2 (csr_access_ex), .ZN
+        (csr_addr[6]));
++
++  // Fault2Assertion Stage-5 fault TF000256_SA0 run-local driver split
++  wire f2a_pre_tf000256_sa0;
++  assign jump_target_id[20] = 1'b0;
+ endmodule
+ 
+ module cv32e40p_top(clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i,

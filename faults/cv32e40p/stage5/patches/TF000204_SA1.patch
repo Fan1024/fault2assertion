@@ -1,0 +1,21 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000204_SA1/fault_netlist.v
+@@ -20719,13 +20719,17 @@
+   INV_X1 g10663(.A (n_298), .ZN (n_5));
+   INV_X1 g10665(.A (n_294), .ZN (n_4));
+   INV_X1 g10666(.A (wfi_i), .ZN (n_3));
+-  INV_X1 fopt12(.A (n_0), .ZN (debug_mode_o));
++  INV_X1 fopt12(.A (n_0), .ZN (f2a_pre_tf000204_sa1));
+   OR4_X1 g10674(.A1 (debug_req_i), .A2 (debug_req_q), .A3
+        (trigger_match_i), .A4 (irq_req_ctrl_i), .ZN (n_411));
+   AOI211_X1 g10675(.A (illegal_insn_i), .B (n_164), .C1 (n_411), .C2
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000204_SA1 run-local driver split
++  wire f2a_pre_tf000204_sa1;
++  assign debug_mode_o = 1'b1;
+ endmodule
+ 
+ module

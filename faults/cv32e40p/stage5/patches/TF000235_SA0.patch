@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000235_SA0/fault_netlist.v
+@@ -37427,7 +37427,7 @@
+        ({mult_operator_ex[2:1], UNCONNECTED1729}), .mult_operand_a_ex_o
+        (mult_operand_a_ex), .mult_operand_b_ex_o (mult_operand_b_ex),
+        .mult_operand_c_ex_o (mult_operand_c_ex), .mult_en_ex_o
+-       (mult_en_ex), .mult_signed_mode_ex_o (mult_signed_mode_ex),
++       (f2a_pre_tf000235_sa0), .mult_signed_mode_ex_o (mult_signed_mode_ex),
+        .csr_access_ex_o (csr_access_ex), .csr_op_ex_o ({csr_op[1],
+        csr_op_ex[0]}), .csr_cause_o ({irq_ack_o, irq_id_o[4],
+        csr_cause[3], irq_id_o[2], csr_cause[1:0]}), .csr_save_if_o
+@@ -37557,6 +37557,10 @@
+        (csr_addr[8]));
+   AND2_X1 g162(.A1 (alu_operand_b_ex[6]), .A2 (csr_access_ex), .ZN
+        (csr_addr[6]));
++
++  // Fault2Assertion Stage-5 fault TF000235_SA0 run-local driver split
++  wire f2a_pre_tf000235_sa0;
++  assign mult_en_ex = 1'b0;
+ endmodule
+ 
+ module cv32e40p_top(clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i,

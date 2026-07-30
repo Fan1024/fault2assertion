@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000360_SA0/fault_netlist.v
+@@ -29773,7 +29773,7 @@
+   cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0
+        register_file_i(.clk (clk), .rst_n (rst_n), .raddr_a_i
+        ({UNCONNECTED_HIER_Z441, instr_rdata_i[19:15]}), .rdata_a_o
+-       (regfile_data_ra_id), .raddr_b_i ({UNCONNECTED_HIER_Z442,
++       ({regfile_data_ra_id[0], f2a_pre_tf000360_sa0, regfile_data_ra_id[2], regfile_data_ra_id[3], regfile_data_ra_id[4], regfile_data_ra_id[5], regfile_data_ra_id[6], regfile_data_ra_id[7], regfile_data_ra_id[8], regfile_data_ra_id[9], regfile_data_ra_id[10], regfile_data_ra_id[11], regfile_data_ra_id[12], regfile_data_ra_id[13], regfile_data_ra_id[14], regfile_data_ra_id[15], regfile_data_ra_id[16], regfile_data_ra_id[17], regfile_data_ra_id[18], regfile_data_ra_id[19], regfile_data_ra_id[20], regfile_data_ra_id[21], regfile_data_ra_id[22], regfile_data_ra_id[23], regfile_data_ra_id[24], regfile_data_ra_id[25], regfile_data_ra_id[26], regfile_data_ra_id[27], regfile_data_ra_id[28], regfile_data_ra_id[29], regfile_data_ra_id[30], regfile_data_ra_id[31]}), .raddr_b_i ({UNCONNECTED_HIER_Z442,
+        instr_rdata_i[24:20]}), .rdata_b_o (regfile_data_rb_id),
+        .waddr_a_i ({UNCONNECTED_HIER_Z449, regfile_waddr_wb_i[4:0]}),
+        .wdata_a_i (regfile_wdata_wb_i), .we_a_i
+@@ -32489,6 +32489,10 @@
+        (n_1168));
+   XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
+        (n_1169));
++
++  // Fault2Assertion Stage-5 fault TF000360_SA0 run-local driver split
++  wire f2a_pre_tf000360_sa0;
++  assign regfile_data_ra_id[1] = 1'b0;
+ endmodule
+ 
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,

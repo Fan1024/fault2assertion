@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000017_SA0/fault_netlist.v
+@@ -34415,7 +34415,7 @@
+   INV_X1 g2561(.A (state_q), .ZN (n_96));
+   INV_X1 g2562(.A (cnt_q[1]), .ZN (n_95));
+   SDFFR_X1 \cnt_q_reg[0] (.RN (rst_n), .CK (clk), .D (cnt_q[0]), .SE
+-       (n_254), .SI (n_0), .Q (cnt_q[0]), .QN (n_0));
++       (n_254), .SI (n_0), .Q (f2a_pre_tf000017_sa0), .QN (n_0));
+   DFFR_X1 \cnt_q_reg[1] (.RN (rst_n), .CK (clk), .D (n_256), .Q
+        (cnt_q[1]));
+   DFFR_X1 \flush_cnt_q_reg[0] (.RN (rst_n), .CK (clk), .D (n_268), .Q
+@@ -34790,6 +34790,10 @@
+   NAND2_X1 g132(.A1 (req_i), .A2 (n_95), .ZN (n_276));
+   OAI21_X1 g126(.A (n_270), .B1 (n_263), .B2 (n_276), .ZN
+        (trans_valid_o));
++
++  // Fault2Assertion Stage-5 fault TF000017_SA0 run-local driver split
++  wire f2a_pre_tf000017_sa0;
++  assign cnt_q[0] = 1'b0;
+ endmodule
+ 
+ module cv32e40p_prefetch_buffer_PULP_OBI0_COREV_PULP0(clk, rst_n,

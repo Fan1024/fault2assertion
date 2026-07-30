@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000237_SA0/fault_netlist.v
+@@ -29717,7 +29717,7 @@
+        .reg_d_wb_is_reg_b_i (reg_d_wb_is_reg_b_id),
+        .reg_d_alu_is_reg_a_i (reg_d_alu_is_reg_a_id),
+        .reg_d_alu_is_reg_b_i (reg_d_alu_is_reg_b_id), .halt_if_o
+-       (halt_if_o), .halt_id_o (halt_id), .jr_stall_o (jr_stall),
++       (halt_if_o), .halt_id_o (f2a_pre_tf000237_sa0), .jr_stall_o (jr_stall),
+        .load_stall_o (load_stall), .id_ready_i (id_ready_o),
+        .ex_valid_i (ex_valid_i), .wb_ready_i (wb_ready_i));
+   cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1
+@@ -32489,6 +32489,10 @@
+        (n_1168));
+   XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
+        (n_1169));
++
++  // Fault2Assertion Stage-5 fault TF000237_SA0 run-local driver split
++  wire f2a_pre_tf000237_sa0;
++  assign halt_id = 1'b0;
+ endmodule
+ 
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,

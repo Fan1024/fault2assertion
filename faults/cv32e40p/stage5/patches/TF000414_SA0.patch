@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000414_SA0/fault_netlist.v
+@@ -19925,7 +19925,7 @@
+   cv32e40p_alu alu_i(.clk (clk), .rst_n (rst_n), .enable_i (alu_en_i),
+        .operator_i ({UNCONNECTED_HIER_Z, alu_operator_i[5:0]}),
+        .operand_a_i (alu_operand_a_i), .operand_b_i (alu_operand_b_i),
+-       .operand_c_i (alu_operand_c_i), .result_o (alu_result),
++       .operand_c_i (alu_operand_c_i), .result_o ({alu_result[0], alu_result[1], alu_result[2], alu_result[3], alu_result[4], alu_result[5], alu_result[6], alu_result[7], alu_result[8], alu_result[9], alu_result[10], alu_result[11], alu_result[12], alu_result[13], alu_result[14], alu_result[15], alu_result[16], alu_result[17], alu_result[18], alu_result[19], alu_result[20], alu_result[21], alu_result[22], alu_result[23], alu_result[24], f2a_pre_tf000414_sa0, alu_result[26], alu_result[27], alu_result[28], alu_result[29], alu_result[30], alu_result[31]}),
+        .comparison_result_o (branch_decision_o), .ready_o (alu_ready),
+        .ex_ready_i (ex_ready_o));
+   cv32e40p_mult mult_i(.clk (clk), .rst_n (rst_n), .enable_i
+@@ -20104,6 +20104,10 @@
+   AOI222_X1 g2(.A1 (alu_result[31]), .A2 (n_20), .B1 (mult_result[31]),
+        .B2 (n_12), .C1 (csr_rdata_i[31]), .C2 (csr_access_i), .ZN
+        (n_383));
++
++  // Fault2Assertion Stage-5 fault TF000414_SA0 run-local driver split
++  wire f2a_pre_tf000414_sa0;
++  assign alu_result[25] = 1'b0;
+ endmodule
+ 
+ module cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0(clk,

@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000218_SA0/fault_netlist.v
+@@ -37417,7 +37417,7 @@
+        pc_mux_id[2:0]}), .exc_pc_mux_o ({UNCONNECTED1708,
+        exc_pc_mux_id[1:0]}), .pc_id_i ({pc_id[31:1],
+        UNCONNECTED_HIER_Z1265}), .halt_if_o (halt_if), .id_ready_o
+-       (id_ready), .ex_ready_i (ex_ready), .wb_ready_i (lsu_ready_wb),
++       (f2a_pre_tf000218_sa0), .ex_ready_i (ex_ready), .wb_ready_i (lsu_ready_wb),
+        .ex_valid_i (ex_valid), .alu_operand_a_ex_o (alu_operand_a_ex),
+        .alu_operand_b_ex_o (alu_operand_b_ex), .alu_operand_c_ex_o
+        (alu_operand_c_ex), .regfile_waddr_ex_o ({UNCONNECTED1724,
+@@ -37557,6 +37557,10 @@
+        (csr_addr[8]));
+   AND2_X1 g162(.A1 (alu_operand_b_ex[6]), .A2 (csr_access_ex), .ZN
+        (csr_addr[6]));
++
++  // Fault2Assertion Stage-5 fault TF000218_SA0 run-local driver split
++  wire f2a_pre_tf000218_sa0;
++  assign id_ready = 1'b0;
+ endmodule
+ 
+ module cv32e40p_top(clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i,

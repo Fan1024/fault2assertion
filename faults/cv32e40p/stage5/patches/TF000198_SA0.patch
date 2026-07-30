@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000198_SA0/fault_netlist.v
+@@ -37401,7 +37401,7 @@
+        ({UNCONNECTED1634, regfile_waddr_fw_wb_o[4:0]}),
+        .regfile_we_wb_o (regfile_we_wb), .regfile_alu_wdata_fw_o
+        (regfile_alu_wdata_fw), .branch_decision_o (branch_decision),
+-       .lsu_ready_ex_i (lsu_ready_ex), .ex_ready_o (ex_ready),
++       .lsu_ready_ex_i (lsu_ready_ex), .ex_ready_o (f2a_pre_tf000198_sa0),
+        .ex_valid_o (ex_valid), .wb_ready_i (lsu_ready_wb));
+   cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1
+        id_stage_i(.clk (clk), .clk_ungated_i (clk_i), .rst_n (rst_ni),
+@@ -37557,6 +37557,10 @@
+        (csr_addr[8]));
+   AND2_X1 g162(.A1 (alu_operand_b_ex[6]), .A2 (csr_access_ex), .ZN
+        (csr_addr[6]));
++
++  // Fault2Assertion Stage-5 fault TF000198_SA0 run-local driver split
++  wire f2a_pre_tf000198_sa0;
++  assign ex_ready = 1'b0;
+ endmodule
+ 
+ module cv32e40p_top(clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i,

@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000012_SA0/fault_netlist.v
+@@ -35495,7 +35495,7 @@
+   SDFFR_X1 \pc_id_o_reg[10] (.RN (rst_n), .CK (clk), .D (pc_id_o[10]),
+        .SE (n_2), .SI (pc_if_o[10]), .Q (pc_id_o[10]));
+   SDFFR_X1 \pc_id_o_reg[11] (.RN (rst_n), .CK (clk), .D (pc_id_o[11]),
+-       .SE (n_2), .SI (pc_if_o[11]), .Q (pc_id_o[11]));
++       .SE (n_2), .SI (pc_if_o[11]), .Q (f2a_pre_tf000012_sa0));
+   SDFFR_X1 \pc_id_o_reg[12] (.RN (rst_n), .CK (clk), .D (pc_id_o[12]),
+        .SE (n_2), .SI (pc_if_o[12]), .Q (pc_id_o[12]));
+   SDFFR_X1 \pc_id_o_reg[13] (.RN (rst_n), .CK (clk), .D (pc_id_o[13]),
+@@ -35711,6 +35711,10 @@
+        (n_184));
+   XOR2_X1 \add_167_42/g787 (.A (\add_167_42/n_2 ), .B (pc_id_o[12]), .Z
+        (n_176));
++
++  // Fault2Assertion Stage-5 fault TF000012_SA0 run-local driver split
++  wire f2a_pre_tf000012_sa0;
++  assign pc_id_o[11] = 1'b0;
+ endmodule
+ 
+ module cv32e40p_load_store_unit_PULP_OBI0(clk, rst_n, data_req_o,

@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000563_SA1/fault_netlist.v
+@@ -37475,7 +37475,7 @@
+        .mhpmevent_branch_taken_o (mhpmevent_branch_taken),
+        .mhpmevent_compressed_o (mhpmevent_compressed),
+        .mhpmevent_jr_stall_o (mhpmevent_jr_stall), .mhpmevent_imiss_o
+-       (mhpmevent_imiss), .mhpmevent_ld_stall_o (mhpmevent_ld_stall),
++       (f2a_pre_tf000563_sa1), .mhpmevent_ld_stall_o (mhpmevent_ld_stall),
+        .perf_imiss_i (perf_imiss));
+   cv32e40p_if_stage_COREV_PULP0_PULP_OBI0_PULP_SECURE0_FPU0_ZFINX0
+        if_stage_i(.clk (clk), .rst_n (rst_ni), .m_trap_base_addr_i
+@@ -37557,6 +37557,10 @@
+        (csr_addr[8]));
+   AND2_X1 g162(.A1 (alu_operand_b_ex[6]), .A2 (csr_access_ex), .ZN
+        (csr_addr[6]));
++
++  // Fault2Assertion Stage-5 fault TF000563_SA1 run-local driver split
++  wire f2a_pre_tf000563_sa1;
++  assign mhpmevent_imiss = 1'b1;
+ endmodule
+ 
+ module cv32e40p_top(clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i,

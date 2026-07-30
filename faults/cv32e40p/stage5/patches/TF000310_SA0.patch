@@ -1,0 +1,16 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000310_SA0/fault_netlist.v
+@@ -37623,8 +37623,12 @@
+        UNCONNECTED_HIER_Z1532, irq_i[3], UNCONNECTED_HIER_Z1531,
+        UNCONNECTED_HIER_Z1530, UNCONNECTED_HIER_Z1529}), .irq_ack_o
+        (irq_ack_o), .irq_id_o (irq_id_o), .debug_req_i (debug_req_i),
+-       .debug_havereset_o (debug_havereset_o), .debug_running_o
++       .debug_havereset_o (f2a_pre_tf000310_sa0), .debug_running_o
+        (debug_running_o), .debug_halted_o (debug_halted_o),
+        .fetch_enable_i (fetch_enable_i), .core_sleep_o (core_sleep_o));
++
++  // Fault2Assertion Stage-5 fault TF000310_SA0 run-local driver split
++  wire f2a_pre_tf000310_sa0;
++  assign debug_havereset_o = 1'b0;
+ endmodule
+ 

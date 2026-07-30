@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000343_SA1/fault_netlist.v
+@@ -29747,7 +29747,7 @@
+        .debug_wfi_no_sleep_i (debug_wfi_no_sleep),
+        .ctrl_transfer_insn_in_dec_o ({n_986, n_987}),
+        .ctrl_transfer_insn_in_id_o (ctrl_transfer_insn_in_id),
+-       .ctrl_transfer_target_mux_sel_o (ctrl_transfer_target_mux_sel));
++       .ctrl_transfer_target_mux_sel_o ({f2a_pre_tf000343_sa1, ctrl_transfer_target_mux_sel[1]}));
+   cv32e40p_int_controller_PULP_SECURE0 int_controller_i(.clk (clk),
+        .rst_n (rst_n), .irq_i ({irq_i[31:16], UNCONNECTED_HIER_Z422,
+        UNCONNECTED_HIER_Z421, UNCONNECTED_HIER_Z420,
+@@ -32489,6 +32489,10 @@
+        (n_1168));
+   XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
+        (n_1169));
++
++  // Fault2Assertion Stage-5 fault TF000343_SA1 run-local driver split
++  wire f2a_pre_tf000343_sa1;
++  assign ctrl_transfer_target_mux_sel[0] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,

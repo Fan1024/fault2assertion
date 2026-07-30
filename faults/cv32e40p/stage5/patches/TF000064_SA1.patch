@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000064_SA1/fault_netlist.v
+@@ -22618,7 +22618,7 @@
+   DFFR_X1 \mem_reg[12][0] (.RN (rst_n), .CK (clk), .D (n_684), .Q
+        (\mem[12] [0]), .QN (n_2025));
+   DFFR_X1 \mem_reg[12][1] (.RN (rst_n), .CK (clk), .D (n_683), .Q
+-       (\mem[12] [1]), .QN (n_2026));
++       (f2a_pre_tf000064_sa1), .QN (n_2026));
+   DFFR_X1 \mem_reg[12][2] (.RN (rst_n), .CK (clk), .D (n_682), .Q
+        (\mem[12] [2]), .QN (n_2027));
+   DFFR_X1 \mem_reg[12][3] (.RN (rst_n), .CK (clk), .D (n_681), .Q
+@@ -29162,6 +29162,10 @@
+   OR2_X1 g172(.A1 (n_85), .A2 (n_3750), .ZN (n_3751));
+   INV_X1 g190(.A (n_3737), .ZN (n_3750));
+   NAND2_X1 g175(.A1 (n_3732), .A2 (n_3739), .ZN (n_3752));
++
++  // Fault2Assertion Stage-5 fault TF000064_SA1 run-local driver split
++  wire f2a_pre_tf000064_sa1;
++  assign \mem[12] [1] = 1'b1;
+ endmodule
+ 
+ module

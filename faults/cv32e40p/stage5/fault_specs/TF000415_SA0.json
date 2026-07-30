@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.0",
+  "program_version": "1.0.4",
+  "generated_at_utc": "2026-07-30T14:38:08.175826+00:00",
+  "stage": "stage_05_fault_materialization",
+  "fault_id": "TF000415_SA0",
+  "selection_id": "TS000415",
+  "selection_rank": 415,
+  "site_id": "RS007740",
+  "site_key": "cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5|alu_result[26]",
+  "design": "cv32e40p",
+  "workload": "crc32",
+  "fault_class": "architectural_data",
+  "injection_kind": "net_stuck_at",
+  "polarity": "SA0",
+  "stuck_at": 0,
+  "source_stage4": {
+    "candidates_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_candidates.json",
+    "candidates_sha256": "e15abab45ff12b46a766fe3e5004fac7ef632a7a31581b3d8a341be682fb1578",
+    "candidate_digest_sha256": "5c5ec529eb3cb9fffb69246e0e7beb433c871d20d2f0981bcd905b1e65739da2",
+    "selection_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_selection.json",
+    "selection_sha256": "9a85dca7226b16cc5eaf37a72b37ca45cb247b0883127e2721a833f871269c28",
+    "selection_digest_sha256": "8f20e4f98ce4f549cccf90af317d337b4374e8d6d319d66edb74da7c329d58a9"
+  },
+  "mapped_netlist": {
+    "path": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",
+    "sha256": "39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7",
+    "storage_policy": "immutable golden source; a faulty copy exists only in a run-local temporary directory"
+  },
+  "site": {
+    "module": "cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5",
+    "source_net": "alu_result[26]",
+    "source_key": "alu_result[26]",
+    "source_kind": "hierarchical_module_output",
+    "state_site": false,
+    "logic_fanout": 1,
+    "fanout_bucket": "1",
+    "classification": {
+      "primary_class": "architectural_data",
+      "injection_kind": "net_stuck_at",
+      "semantic_tags": [
+        "architectural_data_name",
+        "data_module"
+      ],
+      "control_semantic_score_raw": 0.0,
+      "data_semantic_score_raw": 5.5,
+      "semantic_confidence": 0.6875,
+      "evidence": {
+        "control_name_match_count": 0,
+        "data_name_match_count": 1,
+        "control_module_match_count": 0,
+        "data_module_match_count": 1,
+        "generated_name_match_count": 0,
+        "direct_mux_select_consumer": false,
+        "distance_to_mux_select": null,
+        "arithmetic_signal": false,
+        "name_and_module_text": "alu_result[26] cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5"
+      }
+    },
+    "scores": {
+      "assertion_relevance_score": 0.614286,
+      "failure_impact_score": 0.597451,
+      "selection_score": 0.60671
+    },
+    "activity": {
+      "instance_count": 1,
+      "seen_0": true,
+      "seen_1": true,
+      "unknown_seen": false,
+      "value_change_count": 224870,
+      "binary_toggle_count": 224870,
+      "first_observation_cycle": 1,
+      "first_change_cycle": 46,
+      "last_change_cycle": 940799,
+      "first_observation_time": 50,
+      "first_change_time": 500,
+      "last_change_time": 9408030,
+      "last_value": "0"
+    },
+    "detailed_structure": {
+      "max_depth_limit": 16,
+      "max_node_limit": 4096,
+      "truncated": false,
+      "maximum_depth_reached": 8,
+      "tfo_node_count_bounded": 82,
+      "tfo_edge_count_bounded": 88,
+      "reachable_sequential_checkpoint_count_bounded": 35,
+      "reachable_top_output_count_bounded": 0,
+      "reconvergent_node_count_bounded": 78,
+      "branching_node_count_bounded": 5,
+      "reachable_sink_role_counts_bounded": {
+        "combinational_input": 47,
+        "scan_input": 2,
+        "sequential_data": 35
+      },
+      "distance_to_mux_select": null,
+      "distance_to_sequential_data": 6,
+      "distance_to_arithmetic_input": null,
+      "distance_to_arithmetic_carry_input": null
+    },
+    "driver": {
+      "kind": "hierarchical_instance_output",
+      "module": "cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5",
+      "instance": "alu_i",
+      "cell_type": "cv32e40p_alu",
+      "pin": "result_o",
+      "role": "driver",
+      "expression": "alu_result[26]",
+      "metadata": {
+        "child_module": "cv32e40p_alu",
+        "child_port_direction": "output",
+        "child_port_width": 32,
+        "vector_connection": true,
+        "connection_bit_position_from_msb": 26,
+        "original_connection_expression": "alu_result"
+      }
+    }
+  },
+  "receiver_signals": [
+    {
+      "receiver_index": 0,
+      "expression": "n_24",
+      "source_key": "n_24",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2497",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "A1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R000"
+    }
+  ],
+  "modification": {
+    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "temporary_pre_fault_net": "f2a_pre_tf000415_sa0",
+    "stuck_at_assignment": "assign alu_result[26] = 1'b0;",
+    "driver_connection": {
+      "kind": "hierarchical_instance_output",
+      "module": "cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5",
+      "instance": "alu_i",
+      "cell_type": "cv32e40p_alu",
+      "pin": "result_o",
+      "original_connection": "alu_result",
+      "replacement_connection": "{alu_result[0], alu_result[1], alu_result[2], alu_result[3], alu_result[4], alu_result[5], alu_result[6], alu_result[7], alu_result[8], alu_result[9], alu_result[10], alu_result[11], alu_result[12], alu_result[13], alu_result[14], alu_result[15], alu_result[16], alu_result[17], alu_result[18], alu_result[19], alu_result[20], alu_result[21], alu_result[22], alu_result[23], alu_result[24], alu_result[25], f2a_pre_tf000415_sa0, alu_result[27], alu_result[28], alu_result[29], alu_result[30], alu_result[31]}",
+      "connection_start": 1031989,
+      "connection_end": 1031999
+    },
+    "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
+  },
+  "artifacts": {
+    "fault_spec": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/fault_specs/TF000415_SA0.json",
+    "patch": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/patches/TF000415_SA0.patch",
+    "faulty_netlist": "temporary_only",
+    "vcd": "not_generated_by_default"
+  },
+  "fault_spec_digest_sha256": "1dcf3f3af48e4bce24f7863e8d995ba745529af23c305d946e2e1c829bd9a0af"
+}

@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000375_SA0/fault_netlist.v
+@@ -8172,7 +8172,7 @@
+        (n_586), .C1 (n_608), .C2 (operand_a_i[8]), .ZN (n_612));
+   NAND2_X4 g15444(.A1 (n_604), .A2 (n_603), .ZN (n_783));
+   AOI21_X1 g15446(.A (n_605), .B1 (n_598), .B2 (n_575), .ZN
+-       (div_shift[1]));
++       (f2a_pre_tf000375_sa0));
+   INV_X1 g15447(.A (n_607), .ZN (n_610));
+   OAI21_X1 g15448(.A (n_762), .B1 (n_596), .B2 (operator_i[1]), .ZN
+        (n_607));
+@@ -10275,6 +10275,10 @@
+   AOI21_X1 g220(.A (n_1079), .B1 (n_1076), .B2 (n_1078), .ZN (n_1088));
+   XNOR2_X1 g224(.A (n_605), .B (n_1074), .ZN (n_1089));
+   XNOR2_X1 g217(.A (n_1079), .B (n_1082), .ZN (n_1090));
++
++  // Fault2Assertion Stage-5 fault TF000375_SA0 run-local driver split
++  wire f2a_pre_tf000375_sa0;
++  assign div_shift[1] = 1'b0;
+ endmodule
+ 
+ module cv32e40p_mult(clk, rst_n, enable_i, operator_i, short_subword_i,

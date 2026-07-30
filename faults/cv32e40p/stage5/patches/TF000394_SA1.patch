@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000394_SA1/fault_netlist.v
+@@ -20896,7 +20896,7 @@
+        (n_219));
+   OR4_X1 g8485(.A1 (n_210), .A2 (n_209), .A3 (n_211), .A4 (n_149), .ZN
+        (n_218));
+-  AND2_X1 g8486(.A1 (n_214), .A2 (csr_access_o), .ZN (csr_status_o));
++  AND2_X1 g8486(.A1 (n_214), .A2 (csr_access_o), .ZN (f2a_pre_tf000394_sa1));
+   AOI221_X1 g8487(.A (n_188), .B1 (n_154), .B2 (n_137), .C1 (n_210),
+        .C2 (n_44), .ZN (n_217));
+   AOI211_X1 g8488(.A (n_187), .B (n_197), .C1 (n_203), .C2 (n_205), .ZN
+@@ -21252,6 +21252,10 @@
+        (instr_rdata_i[23]), .ZN (n_354));
+   AOI211_X1 g8768(.A (n_52), .B (n_167), .C1 (n_91), .C2 (n_56), .ZN
+        (n_355));
++
++  // Fault2Assertion Stage-5 fault TF000394_SA1 run-local driver split
++  wire f2a_pre_tf000394_sa1;
++  assign csr_status_o = 1'b1;
+ endmodule
+ 
+ module cv32e40p_int_controller_PULP_SECURE0(clk, rst_n, irq_i,

@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000070_SA1/fault_netlist.v
+@@ -36429,7 +36429,7 @@
+   INV_X1 fopt12837(.A (n_0), .ZN (n_82));
+   INV_X1 fopt12842(.A (data_rvalid_i), .ZN (n_0));
+   DFFR_X1 \cnt_q_reg[0] (.RN (rst_n), .CK (clk), .D (n_540), .Q
+-       (cnt_q[0]));
++       (f2a_pre_tf000070_sa1));
+   DFFR_X1 \cnt_q_reg[1] (.RN (rst_n), .CK (clk), .D (n_545), .Q
+        (cnt_q[1]));
+   SDFFR_X1 \data_sign_ext_q_reg[0] (.RN (rst_n), .CK (clk), .D
+@@ -37124,6 +37124,10 @@
+   NAND2_X1 g15(.A1 (n_582), .A2 (n_583), .ZN (busy_o));
+   INV_X1 g17(.A (data_req_ex_i), .ZN (n_583));
+   OR2_X1 g14(.A1 (data_rvalid_i), .A2 (n_582), .ZN (lsu_ready_wb_o));
++
++  // Fault2Assertion Stage-5 fault TF000070_SA1 run-local driver split
++  wire f2a_pre_tf000070_sa1;
++  assign cnt_q[0] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_clock_gate(clk_i, en_i, scan_cg_en_i, clk_o);

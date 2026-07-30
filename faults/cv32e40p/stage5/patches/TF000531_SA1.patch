@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000531_SA1/fault_netlist.v
+@@ -35372,7 +35372,7 @@
+        (n_29));
+   NOR2_X1 g6192(.A1 (fetch_valid), .A2 (pc_set_i), .ZN (perf_imiss_o));
+   NOR2_X1 g6193(.A1 (pc_mux_i[2]), .A2 (pc_mux_i[0]), .ZN (n_26));
+-  NOR2_X1 g6194(.A1 (n_18), .A2 (n_19), .ZN (n_25));
++  NOR2_X1 g6194(.A1 (n_18), .A2 (n_19), .ZN (f2a_pre_tf000531_sa1));
+   INV_X1 g6195(.A (halt_if_i), .ZN (n_24));
+   INV_X1 g6196(.A (exc_pc_mux_i[0]), .ZN (n_23));
+   INV_X1 g6197(.A (exc_pc_mux_i[1]), .ZN (n_22));
+@@ -35711,6 +35711,10 @@
+        (n_184));
+   XOR2_X1 \add_167_42/g787 (.A (\add_167_42/n_2 ), .B (pc_id_o[12]), .Z
+        (n_176));
++
++  // Fault2Assertion Stage-5 fault TF000531_SA1 run-local driver split
++  wire f2a_pre_tf000531_sa1;
++  assign n_25 = 1'b1;
+ endmodule
+ 
+ module cv32e40p_load_store_unit_PULP_OBI0(clk, rst_n, data_req_o,

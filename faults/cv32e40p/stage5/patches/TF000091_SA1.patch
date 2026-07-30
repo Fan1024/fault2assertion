@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000091_SA1/fault_netlist.v
+@@ -1826,7 +1826,7 @@
+        .SI (n_217), .Q (\gen_trigger_regs.tmatch_value_q [20]));
+   SDFFR_X1 \gen_trigger_regs.tmatch_value_q_reg[21] (.RN (rst_n), .CK
+        (clk), .D (\gen_trigger_regs.tmatch_value_q [21]), .SE (n_103),
+-       .SI (n_215), .Q (\gen_trigger_regs.tmatch_value_q [21]));
++       .SI (n_215), .Q (f2a_pre_tf000091_sa1));
+   SDFFR_X1 \gen_trigger_regs.tmatch_value_q_reg[22] (.RN (rst_n), .CK
+        (clk), .D (\gen_trigger_regs.tmatch_value_q [22]), .SE (n_103),
+        .SI (n_213), .Q (\gen_trigger_regs.tmatch_value_q [22]));
+@@ -5121,6 +5121,10 @@
+        (\gen_trigger_regs.tmatch_value_q [31]), .ZN (n_1870));
+   XOR2_X1 g485(.A (pc_id_i[28]), .B
+        (\gen_trigger_regs.tmatch_value_q [28]), .Z (n_1872));
++
++  // Fault2Assertion Stage-5 fault TF000091_SA1 run-local driver split
++  wire f2a_pre_tf000091_sa1;
++  assign \gen_trigger_regs.tmatch_value_q [21] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_alu_div(Clk_CI, Rst_RBI, OpA_DI, OpB_DI, OpBShift_DI,

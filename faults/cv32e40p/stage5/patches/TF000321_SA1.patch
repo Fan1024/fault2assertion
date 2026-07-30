@@ -1,0 +1,17 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000321_SA1/fault_netlist.v
+@@ -37622,9 +37622,13 @@
+        UNCONNECTED_HIER_Z1534, UNCONNECTED_HIER_Z1533,
+        UNCONNECTED_HIER_Z1532, irq_i[3], UNCONNECTED_HIER_Z1531,
+        UNCONNECTED_HIER_Z1530, UNCONNECTED_HIER_Z1529}), .irq_ack_o
+-       (irq_ack_o), .irq_id_o (irq_id_o), .debug_req_i (debug_req_i),
++       (irq_ack_o), .irq_id_o ({irq_id_o[0], f2a_pre_tf000321_sa1, irq_id_o[2], irq_id_o[3], irq_id_o[4]}), .debug_req_i (debug_req_i),
+        .debug_havereset_o (debug_havereset_o), .debug_running_o
+        (debug_running_o), .debug_halted_o (debug_halted_o),
+        .fetch_enable_i (fetch_enable_i), .core_sleep_o (core_sleep_o));
++
++  // Fault2Assertion Stage-5 fault TF000321_SA1 run-local driver split
++  wire f2a_pre_tf000321_sa1;
++  assign irq_id_o[1] = 1'b1;
+ endmodule
+ 

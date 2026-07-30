@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000382_SA1/fault_netlist.v
+@@ -8054,7 +8054,7 @@
+   OAI21_X1 g15370(.A (n_647), .B1 (n_631), .B2 (n_593), .ZN (n_803));
+   OAI21_X1 g15371(.A (n_647), .B1 (n_630), .B2 (n_593), .ZN (n_802));
+   OR2_X2 g15372(.A1 (n_646), .A2 (n_610), .ZN (n_647));
+-  INV_X1 g15373(.A (n_646), .ZN (shift_op_a_32[31]));
++  INV_X1 g15373(.A (n_646), .ZN (f2a_pre_tf000382_sa1));
+   INV_X1 g15374(.A (n_645), .ZN (n_848));
+   INV_X1 g15375(.A (n_644), .ZN (n_849));
+   INV_X1 g15376(.A (n_643), .ZN (n_845));
+@@ -10275,6 +10275,10 @@
+   AOI21_X1 g220(.A (n_1079), .B1 (n_1076), .B2 (n_1078), .ZN (n_1088));
+   XNOR2_X1 g224(.A (n_605), .B (n_1074), .ZN (n_1089));
+   XNOR2_X1 g217(.A (n_1079), .B (n_1082), .ZN (n_1090));
++
++  // Fault2Assertion Stage-5 fault TF000382_SA1 run-local driver split
++  wire f2a_pre_tf000382_sa1;
++  assign shift_op_a_32[31] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_mult(clk, rst_n, enable_i, operator_i, short_subword_i,

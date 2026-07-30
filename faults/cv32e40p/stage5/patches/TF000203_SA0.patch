@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000203_SA0/fault_netlist.v
+@@ -29786,7 +29786,7 @@
+        (regfile_alu_wdata_fw_i), .we_b_i (regfile_alu_we_ex_o_3591));
+   OR3_X1 g15573(.A1 (id_ready_o), .A2 (halt_id), .A3 (branch_taken_ex),
+        .ZN (clear_instr_valid_o));
+-  AND2_X1 g15574(.A1 (n_820), .A2 (ex_ready_i), .ZN (id_ready_o));
++  AND2_X1 g15574(.A1 (n_820), .A2 (ex_ready_i), .ZN (f2a_pre_tf000203_sa0));
+   NOR3_X1 g15575(.A1 (load_stall), .A2 (data_misaligned_i), .A3
+        (jr_stall), .ZN (n_820));
+   AND4_X1 g15967(.A1 (n_817), .A2 (n_778), .A3 (n_786), .A4 (n_785),
+@@ -32489,6 +32489,10 @@
+        (n_1168));
+   XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
+        (n_1169));
++
++  // Fault2Assertion Stage-5 fault TF000203_SA0 run-local driver split
++  wire f2a_pre_tf000203_sa0;
++  assign id_ready_o = 1'b0;
+ endmodule
+ 
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,

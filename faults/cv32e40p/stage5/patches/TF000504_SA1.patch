@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000504_SA1/fault_netlist.v
+@@ -10244,7 +10244,7 @@
+   INV_X1 \srl_300_44/g5047 (.A (n_786), .ZN (\srl_300_44/n_4 ));
+   INV_X1 \srl_300_44/g5048 (.A (n_787), .ZN (\srl_300_44/n_3 ));
+   INV_X2 \srl_300_44/g5049 (.A (n_785), .ZN (\srl_300_44/n_2 ));
+-  INV_X4 \srl_300_44/g5050 (.A (n_784), .ZN (\srl_300_44/n_1 ));
++  INV_X4 \srl_300_44/g5050 (.A (n_784), .ZN (f2a_pre_tf000504_sa1 ));
+   INV_X4 \srl_300_44/g5051 (.A (n_783), .ZN (\srl_300_44/n_0 ));
+   AOI21_X1 g28168(.A (n_713), .B1 (n_60), .B2 (operator_i[0]), .ZN
+        (n_1066));
+@@ -10275,6 +10275,10 @@
+   AOI21_X1 g220(.A (n_1079), .B1 (n_1076), .B2 (n_1078), .ZN (n_1088));
+   XNOR2_X1 g224(.A (n_605), .B (n_1074), .ZN (n_1089));
+   XNOR2_X1 g217(.A (n_1079), .B (n_1082), .ZN (n_1090));
++
++  // Fault2Assertion Stage-5 fault TF000504_SA1 run-local driver split
++  wire f2a_pre_tf000504_sa1;
++  assign \srl_300_44/n_1  = 1'b1;
+ endmodule
+ 
+ module cv32e40p_mult(clk, rst_n, enable_i, operator_i, short_subword_i,

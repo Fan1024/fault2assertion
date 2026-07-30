@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000097_SA1/fault_netlist.v
+@@ -5776,7 +5776,7 @@
+   SDFFR_X1 CompInv_SP_reg(.RN (Rst_RBI), .CK (Clk_CI), .D (CompInv_SP),
+        .SE (n_3505_BAR), .SI (OpBSign_SI), .Q (CompInv_SP));
+   SDFFR_X2 RemSel_SP_reg(.RN (Rst_RBI), .CK (Clk_CI), .D (RemSel_SP),
+-       .SE (n_3505_BAR), .SI (OpCode_SI[1]), .Q (RemSel_SP));
++       .SE (n_3505_BAR), .SI (OpCode_SI[1]), .Q (f2a_pre_tf000097_sa1));
+   DFFR_X2 ResInv_SP_reg(.RN (Rst_RBI), .CK (Clk_CI), .D (n_80), .Q
+        (ResInv_SP));
+   DFFR_X1 \ResReg_DP_reg[0] (.RN (Rst_RBI), .CK (Clk_CI), .D (n_76), .Q
+@@ -7134,6 +7134,10 @@
+   OAI211_X1 g58(.A (n_530), .B (ResInv_SP), .C1 (\minus_102_33/n_81 ),
+        .C2 (n_529), .ZN (n_532));
+   XOR2_X1 g2(.A (n_522), .B (n_524), .Z (Res_DO[31]));
++
++  // Fault2Assertion Stage-5 fault TF000097_SA1 run-local driver split
++  wire f2a_pre_tf000097_sa1;
++  assign RemSel_SP = 1'b1;
+ endmodule
+ 
+ module cv32e40p_ff_one(in_i, first_one_o, no_ones_o);

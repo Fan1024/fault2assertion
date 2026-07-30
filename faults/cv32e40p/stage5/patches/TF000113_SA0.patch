@@ -1,0 +1,21 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000113_SA0/fault_netlist.v
+@@ -34201,13 +34201,17 @@
+        (clk), .D (\gen_no_trans_stable.obi_addr_q [31]), .SE (n_2), .SI
+        (trans_addr_i[31]), .Q (\gen_no_trans_stable.obi_addr_q [31]));
+   DFFR_X2 state_q_reg(.RN (rst_n), .CK (clk), .D (n_1), .QN
+-       (trans_ready_o));
++       (f2a_pre_tf000113_sa0));
+   AND3_X2 g1262(.A1 (n_0), .A2 (trans_valid_i), .A3 (trans_ready_o),
+        .ZN (n_2));
+   AND2_X1 g1263(.A1 (n_0), .A2 (obi_req_o), .ZN (n_1));
+   INV_X1 g1264(.A (obi_gnt_i), .ZN (n_0));
+   NAND2_X1 g4(.A1 (n_149), .A2 (trans_ready_o), .ZN (obi_req_o));
+   INV_X1 g5(.A (trans_valid_i), .ZN (n_149));
++
++  // Fault2Assertion Stage-5 fault TF000113_SA0 run-local driver split
++  wire f2a_pre_tf000113_sa0;
++  assign trans_ready_o = 1'b0;
+ endmodule
+ 
+ module cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2(clk,

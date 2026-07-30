@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000516_SA1/fault_netlist.v
+@@ -35866,7 +35866,7 @@
+   wire n_576, n_578, n_579, n_580, n_582, n_583;
+   INV_X1 g6855(.A (n_324), .ZN (data_misaligned_o));
+   AND2_X1 g6862(.A1 (addr_useincr_ex_i), .A2 (operand_b_ex_i[1]), .ZN
+-       (n_358));
++       (f2a_pre_tf000516_sa1));
+   AND2_X1 g6863(.A1 (addr_useincr_ex_i), .A2 (operand_b_ex_i[0]), .ZN
+        (n_357));
+   AND2_X1 g7031(.A1 (addr_useincr_ex_i), .A2 (operand_b_ex_i[26]), .ZN
+@@ -37124,6 +37124,10 @@
+   NAND2_X1 g15(.A1 (n_582), .A2 (n_583), .ZN (busy_o));
+   INV_X1 g17(.A (data_req_ex_i), .ZN (n_583));
+   OR2_X1 g14(.A1 (data_rvalid_i), .A2 (n_582), .ZN (lsu_ready_wb_o));
++
++  // Fault2Assertion Stage-5 fault TF000516_SA1 run-local driver split
++  wire f2a_pre_tf000516_sa1;
++  assign n_358 = 1'b1;
+ endmodule
+ 
+ module cv32e40p_clock_gate(clk_i, en_i, scan_cg_en_i, clk_o);

@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000209_SA0/fault_netlist.v
+@@ -29794,7 +29794,7 @@
+   NOR3_X1 g15969(.A1 (n_815), .A2 (n_814), .A3 (n_807), .ZN
+        (reg_d_wb_is_reg_b_id));
+   NOR3_X1 g15970(.A1 (n_813), .A2 (n_814), .A3 (n_808), .ZN
+-       (reg_d_ex_is_reg_b_id));
++       (f2a_pre_tf000209_sa0));
+   NOR3_X1 g15971(.A1 (n_814), .A2 (n_812), .A3 (n_792), .ZN
+        (reg_d_alu_is_reg_b_id));
+   NOR3_X1 g15974(.A1 (n_1156), .A2 (n_784), .A3 (n_787), .ZN (n_817));
+@@ -32489,6 +32489,10 @@
+        (n_1168));
+   XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
+        (n_1169));
++
++  // Fault2Assertion Stage-5 fault TF000209_SA0 run-local driver split
++  wire f2a_pre_tf000209_sa0;
++  assign reg_d_ex_is_reg_b_id = 1'b0;
+ endmodule
+ 
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,

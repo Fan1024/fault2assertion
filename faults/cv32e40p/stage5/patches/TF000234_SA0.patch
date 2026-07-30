@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000234_SA0/fault_netlist.v
+@@ -34283,7 +34283,7 @@
+   wire n_267, n_268, n_269, n_270, n_271, n_272, n_273, n_274;
+   wire n_275, n_276, n_277, n_278, n_279, state_q;
+   AOI21_X1 g1564(.A (n_210), .B1 (n_99), .B2 (fifo_empty_i), .ZN
+-       (fetch_valid_o));
++       (f2a_pre_tf000234_sa0));
+   OR2_X1 g1565(.A1 (n_259), .A2 (branch_i), .ZN (n_210));
+   OR2_X1 g2456(.A1 (trans_valid_o), .A2 (n_249), .ZN (busy_o));
+   NAND2_X1 g2457(.A1 (n_145), .A2 (n_133), .ZN (trans_addr_o[14]));
+@@ -34790,6 +34790,10 @@
+   NAND2_X1 g132(.A1 (req_i), .A2 (n_95), .ZN (n_276));
+   OAI21_X1 g126(.A (n_270), .B1 (n_263), .B2 (n_276), .ZN
+        (trans_valid_o));
++
++  // Fault2Assertion Stage-5 fault TF000234_SA0 run-local driver split
++  wire f2a_pre_tf000234_sa0;
++  assign fetch_valid_o = 1'b0;
+ endmodule
+ 
+ module cv32e40p_prefetch_buffer_PULP_OBI0_COREV_PULP0(clk, rst_n,

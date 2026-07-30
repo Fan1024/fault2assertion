@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000536_SA0/fault_netlist.v
+@@ -5101,7 +5101,7 @@
+        (\gen_trigger_regs.tmatch_value_q [20]), .Z (n_1859));
+   NAND4_X1 g470(.A1 (n_1867), .A2 (n_1868), .A3 (n_1869), .A4 (n_1870),
+        .ZN (n_1871));
+-  NOR3_X1 g471(.A1 (n_1864), .A2 (n_1865), .A3 (n_1866), .ZN (n_1867));
++  NOR3_X1 g471(.A1 (n_1864), .A2 (n_1865), .A3 (n_1866), .ZN (f2a_pre_tf000536_sa0));
+   NAND3_X1 g474(.A1 (n_1861), .A2 (n_1862), .A3 (n_1863), .ZN (n_1864));
+   XNOR2_X1 g489(.A (pc_id_i[11]), .B
+        (\gen_trigger_regs.tmatch_value_q [11]), .ZN (n_1861));
+@@ -5121,6 +5121,10 @@
+        (\gen_trigger_regs.tmatch_value_q [31]), .ZN (n_1870));
+   XOR2_X1 g485(.A (pc_id_i[28]), .B
+        (\gen_trigger_regs.tmatch_value_q [28]), .Z (n_1872));
++
++  // Fault2Assertion Stage-5 fault TF000536_SA0 run-local driver split
++  wire f2a_pre_tf000536_sa0;
++  assign n_1867 = 1'b0;
+ endmodule
+ 
+ module cv32e40p_alu_div(Clk_CI, Rst_RBI, OpA_DI, OpB_DI, OpBShift_DI,

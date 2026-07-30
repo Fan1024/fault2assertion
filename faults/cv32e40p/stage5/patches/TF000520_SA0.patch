@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000520_SA0/fault_netlist.v
+@@ -20413,7 +20413,7 @@
+   NAND2_X1 g9966(.A1 (n_178), .A2 (ctrl_fsm_cs[3]), .ZN (n_269));
+   OR3_X1 g9967(.A1 (n_293), .A2 (csr_status_i), .A3 (fencei_insn_i),
+        .ZN (n_292));
+-  AND2_X1 g9968(.A1 (n_180), .A2 (n_182), .ZN (n_282));
++  AND2_X1 g9968(.A1 (n_180), .A2 (n_182), .ZN (f2a_pre_tf000520_sa0));
+   NAND2_X1 g9969(.A1 (n_178), .A2 (n_181), .ZN (n_276));
+   NAND2_X1 g9970(.A1 (n_174), .A2 (n_190), .ZN
+        (operand_a_fw_mux_sel_o[0]));
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000520_SA0 run-local driver split
++  wire f2a_pre_tf000520_sa0;
++  assign n_282 = 1'b0;
+ endmodule
+ 
+ module

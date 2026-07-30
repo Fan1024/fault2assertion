@@ -1,0 +1,21 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000291_SA1/fault_netlist.v
+@@ -37611,7 +37611,7 @@
+        (instr_req_o), .instr_gnt_i (instr_gnt_i), .instr_rvalid_i
+        (instr_rvalid_i), .instr_addr_o ({instr_addr_o[31:2],
+        UNCONNECTED1905, UNCONNECTED1904}), .instr_rdata_i
+-       (instr_rdata_i), .data_req_o (data_req_o), .data_gnt_i
++       (instr_rdata_i), .data_req_o (f2a_pre_tf000291_sa1), .data_gnt_i
+        (data_gnt_i), .data_rvalid_i (data_rvalid_i), .data_we_o
+        (data_we_o), .data_be_o (data_be_o), .data_addr_o (data_addr_o),
+        .data_wdata_o (data_wdata_o), .data_rdata_i (data_rdata_i),
+@@ -37626,5 +37626,9 @@
+        .debug_havereset_o (debug_havereset_o), .debug_running_o
+        (debug_running_o), .debug_halted_o (debug_halted_o),
+        .fetch_enable_i (fetch_enable_i), .core_sleep_o (core_sleep_o));
++
++  // Fault2Assertion Stage-5 fault TF000291_SA1 run-local driver split
++  wire f2a_pre_tf000291_sa1;
++  assign data_req_o = 1'b1;
+ endmodule
+ 

@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000437_SA1/fault_netlist.v
+@@ -35954,7 +35954,7 @@
+   MUX2_X1 g12500(.A (rdata_q[4]), .B (n_353), .S (n_82), .Z
+        (data_rdata_ex_o[4]));
+   MUX2_X1 g12501(.A (rdata_q[0]), .B (n_349), .S (data_rvalid_i), .Z
+-       (data_rdata_ex_o[0]));
++       (f2a_pre_tf000437_sa1));
+   MUX2_X1 g12502(.A (rdata_q[3]), .B (n_352), .S (n_82), .Z
+        (data_rdata_ex_o[3]));
+   MUX2_X1 g12503(.A (rdata_q[21]), .B (n_338), .S (n_82), .Z
+@@ -37124,6 +37124,10 @@
+   NAND2_X1 g15(.A1 (n_582), .A2 (n_583), .ZN (busy_o));
+   INV_X1 g17(.A (data_req_ex_i), .ZN (n_583));
+   OR2_X1 g14(.A1 (data_rvalid_i), .A2 (n_582), .ZN (lsu_ready_wb_o));
++
++  // Fault2Assertion Stage-5 fault TF000437_SA1 run-local driver split
++  wire f2a_pre_tf000437_sa1;
++  assign data_rdata_ex_o[0] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_clock_gate(clk_i, en_i, scan_cg_en_i, clk_o);

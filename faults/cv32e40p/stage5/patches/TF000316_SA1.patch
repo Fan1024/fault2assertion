@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000316_SA1/fault_netlist.v
+@@ -29696,7 +29696,7 @@
+        .debug_ebreakm_i (debug_ebreakm_i), .trigger_match_i
+        (trigger_match_i), .debug_wfi_no_sleep_o (debug_wfi_no_sleep),
+        .debug_havereset_o (debug_havereset_o), .debug_running_o
+-       (debug_running_o), .debug_halted_o (debug_halted_o),
++       (f2a_pre_tf000316_sa1), .debug_halted_o (debug_halted_o),
+        .wake_from_sleep_o (wake_from_sleep_o), .csr_save_if_o
+        (csr_save_if_o), .csr_save_id_o (csr_save_id_o), .csr_cause_o
+        ({UNCONNECTED910, UNCONNECTED909, csr_cause_o[3],
+@@ -32489,6 +32489,10 @@
+        (n_1168));
+   XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
+        (n_1169));
++
++  // Fault2Assertion Stage-5 fault TF000316_SA1 run-local driver split
++  wire f2a_pre_tf000316_sa1;
++  assign debug_running_o = 1'b1;
+ endmodule
+ 
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,

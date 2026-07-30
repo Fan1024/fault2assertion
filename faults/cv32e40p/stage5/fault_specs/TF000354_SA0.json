@@ -1,0 +1,164 @@
+{
+  "schema_version": "1.0",
+  "program_version": "1.0.4",
+  "generated_at_utc": "2026-07-30T14:37:20.588781+00:00",
+  "stage": "stage_05_fault_materialization",
+  "fault_id": "TF000354_SA0",
+  "selection_id": "TS000354",
+  "selection_rank": 354,
+  "site_id": "RS003701",
+  "site_key": "cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1|alu_operand_a_ex[1]",
+  "design": "cv32e40p",
+  "workload": "crc32",
+  "fault_class": "architectural_data",
+  "injection_kind": "net_stuck_at",
+  "polarity": "SA0",
+  "stuck_at": 0,
+  "source_stage4": {
+    "candidates_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_candidates.json",
+    "candidates_sha256": "e15abab45ff12b46a766fe3e5004fac7ef632a7a31581b3d8a341be682fb1578",
+    "candidate_digest_sha256": "5c5ec529eb3cb9fffb69246e0e7beb433c871d20d2f0981bcd905b1e65739da2",
+    "selection_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_selection.json",
+    "selection_sha256": "9a85dca7226b16cc5eaf37a72b37ca45cb247b0883127e2721a833f871269c28",
+    "selection_digest_sha256": "8f20e4f98ce4f549cccf90af317d337b4374e8d6d319d66edb74da7c329d58a9"
+  },
+  "mapped_netlist": {
+    "path": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",
+    "sha256": "39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7",
+    "storage_policy": "immutable golden source; a faulty copy exists only in a run-local temporary directory"
+  },
+  "site": {
+    "module": "cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1",
+    "source_net": "alu_operand_a_ex[1]",
+    "source_key": "alu_operand_a_ex[1]",
+    "source_kind": "hierarchical_module_output",
+    "state_site": false,
+    "logic_fanout": 3,
+    "fanout_bucket": "3_4",
+    "classification": {
+      "primary_class": "architectural_data",
+      "injection_kind": "net_stuck_at",
+      "semantic_tags": [
+        "architectural_data_name",
+        "arithmetic_path",
+        "mux_control_reachable",
+        "top_output_reachable"
+      ],
+      "control_semantic_score_raw": 0.0,
+      "data_semantic_score_raw": 6.0,
+      "semantic_confidence": 0.75,
+      "evidence": {
+        "control_name_match_count": 0,
+        "data_name_match_count": 1,
+        "control_module_match_count": 0,
+        "data_module_match_count": 0,
+        "generated_name_match_count": 0,
+        "direct_mux_select_consumer": false,
+        "distance_to_mux_select": 7,
+        "arithmetic_signal": true,
+        "name_and_module_text": "alu_operand_a_ex[1] cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1"
+      }
+    },
+    "scores": {
+      "assertion_relevance_score": 0.633333,
+      "failure_impact_score": 0.9,
+      "selection_score": 0.753333
+    },
+    "activity": {
+      "instance_count": 1,
+      "seen_0": true,
+      "seen_1": true,
+      "unknown_seen": false,
+      "value_change_count": 261132,
+      "binary_toggle_count": 261132,
+      "first_observation_cycle": 1,
+      "first_change_cycle": 46,
+      "last_change_cycle": 940811,
+      "first_observation_time": 50,
+      "first_change_time": 500,
+      "last_change_time": 9408150,
+      "last_value": "0"
+    },
+    "detailed_structure": {
+      "max_depth_limit": 16,
+      "max_node_limit": 4096,
+      "truncated": true,
+      "maximum_depth_reached": 16,
+      "tfo_node_count_bounded": 2265,
+      "tfo_edge_count_bounded": 3949,
+      "reachable_sequential_checkpoint_count_bounded": 393,
+      "reachable_top_output_count_bounded": 63,
+      "reconvergent_node_count_bounded": 1694,
+      "branching_node_count_bounded": 654,
+      "reachable_sink_role_counts_bounded": {
+        "arithmetic_carry_input": 13,
+        "arithmetic_input": 17,
+        "combinational_input": 1552,
+        "mux_select": 9,
+        "scan_enable": 12,
+        "scan_input": 67,
+        "sequential_data": 393
+      },
+      "distance_to_mux_select": 7,
+      "distance_to_sequential_data": 2,
+      "distance_to_arithmetic_input": 1,
+      "distance_to_arithmetic_carry_input": 2
+    },
+    "driver": {
+      "kind": "hierarchical_instance_output",
+      "module": "cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1",
+      "instance": "id_stage_i",
+      "cell_type": "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1",
+      "pin": "alu_operand_a_ex_o",
+      "role": "driver",
+      "expression": "alu_operand_a_ex[1]",
+      "metadata": {
+        "child_module": "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1",
+        "child_port_direction": "output",
+        "child_port_width": 32,
+        "vector_connection": true,
+        "connection_bit_position_from_msb": 1,
+        "original_connection_expression": "alu_operand_a_ex"
+      }
+    }
+  },
+  "receiver_signals": [
+    {
+      "receiver_index": 0,
+      "expression": "alu_operand_a_ex[1]",
+      "source_key": "alu_operand_a_ex[1]",
+      "role": "hierarchy_or_output_boundary",
+      "metadata": {
+        "sink_kind": "hierarchical_instance_input",
+        "sink_instance": "cs_registers_i",
+        "sink_pin": "csr_wdata_i",
+        "sink_role": "hierarchical_instance_input"
+      },
+      "receiver_id": "R000"
+    }
+  ],
+  "modification": {
+    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "temporary_pre_fault_net": "f2a_pre_tf000354_sa0",
+    "stuck_at_assignment": "assign alu_operand_a_ex[1] = 1'b0;",
+    "driver_connection": {
+      "kind": "hierarchical_instance_output",
+      "module": "cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1",
+      "instance": "id_stage_i",
+      "cell_type": "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1",
+      "pin": "alu_operand_a_ex_o",
+      "original_connection": "alu_operand_a_ex",
+      "replacement_connection": "{alu_operand_a_ex[0], f2a_pre_tf000354_sa0, alu_operand_a_ex[2], alu_operand_a_ex[3], alu_operand_a_ex[4], alu_operand_a_ex[5], alu_operand_a_ex[6], alu_operand_a_ex[7], alu_operand_a_ex[8], alu_operand_a_ex[9], alu_operand_a_ex[10], alu_operand_a_ex[11], alu_operand_a_ex[12], alu_operand_a_ex[13], alu_operand_a_ex[14], alu_operand_a_ex[15], alu_operand_a_ex[16], alu_operand_a_ex[17], alu_operand_a_ex[18], alu_operand_a_ex[19], alu_operand_a_ex[20], alu_operand_a_ex[21], alu_operand_a_ex[22], alu_operand_a_ex[23], alu_operand_a_ex[24], alu_operand_a_ex[25], alu_operand_a_ex[26], alu_operand_a_ex[27], alu_operand_a_ex[28], alu_operand_a_ex[29], alu_operand_a_ex[30], alu_operand_a_ex[31]}",
+      "connection_start": 1982526,
+      "connection_end": 1982542
+    },
+    "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
+  },
+  "artifacts": {
+    "fault_spec": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/fault_specs/TF000354_SA0.json",
+    "patch": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/patches/TF000354_SA0.patch",
+    "faulty_netlist": "temporary_only",
+    "vcd": "not_generated_by_default"
+  },
+  "fault_spec_digest_sha256": "9520cd27b5660bdc9471bfbc1dd1b51b834f55bb0a1e1724d92c26113d0514d1"
+}

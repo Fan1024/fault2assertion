@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000432_SA1/fault_netlist.v
+@@ -19586,7 +19586,7 @@
+   XOR2_X1 \csa_tree_add_228_5_groupi/g12969 (.A (op_b_i[17]), .B
+        (op_b_i[18]), .Z (\csa_tree_add_228_5_groupi/n_97 ));
+   XOR2_X1 \csa_tree_add_228_5_groupi/g12970 (.A (n_1342), .B
+-       (op_b_i[3]), .Z (\csa_tree_add_228_5_groupi/n_96 ));
++       (op_b_i[3]), .Z (f2a_pre_tf000432_sa1 ));
+   OAI22_X1 \csa_tree_add_228_5_groupi/g12971 (.A1
+        (\csa_tree_add_228_5_groupi/n_51 ), .A2 (op_b_i[29]), .B1
+        (\csa_tree_add_228_5_groupi/n_39 ), .B2 (op_b_i[30]), .ZN
+@@ -19820,6 +19820,10 @@
+        .ZN (n_1366));
+   XOR2_X1 g210(.A (n_1332), .B (n_1347), .Z (n_1365));
+   NAND2_X1 g206(.A1 (n_1365), .A2 (n_1352), .ZN (n_1367));
++
++  // Fault2Assertion Stage-5 fault TF000432_SA1 run-local driver split
++  wire f2a_pre_tf000432_sa1;
++  assign \csa_tree_add_228_5_groupi/n_96  = 1'b1;
+ endmodule
+ 
+ module

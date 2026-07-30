@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000171_SA1/fault_netlist.v
+@@ -34163,7 +34163,7 @@
+        (trans_addr_i[18]), .Q (\gen_no_trans_stable.obi_addr_q [18]));
+   SDFFR_X1 \gen_no_trans_stable.obi_addr_q_reg[19] (.RN (rst_n), .CK
+        (clk), .D (\gen_no_trans_stable.obi_addr_q [19]), .SE (n_2), .SI
+-       (trans_addr_i[19]), .Q (\gen_no_trans_stable.obi_addr_q [19]));
++       (trans_addr_i[19]), .Q (f2a_pre_tf000171_sa1));
+   SDFFR_X1 \gen_no_trans_stable.obi_addr_q_reg[20] (.RN (rst_n), .CK
+        (clk), .D (\gen_no_trans_stable.obi_addr_q [20]), .SE (n_2), .SI
+        (trans_addr_i[20]), .Q (\gen_no_trans_stable.obi_addr_q [20]));
+@@ -34208,6 +34208,10 @@
+   INV_X1 g1264(.A (obi_gnt_i), .ZN (n_0));
+   NAND2_X1 g4(.A1 (n_149), .A2 (trans_ready_o), .ZN (obi_req_o));
+   INV_X1 g5(.A (trans_valid_i), .ZN (n_149));
++
++  // Fault2Assertion Stage-5 fault TF000171_SA1 run-local driver split
++  wire f2a_pre_tf000171_sa1;
++  assign \gen_no_trans_stable.obi_addr_q [19] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2(clk,

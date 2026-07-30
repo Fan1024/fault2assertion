@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000140_SA1/fault_netlist.v
+@@ -20530,7 +20530,7 @@
+   DFFR_X1 illegal_insn_q_reg(.RN (rst_n), .CK (clk), .D (n_105), .Q
+        (illegal_insn_q));
+   DFFR_X1 jump_done_q_reg(.RN (rst_n), .CK (clk), .D (n_103), .Q
+-       (jump_done_q));
++       (f2a_pre_tf000140_sa1));
+   NAND4_X1 g10513(.A1 (n_114), .A2 (n_131), .A3 (n_36), .A4 (n_141),
+        .ZN (n_142));
+   AOI221_X1 g10514(.A (n_137), .B1 (n_58), .B2 (n_34), .C1 (n_80), .C2
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000140_SA1 run-local driver split
++  wire f2a_pre_tf000140_sa1;
++  assign jump_done_q = 1'b1;
+ endmodule
+ 
+ module

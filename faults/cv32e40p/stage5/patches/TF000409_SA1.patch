@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000409_SA1/fault_netlist.v
+@@ -33798,7 +33798,7 @@
+   MUX2_X1 g2485(.A (\mem_q[0] [30]), .B (\mem_q[1] [30]), .S
+        (read_pointer_q), .Z (data_o[30]));
+   MUX2_X1 g2486(.A (\mem_q[0] [1]), .B (\mem_q[1] [1]), .S
+-       (read_pointer_q), .Z (data_o[1]));
++       (read_pointer_q), .Z (f2a_pre_tf000409_sa1));
+   MUX2_X1 g2487(.A (\mem_q[0] [0]), .B (\mem_q[1] [0]), .S
+        (read_pointer_q), .Z (data_o[0]));
+   MUX2_X1 g2488(.A (\mem_q[0] [17]), .B (\mem_q[1] [17]), .S
+@@ -34023,6 +34023,10 @@
+   INV_X1 g3733(.A (pop_i), .ZN (n_4));
+   INV_X1 g3734(.A (push_i), .ZN (n_3));
+   INV_X1 g3735(.A (flush_i), .ZN (n_2));
++
++  // Fault2Assertion Stage-5 fault TF000409_SA1 run-local driver split
++  wire f2a_pre_tf000409_sa1;
++  assign data_o[1] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_obi_interface_TRANS_STABLE0(clk, rst_n, trans_valid_i,

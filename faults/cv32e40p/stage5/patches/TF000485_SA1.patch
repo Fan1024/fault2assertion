@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000485_SA1/fault_netlist.v
+@@ -36419,7 +36419,7 @@
+   AND2_X2 g12817(.A1 (n_87), .A2 (data_addr_int[0]), .ZN (n_100));
+   AND2_X2 g12818(.A1 (n_87), .A2 (n_90), .ZN (n_98));
+   AND2_X2 g12819(.A1 (data_addr_int[1]), .A2 (data_addr_int[0]), .ZN
+-       (n_96));
++       (f2a_pre_tf000485_sa1));
+   INV_X1 g12820(.A (data_sign_ext_q[0]), .ZN (n_93));
+   INV_X1 g12821(.A (cnt_q[1]), .ZN (n_92));
+   INV_X1 g12823(.A (data_addr_int[0]), .ZN (n_90));
+@@ -37124,6 +37124,10 @@
+   NAND2_X1 g15(.A1 (n_582), .A2 (n_583), .ZN (busy_o));
+   INV_X1 g17(.A (data_req_ex_i), .ZN (n_583));
+   OR2_X1 g14(.A1 (data_rvalid_i), .A2 (n_582), .ZN (lsu_ready_wb_o));
++
++  // Fault2Assertion Stage-5 fault TF000485_SA1 run-local driver split
++  wire f2a_pre_tf000485_sa1;
++  assign n_96 = 1'b1;
+ endmodule
+ 
+ module cv32e40p_clock_gate(clk_i, en_i, scan_cg_en_i, clk_o);

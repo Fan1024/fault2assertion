@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000572_SA0/fault_netlist.v
+@@ -21381,7 +21381,7 @@
+   NAND2_X1 g1453(.A1 (mie_bypass_i[28]), .A2 (mip_o[28]), .ZN (n_154));
+   NAND2_X1 g1455(.A1 (mie_bypass_i[29]), .A2 (mip_o[29]), .ZN (n_155));
+   NAND2_X1 g1437(.A1 (n_157), .A2 (n_158), .ZN (n_159));
+-  NAND2_X1 g1452(.A1 (mie_bypass_i[30]), .A2 (mip_o[30]), .ZN (n_157));
++  NAND2_X1 g1452(.A1 (mie_bypass_i[30]), .A2 (mip_o[30]), .ZN (f2a_pre_tf000572_sa0));
+   NAND2_X1 g1456(.A1 (mie_bypass_i[31]), .A2 (mip_o[31]), .ZN (n_158));
+   NAND2_X1 g1435(.A1 (n_157), .A2 (n_154), .ZN (n_163));
+   NAND2_X1 g1454(.A1 (mie_bypass_i[11]), .A2 (mip_o[11]), .ZN (n_164));
+@@ -21415,6 +21415,10 @@
+        (irq_i[30]), .B2 (mie_bypass_i[30]), .ZN (n_181));
+   AOI22_X1 g162(.A1 (irq_i[29]), .A2 (mie_bypass_i[29]), .B1
+        (irq_i[28]), .B2 (mie_bypass_i[28]), .ZN (n_182));
++
++  // Fault2Assertion Stage-5 fault TF000572_SA0 run-local driver split
++  wire f2a_pre_tf000572_sa0;
++  assign n_157 = 1'b0;
+ endmodule
+ 
+ module cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0(clk,

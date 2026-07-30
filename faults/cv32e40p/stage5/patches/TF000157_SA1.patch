@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000157_SA1/fault_netlist.v
+@@ -12427,7 +12427,7 @@
+   INV_X1 g2190(.A (operator_i[2]), .ZN (n_15));
+   INV_X1 g2191(.A (operator_i[1]), .ZN (n_14));
+   DFFR_X1 \mulh_CS_reg[0] (.RN (rst_n), .CK (clk), .D (n_13), .Q
+-       (mulh_CS[0]));
++       (f2a_pre_tf000157_sa1));
+   INV_X1 g1621(.A (n_12), .ZN (n_13));
+   AOI21_X1 g1622(.A (n_8), .B1 (mulh_CS[0]), .B2 (mulh_CS[2]), .ZN
+        (n_12));
+@@ -19820,6 +19820,10 @@
+        .ZN (n_1366));
+   XOR2_X1 g210(.A (n_1332), .B (n_1347), .Z (n_1365));
+   NAND2_X1 g206(.A1 (n_1365), .A2 (n_1352), .ZN (n_1367));
++
++  // Fault2Assertion Stage-5 fault TF000157_SA1 run-local driver split
++  wire f2a_pre_tf000157_sa1;
++  assign mulh_CS[0] = 1'b1;
+ endmodule
+ 
+ module

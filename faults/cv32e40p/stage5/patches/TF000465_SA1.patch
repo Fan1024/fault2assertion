@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000465_SA1/fault_netlist.v
+@@ -34053,7 +34053,7 @@
+   MUX2_X1 g1230(.A (\gen_no_trans_stable.obi_addr_q [19]), .B
+        (trans_addr_i[19]), .S (trans_ready_o), .Z (obi_addr_o[19]));
+   MUX2_X1 g1231(.A (\gen_no_trans_stable.obi_addr_q [5]), .B
+-       (trans_addr_i[5]), .S (trans_ready_o), .Z (obi_addr_o[5]));
++       (trans_addr_i[5]), .S (trans_ready_o), .Z (f2a_pre_tf000465_sa1));
+   MUX2_X1 g1232(.A (\gen_no_trans_stable.obi_addr_q [4]), .B
+        (trans_addr_i[4]), .S (trans_ready_o), .Z (obi_addr_o[4]));
+   MUX2_X1 g1233(.A (\gen_no_trans_stable.obi_addr_q [3]), .B
+@@ -34208,6 +34208,10 @@
+   INV_X1 g1264(.A (obi_gnt_i), .ZN (n_0));
+   NAND2_X1 g4(.A1 (n_149), .A2 (trans_ready_o), .ZN (obi_req_o));
+   INV_X1 g5(.A (trans_valid_i), .ZN (n_149));
++
++  // Fault2Assertion Stage-5 fault TF000465_SA1 run-local driver split
++  wire f2a_pre_tf000465_sa1;
++  assign obi_addr_o[5] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2(clk,

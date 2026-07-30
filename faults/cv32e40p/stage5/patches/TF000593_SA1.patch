@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000593_SA1/fault_netlist.v
+@@ -37502,7 +37502,7 @@
+        ({jump_target_id[31:1], UNCONNECTED_HIER_Z1423}),
+        .jump_target_ex_i ({alu_operand_c_ex[31:1],
+        UNCONNECTED_HIER_Z1424}), .halt_if_i (halt_if), .id_ready_i
+-       (id_ready), .if_busy_o (if_busy), .perf_imiss_o (perf_imiss));
++       (id_ready), .if_busy_o (if_busy), .perf_imiss_o (f2a_pre_tf000593_sa1));
+   cv32e40p_load_store_unit_PULP_OBI0 load_store_unit_i(.clk (clk),
+        .rst_n (rst_ni), .data_req_o (data_req_o), .data_gnt_i
+        (data_gnt_i), .data_rvalid_i (data_rvalid_i), .data_addr_o
+@@ -37557,6 +37557,10 @@
+        (csr_addr[8]));
+   AND2_X1 g162(.A1 (alu_operand_b_ex[6]), .A2 (csr_access_ex), .ZN
+        (csr_addr[6]));
++
++  // Fault2Assertion Stage-5 fault TF000593_SA1 run-local driver split
++  wire f2a_pre_tf000593_sa1;
++  assign perf_imiss = 1'b1;
+ endmodule
+ 
+ module cv32e40p_top(clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i,

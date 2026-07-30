@@ -1,0 +1,15 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000261_SA0/fault_netlist.v
+@@ -34789,7 +34789,11 @@
+   OR2_X1 g130(.A1 (n_276), .A2 (n_271), .ZN (n_277));
+   NAND2_X1 g132(.A1 (req_i), .A2 (n_95), .ZN (n_276));
+   OAI21_X1 g126(.A (n_270), .B1 (n_263), .B2 (n_276), .ZN
+-       (trans_valid_o));
++       (f2a_pre_tf000261_sa0));
++
++  // Fault2Assertion Stage-5 fault TF000261_SA0 run-local driver split
++  wire f2a_pre_tf000261_sa0;
++  assign trans_valid_o = 1'b0;
+ endmodule
+ 
+ module cv32e40p_prefetch_buffer_PULP_OBI0_COREV_PULP0(clk, rst_n,

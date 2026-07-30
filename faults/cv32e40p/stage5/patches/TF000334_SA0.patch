@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000334_SA0/fault_netlist.v
+@@ -20283,7 +20283,7 @@
+   AND2_X1 g9860(.A1 (irq_ack_o), .A2 (irq_id_ctrl_i[4]), .ZN
+        (irq_id_o[4]));
+   OAI21_X1 g9861(.A (n_248), .B1 (n_189), .B2 (ctrl_fsm_cs[0]), .ZN
+-       (debug_cause_o[0]));
++       (f2a_pre_tf000334_sa0));
+   NAND3_X1 g9862(.A1 (n_247), .A2 (n_244), .A3 (n_226), .ZN
+        (csr_save_id_o));
+   AND2_X1 g9863(.A1 (irq_ack_o), .A2 (irq_id_ctrl_i[0]), .ZN
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000334_SA0 run-local driver split
++  wire f2a_pre_tf000334_sa0;
++  assign debug_cause_o[0] = 1'b0;
+ endmodule
+ 
+ module

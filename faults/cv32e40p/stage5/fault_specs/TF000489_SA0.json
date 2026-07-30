@@ -1,0 +1,592 @@
+{
+  "schema_version": "1.0",
+  "program_version": "1.0.4",
+  "generated_at_utc": "2026-07-30T14:38:57.957511+00:00",
+  "stage": "stage_05_fault_materialization",
+  "fault_id": "TF000489_SA0",
+  "selection_id": "TS000489",
+  "selection_rank": 489,
+  "site_id": "RS017215",
+  "site_key": "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0|n_2327",
+  "design": "cv32e40p",
+  "workload": "crc32",
+  "fault_class": "generic_observable",
+  "injection_kind": "net_stuck_at",
+  "polarity": "SA0",
+  "stuck_at": 0,
+  "source_stage4": {
+    "candidates_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_candidates.json",
+    "candidates_sha256": "e15abab45ff12b46a766fe3e5004fac7ef632a7a31581b3d8a341be682fb1578",
+    "candidate_digest_sha256": "5c5ec529eb3cb9fffb69246e0e7beb433c871d20d2f0981bcd905b1e65739da2",
+    "selection_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_selection.json",
+    "selection_sha256": "9a85dca7226b16cc5eaf37a72b37ca45cb247b0883127e2721a833f871269c28",
+    "selection_digest_sha256": "8f20e4f98ce4f549cccf90af317d337b4374e8d6d319d66edb74da7c329d58a9"
+  },
+  "mapped_netlist": {
+    "path": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",
+    "sha256": "39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7",
+    "storage_policy": "immutable golden source; a faulty copy exists only in a run-local temporary directory"
+  },
+  "site": {
+    "module": "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0",
+    "source_net": "n_2327",
+    "source_key": "n_2327",
+    "source_kind": "combinational_output",
+    "state_site": false,
+    "logic_fanout": 32,
+    "fanout_bucket": "gt_8",
+    "classification": {
+      "primary_class": "generic_observable",
+      "injection_kind": "net_stuck_at",
+      "semantic_tags": [
+        "arithmetic_path",
+        "data_module",
+        "generated_name",
+        "top_output_reachable"
+      ],
+      "control_semantic_score_raw": 0.0,
+      "data_semantic_score_raw": 2.0,
+      "semantic_confidence": 0.75,
+      "evidence": {
+        "control_name_match_count": 0,
+        "data_name_match_count": 0,
+        "control_module_match_count": 0,
+        "data_module_match_count": 1,
+        "generated_name_match_count": 1,
+        "direct_mux_select_consumer": false,
+        "distance_to_mux_select": null,
+        "arithmetic_signal": true,
+        "name_and_module_text": "n_2327 cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0"
+      }
+    },
+    "scores": {
+      "assertion_relevance_score": 0.314286,
+      "failure_impact_score": 0.964286,
+      "selection_score": 0.606786
+    },
+    "activity": {
+      "instance_count": 1,
+      "seen_0": true,
+      "seen_1": true,
+      "unknown_seen": false,
+      "value_change_count": 506,
+      "binary_toggle_count": 506,
+      "first_observation_cycle": 1,
+      "first_change_cycle": 29385,
+      "last_change_cycle": 940788,
+      "first_observation_time": 50,
+      "first_change_time": 293890,
+      "last_change_time": 9407920,
+      "last_value": "0"
+    },
+    "detailed_structure": {
+      "max_depth_limit": 16,
+      "max_node_limit": 4096,
+      "truncated": true,
+      "maximum_depth_reached": 16,
+      "tfo_node_count_bounded": 1093,
+      "tfo_edge_count_bounded": 1306,
+      "reachable_sequential_checkpoint_count_bounded": 188,
+      "reachable_top_output_count_bounded": 0,
+      "reconvergent_node_count_bounded": 846,
+      "branching_node_count_bounded": 288,
+      "reachable_sink_role_counts_bounded": {
+        "arithmetic_carry_input": 2,
+        "arithmetic_input": 2,
+        "combinational_input": 780,
+        "scan_input": 63,
+        "sequential_data": 188
+      },
+      "distance_to_mux_select": null,
+      "distance_to_sequential_data": 6,
+      "distance_to_arithmetic_input": 5,
+      "distance_to_arithmetic_carry_input": 6
+    },
+    "driver": {
+      "kind": "standard_cell_output",
+      "module": "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0",
+      "instance": "g506",
+      "cell_type": "AND2_X2",
+      "pin": "ZN",
+      "role": "driver",
+      "expression": "n_2327",
+      "metadata": {
+        "cell_family": "combinational_logic"
+      }
+    }
+  },
+  "receiver_signals": [
+    {
+      "receiver_index": 0,
+      "expression": "n_2859",
+      "source_key": "n_2859",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3642",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R000"
+    },
+    {
+      "receiver_index": 1,
+      "expression": "n_2834",
+      "source_key": "n_2834",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3667",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R001"
+    },
+    {
+      "receiver_index": 2,
+      "expression": "n_2828",
+      "source_key": "n_2828",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3673",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R002"
+    },
+    {
+      "receiver_index": 3,
+      "expression": "n_2823",
+      "source_key": "n_2823",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3678",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R003"
+    },
+    {
+      "receiver_index": 4,
+      "expression": "n_2775",
+      "source_key": "n_2775",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3726",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R004"
+    },
+    {
+      "receiver_index": 5,
+      "expression": "n_2774",
+      "source_key": "n_2774",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3727",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R005"
+    },
+    {
+      "receiver_index": 6,
+      "expression": "n_2738",
+      "source_key": "n_2738",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3763",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R006"
+    },
+    {
+      "receiver_index": 7,
+      "expression": "n_2737",
+      "source_key": "n_2737",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3764",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R007"
+    },
+    {
+      "receiver_index": 8,
+      "expression": "n_2723",
+      "source_key": "n_2723",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3778",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R008"
+    },
+    {
+      "receiver_index": 9,
+      "expression": "n_2706",
+      "source_key": "n_2706",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3795",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R009"
+    },
+    {
+      "receiver_index": 10,
+      "expression": "n_2705",
+      "source_key": "n_2705",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3796",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R010"
+    },
+    {
+      "receiver_index": 11,
+      "expression": "n_2704",
+      "source_key": "n_2704",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3797",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R011"
+    },
+    {
+      "receiver_index": 12,
+      "expression": "n_2703",
+      "source_key": "n_2703",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3798",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R012"
+    },
+    {
+      "receiver_index": 13,
+      "expression": "n_2692",
+      "source_key": "n_2692",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3809",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R013"
+    },
+    {
+      "receiver_index": 14,
+      "expression": "n_2538",
+      "source_key": "n_2538",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3963",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R014"
+    },
+    {
+      "receiver_index": 15,
+      "expression": "n_2537",
+      "source_key": "n_2537",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3964",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R015"
+    },
+    {
+      "receiver_index": 16,
+      "expression": "n_2506",
+      "source_key": "n_2506",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3995",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R016"
+    },
+    {
+      "receiver_index": 17,
+      "expression": "n_2505",
+      "source_key": "n_2505",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3996",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R017"
+    },
+    {
+      "receiver_index": 18,
+      "expression": "n_2486",
+      "source_key": "n_2486",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g4015",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R018"
+    },
+    {
+      "receiver_index": 19,
+      "expression": "n_2485",
+      "source_key": "n_2485",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g4016",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R019"
+    },
+    {
+      "receiver_index": 20,
+      "expression": "n_2484",
+      "source_key": "n_2484",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g4017",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R020"
+    },
+    {
+      "receiver_index": 21,
+      "expression": "n_2483",
+      "source_key": "n_2483",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g4018",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R021"
+    },
+    {
+      "receiver_index": 22,
+      "expression": "n_2482",
+      "source_key": "n_2482",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g4019",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R022"
+    },
+    {
+      "receiver_index": 23,
+      "expression": "n_2481",
+      "source_key": "n_2481",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g4020",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R023"
+    },
+    {
+      "receiver_index": 24,
+      "expression": "n_2480",
+      "source_key": "n_2480",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g4021",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R024"
+    },
+    {
+      "receiver_index": 25,
+      "expression": "n_2479",
+      "source_key": "n_2479",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g4022",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R025"
+    },
+    {
+      "receiver_index": 26,
+      "expression": "n_2478",
+      "source_key": "n_2478",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g4023",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R026"
+    },
+    {
+      "receiver_index": 27,
+      "expression": "n_2477",
+      "source_key": "n_2477",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g4024",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R027"
+    },
+    {
+      "receiver_index": 28,
+      "expression": "n_2476",
+      "source_key": "n_2476",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g4025",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R028"
+    },
+    {
+      "receiver_index": 29,
+      "expression": "n_2475",
+      "source_key": "n_2475",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g4026",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R029"
+    },
+    {
+      "receiver_index": 30,
+      "expression": "n_2471",
+      "source_key": "n_2471",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g4030",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R030"
+    },
+    {
+      "receiver_index": 31,
+      "expression": "n_2470",
+      "source_key": "n_2470",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g4031",
+        "receiver_cell_type": "AOI22_X1",
+        "receiver_input_pin": "B1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R031"
+    }
+  ],
+  "modification": {
+    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "temporary_pre_fault_net": "f2a_pre_tf000489_sa0",
+    "stuck_at_assignment": "assign n_2327 = 1'b0;",
+    "driver_connection": {
+      "kind": "standard_cell_output",
+      "module": "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0",
+      "instance": "g506",
+      "cell_type": "AND2_X2",
+      "pin": "ZN",
+      "original_connection": "n_2327",
+      "replacement_connection": "f2a_pre_tf000489_sa0",
+      "connection_start": 1393914,
+      "connection_end": 1393920
+    },
+    "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
+  },
+  "artifacts": {
+    "fault_spec": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/fault_specs/TF000489_SA0.json",
+    "patch": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/patches/TF000489_SA0.patch",
+    "faulty_netlist": "temporary_only",
+    "vcd": "not_generated_by_default"
+  },
+  "fault_spec_digest_sha256": "d4fa7040e8dc920c68c02d469048e927cfdbe89e1b0147a276af742c1d669133"
+}

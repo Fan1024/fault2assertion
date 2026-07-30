@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000473_SA0/fault_netlist.v
+@@ -33352,7 +33352,7 @@
+   OAI211_X1 g9492(.A (n_246), .B (n_45), .C1 (n_240), .C2 (n_12), .ZN
+        (instr_o[21]));
+   NAND4_X1 g9493(.A1 (n_246), .A2 (n_204), .A3 (n_252), .A4 (n_175),
+-       .ZN (instr_o[23]));
++       .ZN (f2a_pre_tf000473_sa0));
+   OAI211_X1 g9494(.A (n_179), .B (n_190), .C1 (n_238), .C2 (n_8), .ZN
+        (instr_o[30]));
+   NAND3_X1 g9495(.A1 (n_246), .A2 (n_256), .A3 (n_160), .ZN
+@@ -33715,6 +33715,10 @@
+   INV_X1 g9778(.A (instr_i[14]), .ZN (n_0));
+   AOI21_X1 g2(.A (n_1), .B1 (n_336), .B2 (n_150), .ZN (n_337));
+   NAND2_X1 g3(.A1 (n_29), .A2 (n_2), .ZN (n_336));
++
++  // Fault2Assertion Stage-5 fault TF000473_SA0 run-local driver split
++  wire f2a_pre_tf000473_sa0;
++  assign instr_o[23] = 1'b0;
+ endmodule
+ 
+ module cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2(clk_i, rst_ni,

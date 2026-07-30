@@ -1,0 +1,26 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000597_SA1/fault_netlist.v
+@@ -37451,11 +37451,7 @@
+        UNCONNECTED_HIER_Z1297, mie_bypass[7], UNCONNECTED_HIER_Z1296,
+        UNCONNECTED_HIER_Z1295, UNCONNECTED_HIER_Z1294, mie_bypass[3],
+        UNCONNECTED_HIER_Z1293, UNCONNECTED_HIER_Z1292,
+-       UNCONNECTED_HIER_Z1291}), .mip_o ({mip[31:16], UNCONNECTED1888,
+-       UNCONNECTED1887, UNCONNECTED1886, UNCONNECTED1885, mip[11],
+-       UNCONNECTED1884, UNCONNECTED1883, UNCONNECTED1882, mip[7],
+-       UNCONNECTED1881, UNCONNECTED1880, UNCONNECTED1879, mip[3],
+-       UNCONNECTED1878, UNCONNECTED1877, UNCONNECTED1876}),
++       UNCONNECTED_HIER_Z1291}), .mip_o ({mip[31], mip[30], mip[29], mip[28], mip[27], mip[26], mip[25], mip[24], mip[23], mip[22], mip[21], f2a_pre_tf000597_sa1, mip[19], mip[18], mip[17], mip[16], UNCONNECTED1888, UNCONNECTED1887, UNCONNECTED1886, UNCONNECTED1885, mip[11], UNCONNECTED1884, UNCONNECTED1883, UNCONNECTED1882, mip[7], UNCONNECTED1881, UNCONNECTED1880, UNCONNECTED1879, mip[3], UNCONNECTED1878, UNCONNECTED1877, UNCONNECTED1876}),
+        .m_irq_enable_i (m_irq_enable), .irq_id_o ({UNCONNECTED1891,
+        irq_id_o[3], UNCONNECTED1890, irq_id_o[1:0]}), .debug_mode_o
+        (debug_mode), .debug_cause_o (debug_cause), .debug_csr_save_o
+@@ -37557,6 +37553,10 @@
+        (csr_addr[8]));
+   AND2_X1 g162(.A1 (alu_operand_b_ex[6]), .A2 (csr_access_ex), .ZN
+        (csr_addr[6]));
++
++  // Fault2Assertion Stage-5 fault TF000597_SA1 run-local driver split
++  wire f2a_pre_tf000597_sa1;
++  assign mip[20] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_top(clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i,

@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000305_SA1/fault_netlist.v
+@@ -29756,7 +29756,7 @@
+        UNCONNECTED_HIER_Z415, UNCONNECTED_HIER_Z414,
+        UNCONNECTED_HIER_Z413, irq_i[3], UNCONNECTED_HIER_Z412,
+        UNCONNECTED_HIER_Z411, UNCONNECTED_HIER_Z410}), .irq_req_ctrl_o
+-       (irq_req_ctrl), .irq_id_ctrl_o (irq_id_ctrl), .irq_wu_ctrl_o
++       (irq_req_ctrl), .irq_id_ctrl_o ({irq_id_ctrl[0], irq_id_ctrl[1], irq_id_ctrl[2], f2a_pre_tf000305_sa1, irq_id_ctrl[4]}), .irq_wu_ctrl_o
+        (irq_wu_ctrl), .mie_bypass_i ({mie_bypass_i[31:16],
+        UNCONNECTED_HIER_Z436, UNCONNECTED_HIER_Z435,
+        UNCONNECTED_HIER_Z434, UNCONNECTED_HIER_Z433, mie_bypass_i[11],
+@@ -32489,6 +32489,10 @@
+        (n_1168));
+   XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
+        (n_1169));
++
++  // Fault2Assertion Stage-5 fault TF000305_SA1 run-local driver split
++  wire f2a_pre_tf000305_sa1;
++  assign irq_id_ctrl[3] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,

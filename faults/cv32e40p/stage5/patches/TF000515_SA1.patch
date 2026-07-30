@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000515_SA1/fault_netlist.v
+@@ -36806,7 +36806,7 @@
+   NAND2_X1 \ADD_UNS_OP/g1186 (.A1 (\ADD_UNS_OP/n_112 ), .A2
+        (\ADD_UNS_OP/n_4 ), .ZN (\ADD_UNS_OP/n_122 ));
+   HA_X1 \ADD_UNS_OP/g1187 (.A (n_357), .B (operand_a_ex_i[0]), .CO
+-       (\ADD_UNS_OP/n_116 ), .S (data_addr_int[0]));
++       (f2a_pre_tf000515_sa1 ), .S (data_addr_int[0]));
+   OAI21_X1 \ADD_UNS_OP/g1188 (.A (\ADD_UNS_OP/n_73 ), .B1
+        (\ADD_UNS_OP/n_62 ), .B2 (\ADD_UNS_OP/n_57 ), .ZN
+        (\ADD_UNS_OP/n_115 ));
+@@ -37124,6 +37124,10 @@
+   NAND2_X1 g15(.A1 (n_582), .A2 (n_583), .ZN (busy_o));
+   INV_X1 g17(.A (data_req_ex_i), .ZN (n_583));
+   OR2_X1 g14(.A1 (data_rvalid_i), .A2 (n_582), .ZN (lsu_ready_wb_o));
++
++  // Fault2Assertion Stage-5 fault TF000515_SA1 run-local driver split
++  wire f2a_pre_tf000515_sa1;
++  assign \ADD_UNS_OP/n_116  = 1'b1;
+ endmodule
+ 
+ module cv32e40p_clock_gate(clk_i, en_i, scan_cg_en_i, clk_o);

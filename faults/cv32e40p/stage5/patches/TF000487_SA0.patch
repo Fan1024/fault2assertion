@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000487_SA0/fault_netlist.v
+@@ -26493,7 +26493,7 @@
+   AND2_X2 g501(.A1 (n_2443), .A2 (n_2439), .ZN (n_2330));
+   AND2_X2 g502(.A1 (n_2443), .A2 (n_2440), .ZN (n_2329));
+   AND2_X2 g503(.A1 (n_2443), .A2 (n_2438), .ZN (n_2322));
+-  AND2_X2 g504(.A1 (n_2443), .A2 (n_2434), .ZN (n_2321));
++  AND2_X2 g504(.A1 (n_2443), .A2 (n_2434), .ZN (f2a_pre_tf000487_sa0));
+   AND2_X2 g505(.A1 (n_2445), .A2 (n_2439), .ZN (n_2328));
+   AND2_X2 g506(.A1 (n_2445), .A2 (n_2440), .ZN (n_2327));
+   AND2_X2 g507(.A1 (n_2449), .A2 (n_2438), .ZN (n_2326));
+@@ -29162,6 +29162,10 @@
+   OR2_X1 g172(.A1 (n_85), .A2 (n_3750), .ZN (n_3751));
+   INV_X1 g190(.A (n_3737), .ZN (n_3750));
+   NAND2_X1 g175(.A1 (n_3732), .A2 (n_3739), .ZN (n_3752));
++
++  // Fault2Assertion Stage-5 fault TF000487_SA0 run-local driver split
++  wire f2a_pre_tf000487_sa0;
++  assign n_2321 = 1'b0;
+ endmodule
+ 
+ module

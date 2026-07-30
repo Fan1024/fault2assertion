@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000184_SA1/fault_netlist.v
+@@ -37433,7 +37433,7 @@
+        csr_cause[3], irq_id_o[2], csr_cause[1:0]}), .csr_save_if_o
+        (csr_save_if), .csr_save_id_o (csr_save_id),
+        .csr_restore_mret_id_o (csr_restore_mret_id), .csr_save_cause_o
+-       (csr_save_cause), .data_req_ex_o (data_req_ex), .data_we_ex_o
++       (csr_save_cause), .data_req_ex_o (f2a_pre_tf000184_sa1), .data_we_ex_o
+        (data_we_o), .data_type_ex_o (data_type_ex), .data_sign_ext_ex_o
+        ({UNCONNECTED1873, data_sign_ext_ex[0]}), .data_misaligned_ex_o
+        (data_misaligned_ex), .prepost_useincr_ex_o (useincr_addr_ex),
+@@ -37557,6 +37557,10 @@
+        (csr_addr[8]));
+   AND2_X1 g162(.A1 (alu_operand_b_ex[6]), .A2 (csr_access_ex), .ZN
+        (csr_addr[6]));
++
++  // Fault2Assertion Stage-5 fault TF000184_SA1 run-local driver split
++  wire f2a_pre_tf000184_sa1;
++  assign data_req_ex = 1'b1;
+ endmodule
+ 
+ module cv32e40p_top(clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i,

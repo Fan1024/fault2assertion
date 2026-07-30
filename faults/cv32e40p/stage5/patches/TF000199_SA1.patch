@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000199_SA1/fault_netlist.v
+@@ -35004,7 +35004,7 @@
+        (clk), .rst_n (rst_n), .req_i (req_i), .branch_i (pc_set_i),
+        .branch_addr_i ({branch_addr_n[31:2], UNCONNECTED_HIER_Z602,
+        UNCONNECTED_HIER_Z601}), .fetch_ready_i (fetch_ready),
+-       .fetch_valid_o (fetch_valid), .fetch_rdata_o (fetch_rdata),
++       .fetch_valid_o (f2a_pre_tf000199_sa1), .fetch_rdata_o (fetch_rdata),
+        .instr_req_o (instr_req_o), .instr_gnt_i (instr_gnt_i),
+        .instr_addr_o ({instr_addr_o[31:2], UNCONNECTED1451,
+        UNCONNECTED1450}), .instr_rdata_i (instr_rdata_i),
+@@ -35711,6 +35711,10 @@
+        (n_184));
+   XOR2_X1 \add_167_42/g787 (.A (\add_167_42/n_2 ), .B (pc_id_o[12]), .Z
+        (n_176));
++
++  // Fault2Assertion Stage-5 fault TF000199_SA1 run-local driver split
++  wire f2a_pre_tf000199_sa1;
++  assign fetch_valid = 1'b1;
+ endmodule
+ 
+ module cv32e40p_load_store_unit_PULP_OBI0(clk, rst_n, data_req_o,

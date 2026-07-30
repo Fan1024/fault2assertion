@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000208_SA0/fault_netlist.v
+@@ -20971,7 +20971,7 @@
+   OAI211_X1 g8532(.A (n_134), .B (n_26), .C1 (n_116), .C2 (n_36), .ZN
+        (n_192));
+   NAND3_X1 g8533(.A1 (n_173), .A2 (n_140), .A3 (n_147), .ZN
+-       (regfile_alu_we_dec_o));
++       (f2a_pre_tf000208_sa0));
+   NOR2_X1 g8534(.A1 (n_172), .A2 (n_170), .ZN (wfi_o));
+   NOR4_X1 g8536(.A1 (n_109), .A2 (n_175), .A3 (n_39), .A4 (n_125), .ZN
+        (n_191));
+@@ -21252,6 +21252,10 @@
+        (instr_rdata_i[23]), .ZN (n_354));
+   AOI211_X1 g8768(.A (n_52), .B (n_167), .C1 (n_91), .C2 (n_56), .ZN
+        (n_355));
++
++  // Fault2Assertion Stage-5 fault TF000208_SA0 run-local driver split
++  wire f2a_pre_tf000208_sa0;
++  assign regfile_alu_we_dec_o = 1'b0;
+ endmodule
+ 
+ module cv32e40p_int_controller_PULP_SECURE0(clk, rst_n, irq_i,

@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000495_SA1/fault_netlist.v
+@@ -34718,7 +34718,7 @@
+   NAND2_X1 \inc_add_138_56/g505 (.A1 (\inc_add_138_56/n_11 ), .A2
+        (trans_addr_q[4]), .ZN (\inc_add_138_56/n_12 ));
+   INV_X1 \inc_add_138_56/g506 (.A (\inc_add_138_56/n_2 ), .ZN
+-       (\inc_add_138_56/n_11 ));
++       (f2a_pre_tf000495_sa1 ));
+   NAND4_X1 \inc_add_138_56/g507 (.A1 (trans_addr_q[20]), .A2
+        (trans_addr_q[21]), .A3 (trans_addr_q[19]), .A4
+        (trans_addr_q[18]), .ZN (\inc_add_138_56/n_10 ));
+@@ -34790,6 +34790,10 @@
+   NAND2_X1 g132(.A1 (req_i), .A2 (n_95), .ZN (n_276));
+   OAI21_X1 g126(.A (n_270), .B1 (n_263), .B2 (n_276), .ZN
+        (trans_valid_o));
++
++  // Fault2Assertion Stage-5 fault TF000495_SA1 run-local driver split
++  wire f2a_pre_tf000495_sa1;
++  assign \inc_add_138_56/n_11  = 1'b1;
+ endmodule
+ 
+ module cv32e40p_prefetch_buffer_PULP_OBI0_COREV_PULP0(clk, rst_n,

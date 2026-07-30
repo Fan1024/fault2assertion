@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000439_SA1/fault_netlist.v
+@@ -21060,7 +21060,7 @@
+        .ZN (n_150));
+   NOR2_X1 g8599(.A1 (n_124), .A2 (illegal_c_insn_i), .ZN (n_149));
+   NAND2_X1 g8600(.A1 (instr_rdata_i[13]), .A2 (n_122), .ZN (n_148));
+-  OR2_X1 g8601(.A1 (n_118), .A2 (n_119), .ZN (imm_b_mux_sel_o[1]));
++  OR2_X1 g8601(.A1 (n_118), .A2 (n_119), .ZN (f2a_pre_tf000439_sa1));
+   NAND2_X1 g8602(.A1 (n_118), .A2 (instr_rdata_i[3]), .ZN (n_147));
+   NOR4_X1 g8603(.A1 (n_122), .A2 (instr_rdata_i[8]), .A3
+        (instr_rdata_i[9]), .A4 (n_92), .ZN (n_18));
+@@ -21252,6 +21252,10 @@
+        (instr_rdata_i[23]), .ZN (n_354));
+   AOI211_X1 g8768(.A (n_52), .B (n_167), .C1 (n_91), .C2 (n_56), .ZN
+        (n_355));
++
++  // Fault2Assertion Stage-5 fault TF000439_SA1 run-local driver split
++  wire f2a_pre_tf000439_sa1;
++  assign imm_b_mux_sel_o[1] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_int_controller_PULP_SECURE0(clk, rst_n, irq_i,

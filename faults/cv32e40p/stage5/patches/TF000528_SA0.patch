@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000528_SA0/fault_netlist.v
+@@ -20396,7 +20396,7 @@
+   NOR2_X1 g9952(.A1 (n_202), .A2 (ctrl_fsm_cs[0]), .ZN (n_216));
+   NAND2_X1 g9953(.A1 (n_199), .A2 (ctrl_fsm_cs[1]), .ZN (n_214));
+   OR2_X1 g9954(.A1 (n_304), .A2 (ctrl_fsm_cs[1]), .ZN (n_275));
+-  AND3_X1 g9955(.A1 (n_184), .A2 (n_188), .A3 (n_190), .ZN (n_213));
++  AND3_X1 g9955(.A1 (n_184), .A2 (n_188), .A3 (n_190), .ZN (f2a_pre_tf000528_sa0));
+   NAND2_X1 g9956(.A1 (n_196), .A2 (ctrl_fsm_cs[1]), .ZN (n_303));
+   NOR3_X1 g9957(.A1 (n_198), .A2 (ctrl_fsm_cs[0]), .A3 (debug_mode_o),
+        .ZN (n_212));
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000528_SA0 run-local driver split
++  wire f2a_pre_tf000528_sa0;
++  assign n_213 = 1'b0;
+ endmodule
+ 
+ module

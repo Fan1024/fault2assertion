@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000569_SA0/fault_netlist.v
+@@ -21372,7 +21372,7 @@
+   NAND2_X1 g1448(.A1 (mie_bypass_i[22]), .A2 (mip_o[22]), .ZN (n_146));
+   OR2_X1 g1423(.A1 (n_149), .A2 (n_161), .ZN (irq_id_ctrl_o[4]));
+   NAND2_X1 g1427(.A1 (n_153), .A2 (n_160), .ZN (n_161));
+-  NOR2_X1 g1431(.A1 (n_37), .A2 (n_152), .ZN (n_153));
++  NOR2_X1 g1431(.A1 (n_37), .A2 (n_152), .ZN (f2a_pre_tf000569_sa0));
+   NAND2_X1 g1441(.A1 (n_150), .A2 (n_151), .ZN (n_152));
+   NAND2_X1 g1451(.A1 (mie_bypass_i[27]), .A2 (mip_o[27]), .ZN (n_150));
+   NAND2_X1 g1450(.A1 (mie_bypass_i[26]), .A2 (mip_o[26]), .ZN (n_151));
+@@ -21415,6 +21415,10 @@
+        (irq_i[30]), .B2 (mie_bypass_i[30]), .ZN (n_181));
+   AOI22_X1 g162(.A1 (irq_i[29]), .A2 (mie_bypass_i[29]), .B1
+        (irq_i[28]), .B2 (mie_bypass_i[28]), .ZN (n_182));
++
++  // Fault2Assertion Stage-5 fault TF000569_SA0 run-local driver split
++  wire f2a_pre_tf000569_sa0;
++  assign n_153 = 1'b0;
+ endmodule
+ 
+ module cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0(clk,

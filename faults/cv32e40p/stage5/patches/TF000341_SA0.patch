@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000341_SA0/fault_netlist.v
+@@ -36788,7 +36788,7 @@
+        (\ADD_UNS_OP/n_132 ));
+   FA_X1 \ADD_UNS_OP/g1178 (.A (n_358), .B (operand_a_ex_i[1]), .CI
+        (\ADD_UNS_OP/n_116 ), .CO (\ADD_UNS_OP/n_130 ), .S
+-       (data_addr_int[1]));
++       (f2a_pre_tf000341_sa0));
+   AND2_X1 \ADD_UNS_OP/g1179 (.A1 (\ADD_UNS_OP/n_125 ), .A2
+        (\ADD_UNS_OP/n_67 ), .ZN (\ADD_UNS_OP/n_129 ));
+   AND2_X1 \ADD_UNS_OP/g1180 (.A1 (\ADD_UNS_OP/n_124 ), .A2
+@@ -37124,6 +37124,10 @@
+   NAND2_X1 g15(.A1 (n_582), .A2 (n_583), .ZN (busy_o));
+   INV_X1 g17(.A (data_req_ex_i), .ZN (n_583));
+   OR2_X1 g14(.A1 (data_rvalid_i), .A2 (n_582), .ZN (lsu_ready_wb_o));
++
++  // Fault2Assertion Stage-5 fault TF000341_SA0 run-local driver split
++  wire f2a_pre_tf000341_sa0;
++  assign data_addr_int[1] = 1'b0;
+ endmodule
+ 
+ module cv32e40p_clock_gate(clk_i, en_i, scan_cg_en_i, clk_o);

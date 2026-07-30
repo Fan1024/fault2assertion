@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000308_SA1/fault_netlist.v
+@@ -20378,7 +20378,7 @@
+   AOI21_X1 g9936(.A (trigger_match_i), .B1 (n_284), .B2
+        (debug_req_entry_q), .ZN (n_218));
+   OR3_X1 g9937(.A1 (n_299), .A2 (trigger_match_i), .A3
+-       (debug_single_step_i), .ZN (debug_wfi_no_sleep_o));
++       (debug_single_step_i), .ZN (f2a_pre_tf000308_sa1));
+   NOR2_X1 g9939(.A1 (irq_wu_ctrl_i), .A2 (n_299), .ZN (n_12));
+   AOI21_X1 g9940(.A (n_207), .B1 (n_185), .B2 (debug_mode_o), .ZN
+        (n_220));
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000308_SA1 run-local driver split
++  wire f2a_pre_tf000308_sa1;
++  assign debug_wfi_no_sleep_o = 1'b1;
+ endmodule
+ 
+ module

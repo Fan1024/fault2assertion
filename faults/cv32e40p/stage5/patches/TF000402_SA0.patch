@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000402_SA0/fault_netlist.v
+@@ -20372,7 +20372,7 @@
+   NOR2_X1 g9931(.A1 (n_275), .A2 (illegal_insn_q), .ZN (n_225));
+   INV_X1 g9932(.A (n_12), .ZN (wake_from_sleep_o));
+   AND4_X1 g9934(.A1 (n_174), .A2 (n_183), .A3 (reg_d_wb_is_reg_b_i),
+-       .A4 (regfile_we_wb_i), .ZN (operand_b_fw_mux_sel_o[1]));
++       .A4 (regfile_we_wb_i), .ZN (f2a_pre_tf000402_sa0));
+   NOR2_X1 g9935(.A1 (operand_a_fw_mux_sel_o[0]), .A2 (n_188), .ZN
+        (operand_a_fw_mux_sel_o[1]));
+   AOI21_X1 g9936(.A (trigger_match_i), .B1 (n_284), .B2
+@@ -20726,6 +20726,10 @@
+        (n_0), .ZN (n_412));
+   AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
+        .ZN (n_413));
++
++  // Fault2Assertion Stage-5 fault TF000402_SA0 run-local driver split
++  wire f2a_pre_tf000402_sa0;
++  assign operand_b_fw_mux_sel_o[1] = 1'b0;
+ endmodule
+ 
+ module

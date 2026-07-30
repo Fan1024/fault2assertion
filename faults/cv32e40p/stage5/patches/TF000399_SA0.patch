@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000399_SA0/fault_netlist.v
+@@ -19639,7 +19639,7 @@
+        (op_a_i[0]), .ZN (\csa_tree_add_228_5_groupi/n_73 ));
+   OR2_X2 \csa_tree_add_228_5_groupi/g12991 (.A1 (op_b_i[0]), .A2
+        (\csa_tree_add_228_5_groupi/n_47 ), .ZN
+-       (\csa_tree_add_228_5_groupi/n_72 ));
++       (f2a_pre_tf000399_sa0 ));
+   INV_X1 \csa_tree_add_228_5_groupi/g12992 (.A (op_a_i[29]), .ZN
+        (\csa_tree_add_228_5_groupi/n_70 ));
+   INV_X1 \csa_tree_add_228_5_groupi/g12993 (.A (op_a_i[28]), .ZN
+@@ -19820,6 +19820,10 @@
+        .ZN (n_1366));
+   XOR2_X1 g210(.A (n_1332), .B (n_1347), .Z (n_1365));
+   NAND2_X1 g206(.A1 (n_1365), .A2 (n_1352), .ZN (n_1367));
++
++  // Fault2Assertion Stage-5 fault TF000399_SA0 run-local driver split
++  wire f2a_pre_tf000399_sa0;
++  assign \csa_tree_add_228_5_groupi/n_72  = 1'b0;
+ endmodule
+ 
+ module

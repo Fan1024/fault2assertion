@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000280_SA0/fault_netlist.v
+@@ -34993,7 +34993,7 @@
+   cv32e40p_aligner aligner_i(.clk (clk), .rst_n (rst_n), .fetch_valid_i
+        (fetch_valid), .aligner_ready_o (aligner_ready), .if_valid_i
+        (if_valid), .fetch_rdata_i (fetch_rdata), .instr_aligned_o
+-       (instr_aligned), .instr_valid_o (instr_valid), .branch_addr_i
++       (instr_aligned), .instr_valid_o (f2a_pre_tf000280_sa0), .branch_addr_i
+        ({branch_addr_n[31:1], UNCONNECTED_HIER_Z567}), .branch_i
+        (pc_set_i), .pc_o ({pc_if_o[31:1], UNCONNECTED1448}));
+   cv32e40p_compressed_decoder_FPU0_ZFINX0 compressed_decoder_i(.instr_i
+@@ -35711,6 +35711,10 @@
+        (n_184));
+   XOR2_X1 \add_167_42/g787 (.A (\add_167_42/n_2 ), .B (pc_id_o[12]), .Z
+        (n_176));
++
++  // Fault2Assertion Stage-5 fault TF000280_SA0 run-local driver split
++  wire f2a_pre_tf000280_sa0;
++  assign instr_valid = 1'b0;
+ endmodule
+ 
+ module cv32e40p_load_store_unit_PULP_OBI0(clk, rst_n, data_req_o,

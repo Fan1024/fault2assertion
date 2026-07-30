@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000381_SA1/fault_netlist.v
+@@ -35004,7 +35004,7 @@
+        (clk), .rst_n (rst_n), .req_i (req_i), .branch_i (pc_set_i),
+        .branch_addr_i ({branch_addr_n[31:2], UNCONNECTED_HIER_Z602,
+        UNCONNECTED_HIER_Z601}), .fetch_ready_i (fetch_ready),
+-       .fetch_valid_o (fetch_valid), .fetch_rdata_o (fetch_rdata),
++       .fetch_valid_o (fetch_valid), .fetch_rdata_o ({fetch_rdata[0], fetch_rdata[1], fetch_rdata[2], fetch_rdata[3], fetch_rdata[4], fetch_rdata[5], fetch_rdata[6], fetch_rdata[7], fetch_rdata[8], fetch_rdata[9], fetch_rdata[10], fetch_rdata[11], fetch_rdata[12], fetch_rdata[13], fetch_rdata[14], fetch_rdata[15], f2a_pre_tf000381_sa1, fetch_rdata[17], fetch_rdata[18], fetch_rdata[19], fetch_rdata[20], fetch_rdata[21], fetch_rdata[22], fetch_rdata[23], fetch_rdata[24], fetch_rdata[25], fetch_rdata[26], fetch_rdata[27], fetch_rdata[28], fetch_rdata[29], fetch_rdata[30], fetch_rdata[31]}),
+        .instr_req_o (instr_req_o), .instr_gnt_i (instr_gnt_i),
+        .instr_addr_o ({instr_addr_o[31:2], UNCONNECTED1451,
+        UNCONNECTED1450}), .instr_rdata_i (instr_rdata_i),
+@@ -35711,6 +35711,10 @@
+        (n_184));
+   XOR2_X1 \add_167_42/g787 (.A (\add_167_42/n_2 ), .B (pc_id_o[12]), .Z
+        (n_176));
++
++  // Fault2Assertion Stage-5 fault TF000381_SA1 run-local driver split
++  wire f2a_pre_tf000381_sa1;
++  assign fetch_rdata[16] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_load_store_unit_PULP_OBI0(clk, rst_n, data_req_o,

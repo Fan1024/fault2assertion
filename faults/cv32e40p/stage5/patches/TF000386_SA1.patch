@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000386_SA1/fault_netlist.v
+@@ -7307,7 +7307,7 @@
+        (\WALLACE_CSA_DUMMY_OP_groupi/n_48 ), .ZN (result_o[5]));
+   INV_X1 \WALLACE_CSA_DUMMY_OP_groupi/g1330 (.A
+        (\WALLACE_CSA_DUMMY_OP_groupi/n_60 ), .ZN
+-       (\WALLACE_CSA_DUMMY_OP_groupi/n_62 ));
++       (f2a_pre_tf000386_sa1 ));
+   FA_X1 \WALLACE_CSA_DUMMY_OP_groupi/g1331 (.A
+        (\WALLACE_CSA_DUMMY_OP_groupi/n_54 ), .B
+        (\WALLACE_CSA_DUMMY_OP_groupi/n_49 ), .CI
+@@ -7469,6 +7469,10 @@
+   FA_X1 \WALLACE_CSA_DUMMY_OP_groupi/g1365 (.A (in_i[30]), .B
+        (in_i[0]), .CI (in_i[31]), .CO (\WALLACE_CSA_DUMMY_OP_groupi/n_1
+        ), .S (\WALLACE_CSA_DUMMY_OP_groupi/n_0 ));
++
++  // Fault2Assertion Stage-5 fault TF000386_SA1 run-local driver split
++  wire f2a_pre_tf000386_sa1;
++  assign \WALLACE_CSA_DUMMY_OP_groupi/n_62  = 1'b1;
+ endmodule
+ 
+ module cv32e40p_alu(clk, rst_n, enable_i, operator_i, operand_a_i,

@@ -1,0 +1,215 @@
+{
+  "schema_version": "1.0",
+  "program_version": "1.0.4",
+  "generated_at_utc": "2026-07-30T14:33:53.587278+00:00",
+  "stage": "stage_05_fault_materialization",
+  "fault_id": "TF000019_SA1",
+  "selection_id": "TS000019",
+  "selection_rank": 19,
+  "site_id": "RS008191",
+  "site_key": "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2|cnt_o[1]",
+  "design": "cv32e40p",
+  "workload": "crc32",
+  "fault_class": "sequential_state",
+  "injection_kind": "state_output_stuck_at",
+  "polarity": "SA1",
+  "stuck_at": 1,
+  "source_stage4": {
+    "candidates_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_candidates.json",
+    "candidates_sha256": "e15abab45ff12b46a766fe3e5004fac7ef632a7a31581b3d8a341be682fb1578",
+    "candidate_digest_sha256": "5c5ec529eb3cb9fffb69246e0e7beb433c871d20d2f0981bcd905b1e65739da2",
+    "selection_path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_selection.json",
+    "selection_sha256": "9a85dca7226b16cc5eaf37a72b37ca45cb247b0883127e2721a833f871269c28",
+    "selection_digest_sha256": "8f20e4f98ce4f549cccf90af317d337b4374e8d6d319d66edb74da7c329d58a9"
+  },
+  "mapped_netlist": {
+    "path": "/raid/spring2026/fwu44/research/cv32e40p/syn/runs/run_003/results/cv32e40p.SYN/cv32e40p.mapped.v",
+    "sha256": "39a356571edcd76b710a5ef5776ba5877a1852c2d326d41e936a7d5d554472a7",
+    "storage_policy": "immutable golden source; a faulty copy exists only in a run-local temporary directory"
+  },
+  "site": {
+    "module": "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2",
+    "source_net": "cnt_o[1]",
+    "source_key": "cnt_o[1]",
+    "source_kind": "sequential_output",
+    "state_site": true,
+    "logic_fanout": 4,
+    "fanout_bucket": "3_4",
+    "classification": {
+      "primary_class": "sequential_state",
+      "injection_kind": "state_output_stuck_at",
+      "semantic_tags": [
+        "control_module",
+        "control_state_semantics",
+        "mux_control_reachable",
+        "sequential_state",
+        "top_output_reachable"
+      ],
+      "control_semantic_score_raw": 5.0,
+      "data_semantic_score_raw": 1.0,
+      "semantic_confidence": 0.583333,
+      "evidence": {
+        "control_name_match_count": 0,
+        "data_name_match_count": 0,
+        "control_module_match_count": 1,
+        "data_module_match_count": 0,
+        "generated_name_match_count": 0,
+        "direct_mux_select_consumer": false,
+        "distance_to_mux_select": 3,
+        "arithmetic_signal": false,
+        "name_and_module_text": "cnt_o[1] cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2"
+      }
+    },
+    "scores": {
+      "assertion_relevance_score": 0.983333,
+      "failure_impact_score": 0.904461,
+      "selection_score": 0.947841
+    },
+    "activity": {
+      "instance_count": 1,
+      "seen_0": true,
+      "seen_1": true,
+      "unknown_seen": false,
+      "value_change_count": 131346,
+      "binary_toggle_count": 131346,
+      "first_observation_cycle": 1,
+      "first_change_cycle": 30,
+      "last_change_cycle": 940797,
+      "first_observation_time": 50,
+      "first_change_time": 340,
+      "last_change_time": 9408010,
+      "last_value": "0"
+    },
+    "detailed_structure": {
+      "max_depth_limit": 16,
+      "max_node_limit": 4096,
+      "truncated": false,
+      "maximum_depth_reached": 14,
+      "tfo_node_count_bounded": 823,
+      "tfo_edge_count_bounded": 1498,
+      "reachable_sequential_checkpoint_count_bounded": 114,
+      "reachable_top_output_count_bounded": 1,
+      "reconvergent_node_count_bounded": 540,
+      "branching_node_count_bounded": 218,
+      "reachable_sink_role_counts_bounded": {
+        "clock_buffer_input": 1,
+        "combinational_input": 533,
+        "mux_select": 3,
+        "scan_enable": 7,
+        "scan_input": 7,
+        "sequential_data": 114
+      },
+      "distance_to_mux_select": 3,
+      "distance_to_sequential_data": 2,
+      "distance_to_arithmetic_input": null,
+      "distance_to_arithmetic_carry_input": null
+    },
+    "driver": {
+      "kind": "standard_cell_output",
+      "module": "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2",
+      "instance": "\\status_cnt_q_reg[1]",
+      "cell_type": "DFFR_X1",
+      "pin": "Q",
+      "role": "driver",
+      "expression": "cnt_o[1]",
+      "metadata": {
+        "cell_family": "sequential"
+      }
+    }
+  },
+  "receiver_signals": [
+    {
+      "receiver_index": 0,
+      "expression": "cnt_o[1]",
+      "source_key": "cnt_o[1]",
+      "role": "hierarchy_or_output_boundary",
+      "metadata": {
+        "sink_kind": "module_output",
+        "sink_instance": null,
+        "sink_pin": "cnt_o",
+        "sink_role": "module_output"
+      },
+      "receiver_id": "R000"
+    },
+    {
+      "receiver_index": 1,
+      "expression": "n_28",
+      "source_key": "n_28",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g2490",
+        "receiver_cell_type": "OR2_X1",
+        "receiver_input_pin": "A2",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R001"
+    },
+    {
+      "receiver_index": 2,
+      "expression": "n_12",
+      "source_key": "n_12",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3723",
+        "receiver_cell_type": "NAND4_X1",
+        "receiver_input_pin": "A3",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R002"
+    },
+    {
+      "receiver_index": 3,
+      "expression": "n_10",
+      "source_key": "n_10",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3727",
+        "receiver_cell_type": "OR3_X1",
+        "receiver_input_pin": "A3",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R003"
+    },
+    {
+      "receiver_index": 4,
+      "expression": "n_6",
+      "source_key": "n_6",
+      "role": "direct_receiver_output",
+      "metadata": {
+        "receiver_instance": "g3731",
+        "receiver_cell_type": "NAND2_X1",
+        "receiver_input_pin": "A1",
+        "receiver_output_pin": "ZN",
+        "receiver_input_role": "combinational_input"
+      },
+      "receiver_id": "R004"
+    }
+  ],
+  "modification": {
+    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "temporary_pre_fault_net": "f2a_pre_tf000019_sa1",
+    "stuck_at_assignment": "assign cnt_o[1] = 1'b1;",
+    "driver_connection": {
+      "kind": "standard_cell_output",
+      "module": "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2",
+      "instance": "\\status_cnt_q_reg[1]",
+      "cell_type": "DFFR_X1",
+      "pin": "Q",
+      "original_connection": "cnt_o[1]",
+      "replacement_connection": "f2a_pre_tf000019_sa1",
+      "connection_start": 1798798,
+      "connection_end": 1798806
+    },
+    "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
+  },
+  "artifacts": {
+    "fault_spec": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/fault_specs/TF000019_SA1.json",
+    "patch": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/stage5/patches/TF000019_SA1.patch",
+    "faulty_netlist": "temporary_only",
+    "vcd": "not_generated_by_default"
+  },
+  "fault_spec_digest_sha256": "77fd0b5ccc939cb48f32648554afe9afa23d02f93c1bd4c86eff6e41446de926"
+}

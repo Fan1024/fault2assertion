@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000227_SA1/fault_netlist.v
+@@ -34855,7 +34855,7 @@
+   MUX2_X1 g827(.A (fifo_rdata[28]), .B (instr_rdata_i[28]), .S
+        (fifo_empty), .Z (fetch_rdata_o[28]));
+   MUX2_X1 g828(.A (fifo_rdata[30]), .B (instr_rdata_i[30]), .S
+-       (fifo_empty), .Z (fetch_rdata_o[30]));
++       (fifo_empty), .Z (f2a_pre_tf000227_sa1));
+   MUX2_X1 g829(.A (fifo_rdata[14]), .B (instr_rdata_i[14]), .S
+        (fifo_empty), .Z (fetch_rdata_o[14]));
+   MUX2_X1 g830(.A (fifo_rdata[18]), .B (instr_rdata_i[18]), .S
+@@ -34896,6 +34896,10 @@
+        (fifo_empty), .Z (fetch_rdata_o[0]));
+   MUX2_X1 g848(.A (fifo_rdata[22]), .B (instr_rdata_i[22]), .S
+        (fifo_empty), .Z (fetch_rdata_o[22]));
++
++  // Fault2Assertion Stage-5 fault TF000227_SA1 run-local driver split
++  wire f2a_pre_tf000227_sa1;
++  assign fetch_rdata_o[30] = 1'b1;
+ endmodule
+ 
+ module

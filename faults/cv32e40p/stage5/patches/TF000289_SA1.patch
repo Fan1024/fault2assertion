@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000289_SA1/fault_netlist.v
+@@ -20851,7 +20851,7 @@
+        (ctrl_transfer_insn_in_id_o[1]));
+   AND2_X1 g4725(.A1 (n_232), .A2 (n_259), .ZN (data_req_o));
+   NOR2_X1 g4726(.A1 (deassert_we_i), .A2 (n_256), .ZN
+-       (ctrl_transfer_insn_in_id_o[0]));
++       (f2a_pre_tf000289_sa1));
+   NOR2_X1 g4727(.A1 (deassert_we_i), .A2 (n_251), .ZN
+        (regfile_mem_we_o));
+   INV_X1 fopt4735(.A (deassert_we_i), .ZN (n_232));
+@@ -21252,6 +21252,10 @@
+        (instr_rdata_i[23]), .ZN (n_354));
+   AOI211_X1 g8768(.A (n_52), .B (n_167), .C1 (n_91), .C2 (n_56), .ZN
+        (n_355));
++
++  // Fault2Assertion Stage-5 fault TF000289_SA1 run-local driver split
++  wire f2a_pre_tf000289_sa1;
++  assign ctrl_transfer_insn_in_id_o[0] = 1'b1;
+ endmodule
+ 
+ module cv32e40p_int_controller_PULP_SECURE0(clk, rst_n, irq_i,

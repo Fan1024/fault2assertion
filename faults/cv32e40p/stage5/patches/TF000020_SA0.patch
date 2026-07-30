@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000020_SA0/fault_netlist.v
+@@ -30532,7 +30532,7 @@
+        (\regfile_alu_waddr_ex_o[4]_3589 ), .Q
+        (\regfile_alu_waddr_ex_o[4]_3589 ));
+   DFFR_X1 regfile_alu_we_ex_o_reg(.RN (rst_n), .CK (clk), .D (n_331),
+-       .Q (regfile_alu_we_ex_o_3591));
++       .Q (f2a_pre_tf000020_sa0));
+   SDFFR_X1 \regfile_waddr_ex_o_reg[0] (.RN (rst_n), .CK (clk), .D
+        (instr_rdata_i[7]), .SE (n_270), .SI (regfile_waddr_ex_o[0]), .Q
+        (regfile_waddr_ex_o[0]));
+@@ -32489,6 +32489,10 @@
+        (n_1168));
+   XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
+        (n_1169));
++
++  // Fault2Assertion Stage-5 fault TF000020_SA0 run-local driver split
++  wire f2a_pre_tf000020_sa0;
++  assign regfile_alu_we_ex_o_3591 = 1'b0;
+ endmodule
+ 
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,

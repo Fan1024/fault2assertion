@@ -1,0 +1,22 @@
+--- a/cv32e40p.mapped.v
++++ b/run-local/TF000057_SA0/fault_netlist.v
+@@ -22790,7 +22790,7 @@
+   DFFR_X1 \mem_reg[14][22] (.RN (rst_n), .CK (clk), .D (n_1128), .Q
+        (\mem[14] [22]));
+   DFFR_X1 \mem_reg[14][23] (.RN (rst_n), .CK (clk), .D (n_1127), .Q
+-       (\mem[14] [23]));
++       (f2a_pre_tf000057_sa0));
+   DFFR_X1 \mem_reg[14][24] (.RN (rst_n), .CK (clk), .D (n_1378), .Q
+        (\mem[14] [24]));
+   DFFR_X1 \mem_reg[14][25] (.RN (rst_n), .CK (clk), .D (n_1377), .Q
+@@ -29162,6 +29162,10 @@
+   OR2_X1 g172(.A1 (n_85), .A2 (n_3750), .ZN (n_3751));
+   INV_X1 g190(.A (n_3737), .ZN (n_3750));
+   NAND2_X1 g175(.A1 (n_3732), .A2 (n_3739), .ZN (n_3752));
++
++  // Fault2Assertion Stage-5 fault TF000057_SA0 run-local driver split
++  wire f2a_pre_tf000057_sa0;
++  assign \mem[14] [23] = 1'b0;
+ endmodule
+ 
+ module
