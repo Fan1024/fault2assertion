@@ -1,0 +1,25 @@
+Branch fault VCD=0 screening summary
+=====================================
+Campaign root: /raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/branchfault
+Workload: crc32
+Run name: screen_seed20260729_mc2000000
+Random seed: 20260729
+Expected fault instances: 760
+
+Counts by result:
+  NOT_RUN                     750
+  OUTPUT_MATCH                 10
+
+Counts by screening decision:
+  LOCAL_PROBE_REQUIRED               10
+  PENDING                           750
+
+Interpretation:
+  OUTPUT_MISMATCH -> keep as final-output-detectable fault.
+  TIMEOUT         -> keep for review; verify golden completes under the same MAXCYCLES.
+  OUTPUT_MATCH    -> do not discard; run local probe next.
+  ERROR/UNKNOWN   -> infrastructure failure, not a scientific fault result.
+  NOT_RUN         -> pending.
+
+JSON: /raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/branchfault/screening/screen_seed20260729_mc2000000/campaign_results.json
+CSV:  /raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/branchfault/screening/screen_seed20260729_mc2000000/campaign_results.csv

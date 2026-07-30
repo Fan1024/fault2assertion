@@ -1,0 +1,7 @@
+?? faults/
+?? golden/cv32e40p/crc32/netlist/golden_mc2000000_check/
+?? scripts/fault_injection/compare_local_probe.py
+?? scripts/fault_injection/make_local_probe.py
+?? scripts/fault_injection/summarize_branch_campaign.py
+?? scripts/run_branch_campaign_vcd0.sh
+?? scripts/run_branch_probe.sh

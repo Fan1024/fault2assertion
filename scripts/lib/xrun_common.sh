@@ -43,9 +43,27 @@ f2a_run_xrun() {
     local verbose="${VERBOSE:-0}"
     local keep_work="${KEEP_WORK:-1}"
 
+    # Local-probe controls.
+    #
+    # Golden probe:
+    #   LOCAL_PROBE=1
+    #   PROBE_FAULT_JSON=/path/to/BFxxxx_SAx/fault.json
+    #   VCD=1
+    #
+    # Fault probe:
+    #   LOCAL_PROBE=1
+    #   VCD=1
+    #
+    # For a fault run, FAULT_JSON is supplied by run_xrun_fault.sh.
+    local local_probe="${LOCAL_PROBE:-0}"
+    local requested_probe_fault_json="${PROBE_FAULT_JSON:-}"
+
     case "${RUN_KIND}" in
         golden|fault) ;;
-        *) f2a_die "unsupported RUN_KIND: ${RUN_KIND}"; return 1 ;;
+        *)
+            f2a_die "unsupported RUN_KIND: ${RUN_KIND}"
+            return 1
+            ;;
     esac
 
     if [[ "${DESIGN}" != "cv32e40p" ]]; then
@@ -56,7 +74,8 @@ f2a_run_xrun() {
     case "${SIM_LEVEL}" in
         rtl|netlist) ;;
         *)
-            f2a_die "unsupported simulation level: ${SIM_LEVEL}; use rtl or netlist"
+            f2a_die \
+                "unsupported simulation level: ${SIM_LEVEL}; use rtl or netlist"
             return 1
             ;;
     esac
@@ -66,11 +85,38 @@ f2a_run_xrun() {
         return 1
     fi
 
+    case "${vcd}" in
+        0|1) ;;
+        *)
+            f2a_die "VCD must be 0 or 1; got ${vcd}"
+            return 1
+            ;;
+    esac
+
+    case "${local_probe}" in
+        0|1) ;;
+        *)
+            f2a_die "LOCAL_PROBE must be 0 or 1; got ${local_probe}"
+            return 1
+            ;;
+    esac
+
+    if [[ "${local_probe}" == "1" && "${SIM_LEVEL}" != "netlist" ]]; then
+        f2a_die "LOCAL_PROBE=1 currently supports netlist simulation only"
+        return 1
+    fi
+
+    if [[ "${local_probe}" == "1" && "${vcd}" != "1" ]]; then
+        f2a_die "LOCAL_PROBE=1 requires VCD=1"
+        return 1
+    fi
+
     local setup_script="${F2A_ROOT}/scripts/setup_env.sh"
     [[ -f "${setup_script}" ]] || {
         f2a_die "setup script not found: ${setup_script}"
         return 1
     }
+
     # shellcheck disable=SC1090
     source "${setup_script}"
 
@@ -88,12 +134,15 @@ f2a_run_xrun() {
         f2a_die "xrun was not found in PATH"
         return 1
     }
+
     f2a_require_file "${firmware}" "firmware" || return 1
     f2a_require_file "${elf_file}" "ELF" || return 1
+
     [[ -d "${tb_dir}" ]] || {
         f2a_die "testbench directory not found: ${tb_dir}"
         return 1
     }
+
     if [[ -e "${RUN_DIR}" ]]; then
         f2a_die "run directory already exists: ${RUN_DIR}"
         return 1
@@ -122,6 +171,7 @@ f2a_run_xrun() {
         "${tb_subsystem_source}"
         "${tb_dir}/tb_top.sv"
     )
+
     local source_file
     for source_file in "${tb_sources[@]}"; do
         [[ -f "${source_file}" ]] || {
@@ -134,11 +184,16 @@ f2a_run_xrun() {
     local raw_netlist=""
     local sim_netlist=""
 
+    local probe_source=""
+    local probe_manifest=""
+    local effective_probe_fault_json=""
+
     if [[ "${SIM_LEVEL}" == "rtl" ]]; then
         [[ -f "${rtl_manifest}" ]] || {
             f2a_die "RTL manifest not found: ${rtl_manifest}"
             return 1
         }
+
         sed "s|\${DESIGN_RTL_DIR}|${rtl_dir}|g" \
             "${rtl_manifest}" > "${design_sources_file}"
     else
@@ -146,25 +201,37 @@ f2a_run_xrun() {
 
         if [[ "${RUN_KIND}" == "golden" ]]; then
             raw_netlist="${GOLDEN_NETLIST:-${CV32E40P_MAPPED_NETLIST:-}}"
-            f2a_require_file "${raw_netlist}" "golden mapped netlist" || return 1
+            f2a_require_file \
+                "${raw_netlist}" \
+                "golden mapped netlist" \
+                || return 1
         else
             local fault_json="${FAULT_JSON:?FAULT_JSON must be set for fault simulation}"
             local injector="${f2a_home}/scripts/fault_injection/branch_fault.py"
+
             f2a_require_file "${fault_json}" "fault metadata" || return 1
+
             [[ -f "${injector}" ]] || {
                 f2a_die "fault injector not found: ${injector}"
                 return 1
             }
 
             raw_netlist="${work_dir}/fault_netlist.v"
+
             python3 "${injector}" apply \
                 --fault-json "${fault_json}" \
                 --output-netlist "${raw_netlist}"
-            f2a_require_file "${raw_netlist}" "run-local fault netlist" || return 1
+
+            f2a_require_file \
+                "${raw_netlist}" \
+                "run-local fault netlist" \
+                || return 1
 
             cp "${fault_json}" "${RUN_DIR}/fault.json"
+
             if [[ -f "$(dirname -- "${fault_json}")/fault.patch" ]]; then
-                cp "$(dirname -- "${fault_json}")/fault.patch" \
+                cp \
+                    "$(dirname -- "${fault_json}")/fault.patch" \
                     "${RUN_DIR}/fault.patch"
             fi
         fi
@@ -174,22 +241,35 @@ f2a_run_xrun() {
             "${rtl_dir}/include/cv32e40p_pkg.sv"
             "${rtl_dir}/include/cv32e40p_fpu_pkg.sv"
         )
+
         local package_file
         for package_file in "${package_sources[@]}"; do
             [[ -f "${package_file}" ]] || {
-                f2a_die "required CV32E40P package not found: ${package_file}"
+                f2a_die \
+                    "required CV32E40P package not found: ${package_file}"
                 return 1
             }
         done
 
         local netlist_prep_script="${f2a_home}/platform/cv32e40p/prepare_netlist.py"
+
         [[ -f "${netlist_prep_script}" ]] || {
-            f2a_die "netlist preparation script not found: ${netlist_prep_script}"
+            f2a_die \
+                "netlist preparation script not found: ${netlist_prep_script}"
             return 1
         }
+
         sim_netlist="${work_dir}/cv32e40p.mapped.sim.v"
-        python3 "${netlist_prep_script}" "${raw_netlist}" "${sim_netlist}"
-        f2a_require_file "${sim_netlist}" "run-local simulation netlist" || return 1
+
+        python3 \
+            "${netlist_prep_script}" \
+            "${raw_netlist}" \
+            "${sim_netlist}"
+
+        f2a_require_file \
+            "${sim_netlist}" \
+            "run-local simulation netlist" \
+            || return 1
 
         {
             printf '%s\n' "${package_sources[@]}"
@@ -197,22 +277,88 @@ f2a_run_xrun() {
             printf '%s\n' "${sim_netlist}"
         } > "${design_sources_file}"
 
-        sha256sum "${raw_netlist}" "${cell_model}" \
+        sha256sum \
+            "${raw_netlist}" \
+            "${cell_model}" \
             > "${RUN_DIR}/netlist_sources.sha256"
-        sha256sum "${sim_netlist}" \
+
+        sha256sum \
+            "${sim_netlist}" \
             > "${RUN_DIR}/simulation_netlist.sha256"
-        printf '%s\n' "${raw_netlist}" \
+
+        printf '%s\n' \
+            "${raw_netlist}" \
             > "${RUN_DIR}/mapped_netlist_source.txt"
-        printf '%s\n' "${cell_model}" \
+
+        printf '%s\n' \
+            "${cell_model}" \
             > "${RUN_DIR}/cell_model_source.txt"
+
+        # --------------------------------------------------------------
+        # Optional fault-local probe generation
+        # --------------------------------------------------------------
+        if [[ "${local_probe}" == "1" ]]; then
+            if [[ "${RUN_KIND}" == "fault" ]]; then
+                effective_probe_fault_json="${FAULT_JSON:?FAULT_JSON must be set}"
+            else
+                effective_probe_fault_json="${requested_probe_fault_json}"
+            fi
+
+            if [[ -z "${effective_probe_fault_json}" ]]; then
+                f2a_die \
+                    "golden LOCAL_PROBE=1 requires PROBE_FAULT_JSON=/path/to/fault.json"
+                return 1
+            fi
+
+            f2a_require_file \
+                "${effective_probe_fault_json}" \
+                "probe fault metadata" \
+                || return 1
+
+            local probe_generator="${f2a_home}/scripts/fault_injection/make_local_probe.py"
+
+            [[ -f "${probe_generator}" ]] || {
+                f2a_die \
+                    "local probe generator not found: ${probe_generator}"
+                return 1
+            }
+
+            probe_source="${work_dir}/local_probe.sv"
+            probe_manifest="${RUN_DIR}/local_probe_manifest.json"
+
+            python3 "${probe_generator}" \
+                --fault-json "${effective_probe_fault_json}" \
+                --netlist "${sim_netlist}" \
+                --output "${probe_source}" \
+                --manifest "${probe_manifest}"
+
+            f2a_require_file \
+                "${probe_source}" \
+                "generated local probe" \
+                || return 1
+
+            f2a_require_file \
+                "${probe_manifest}" \
+                "local probe manifest" \
+                || return 1
+
+            # Preserve the generated probe even after the work directory is removed.
+            cp "${probe_source}" "${RUN_DIR}/local_probe.sv"
+
+            # Compile the generated probe together with the testbench.
+            tb_sources+=("${probe_source}")
+        fi
     fi
 
     git -C "${cv32e40p_home}" rev-parse HEAD \
         > "${RUN_DIR}/cv32e40p_commit.txt" 2>/dev/null || true
+
     git -C "${cv32e40p_home}" status --short \
         > "${RUN_DIR}/cv32e40p_status.txt" 2>/dev/null || true
+
     git -C "${f2a_home}" rev-parse HEAD \
         > "${RUN_DIR}/fault2assertion_commit.txt" 2>/dev/null || true
+
     git -C "${f2a_home}" status --short \
         > "${RUN_DIR}/fault2assertion_status.txt" 2>/dev/null || true
 
@@ -234,6 +380,9 @@ fault_json=${FAULT_JSON:-}
 raw_simulation_netlist=${raw_netlist}
 cell_model=${cell_model}
 maxcycles=${maxcycles}
+local_probe=${local_probe}
+probe_fault_json=${effective_probe_fault_json}
+probe_source=${probe_source}
 vcd=${vcd}
 verbose=${verbose}
 keep_work=${keep_work}
@@ -248,10 +397,14 @@ MANIFEST
         "${cv32e40p_home}/sva"
         "${tb_dir}/include"
     )
+
     local -a include_args=()
     local include_dir
+
     for include_dir in "${include_dirs[@]}"; do
-        [[ -d "${include_dir}" ]] && include_args+=("+incdir+${include_dir}")
+        if [[ -d "${include_dir}" ]]; then
+            include_args+=("+incdir+${include_dir}")
+        fi
     done
 
     local -a xrun_args=(
@@ -277,10 +430,22 @@ MANIFEST
             -notimingchecks
         )
     fi
-    [[ "${vcd}" == "1" ]] && xrun_args+=(+vcd)
-    [[ "${verbose}" == "1" ]] && xrun_args+=(+verbose)
 
-    f2a_write_command "${RUN_DIR}/command.txt" "${xrun_args[@]}"
+    if [[ "${vcd}" == "1" ]]; then
+        xrun_args+=(+vcd)
+    fi
+
+    if [[ "${local_probe}" == "1" ]]; then
+        xrun_args+=(+local_probe)
+    fi
+
+    if [[ "${verbose}" == "1" ]]; then
+        xrun_args+=(+verbose)
+    fi
+
+    f2a_write_command \
+        "${RUN_DIR}/command.txt" \
+        "${xrun_args[@]}"
 
     echo
     echo "======================================================================"
@@ -289,18 +454,37 @@ MANIFEST
     echo "Design         : ${DESIGN}"
     echo "Workload       : ${WORKLOAD}"
     echo "Simulation     : ${SIM_LEVEL}"
-    [[ -n "${FAULT_ID:-}" ]] && echo "Fault ID       : ${FAULT_ID}"
+
+    if [[ -n "${FAULT_ID:-}" ]]; then
+        echo "Fault ID       : ${FAULT_ID}"
+    fi
+
     echo "Firmware       : ${firmware}"
-    [[ -n "${raw_netlist}" ]] && echo "Input netlist  : ${raw_netlist}"
-    [[ "${SIM_LEVEL}" == "netlist" ]] && echo "Cell model     : ${cell_model}"
+
+    if [[ -n "${raw_netlist}" ]]; then
+        echo "Input netlist  : ${raw_netlist}"
+    fi
+
+    if [[ "${SIM_LEVEL}" == "netlist" ]]; then
+        echo "Cell model     : ${cell_model}"
+    fi
+
     echo "Run directory  : ${RUN_DIR}"
     echo "Work directory : ${work_dir}"
     echo "Maximum cycles : ${maxcycles}"
     echo "VCD enabled    : ${vcd}"
+    echo "Local probe    : ${local_probe}"
+
+    if [[ "${local_probe}" == "1" ]]; then
+        echo "Probe metadata : ${effective_probe_fault_json}"
+        echo "Probe source   : ${probe_source}"
+    fi
+
     echo "Xcelium        : $(command -v xrun)"
     echo "======================================================================"
 
     cd "${work_dir}"
+
     set +e
     xrun "${xrun_args[@]}"
     local xrun_status=$?
@@ -311,24 +495,36 @@ MANIFEST
     local final_status=""
     local exit_status=0
 
-    if grep -q "Simulation aborted due to maximum cycle limit" "${log_file}"; then
+    if grep -q \
+        "Simulation aborted due to maximum cycle limit" \
+        "${log_file}"
+    then
         final_status="TIMEOUT"
         exit_status=2
-    elif grep -Eqi "CRC32 FAIL|EXIT FAILURE|TEST\(S\) FAILED" "${log_file}"; then
+    elif grep -Eqi \
+        "CRC32 FAIL|EXIT FAILURE|TEST\(S\) FAILED" \
+        "${log_file}"
+    then
         final_status="OUTPUT_MISMATCH"
         exit_status=2
     elif [[ ${xrun_status} -ne 0 ]]; then
         final_status="ERROR"
         exit_status=${xrun_status}
-    elif [[ "${WORKLOAD}" == "crc32" ]] && \
-         grep -Eqi "CRC32 PASS:.*vector=cbf43926.*signature=2d6352b3" "${log_file}" && \
-         grep -q "EXIT SUCCESS" "${log_file}"; then
+    elif [[ "${WORKLOAD}" == "crc32" ]] \
+        && grep -Eqi \
+            "CRC32 PASS:.*vector=cbf43926.*signature=2d6352b3" \
+            "${log_file}" \
+        && grep -q "EXIT SUCCESS" "${log_file}"
+    then
         if [[ "${RUN_KIND}" == "golden" ]]; then
             final_status="PASS"
         else
             final_status="OUTPUT_MATCH"
         fi
-        grep -Ei "CRC32 PASS|EXIT SUCCESS" "${log_file}" \
+
+        grep -Ei \
+            "CRC32 PASS|EXIT SUCCESS" \
+            "${log_file}" \
             > "${RUN_DIR}/signature.txt" || true
     elif grep -q "EXIT SUCCESS" "${log_file}"; then
         if [[ "${RUN_KIND}" == "golden" ]]; then
@@ -342,23 +538,28 @@ MANIFEST
     fi
 
     printf '%s\n' "${final_status}" > "${result_file}"
+
     printf 'xrun_exit_status=%s\nresult=%s\n' \
-        "${xrun_status}" "${final_status}" > "${RUN_DIR}/result.env"
+        "${xrun_status}" \
+        "${final_status}" \
+        > "${RUN_DIR}/result.env"
 
     echo
     echo "======================================================================"
     echo "Simulation result: ${final_status}"
     echo "======================================================================"
     echo "Log : ${log_file}"
+
     if [[ -f "${work_dir}/riscy_tb.vcd" ]]; then
         echo "VCD : ${work_dir}/riscy_tb.vcd"
     fi
 
-    # KEEP_WORK=0 is intended for later use after VCD feature extraction is added.
-    # For now, refuse to delete a work directory containing a VCD so data is not lost.
+    # KEEP_WORK=0 is mainly used by VCD=0 batch screening. For probe runs,
+    # run_branch_probe.sh performs comparison first and removes work afterwards.
     if [[ "${keep_work}" == "0" ]]; then
         if [[ -f "${work_dir}/riscy_tb.vcd" ]]; then
-            echo "WARNING: KEEP_WORK=0 ignored because VCD feature extraction is not connected yet."
+            echo \
+                "WARNING: KEEP_WORK=0 ignored because work contains a VCD."
         else
             rm -rf "${work_dir}"
             echo "Removed work directory: ${work_dir}"
