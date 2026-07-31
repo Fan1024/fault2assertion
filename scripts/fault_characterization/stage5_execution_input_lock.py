@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 
-PROGRAM_VERSION = "1.0.0"
+PROGRAM_VERSION = "2.0.0"
 
 
 class LockError(RuntimeError):
@@ -132,6 +132,23 @@ def build_payload(args: argparse.Namespace) -> dict[str, Any]:
             repo / "scripts/fault_characterization/stage5_reproduction_bundle.py",
         ),
         ("stage5_fault_materializer", repo / "scripts/fault_characterization/stage5_faults.py"),
+        ("stage5_fault_materializer_impl", repo / "scripts/fault_characterization/stage5_faults_v107_impl.py"),
+        ("stage5_assertion_policy", repo / "platform/cv32e40p/stage5_assertion_policy_v1.json"),
+        ("stage5_mm_ram_preparation", repo / "platform/cv32e40p/prepare_stage5_mm_ram.py"),
+        ("stage5_gate_validation_common", repo / "scripts/fault_characterization/stage5_gate_validation_common.py"),
+        ("stage5_diagnostic_run_validator", repo / "scripts/fault_characterization/stage5_diagnostic_run_validate.py"),
+        ("stage5_detector_inventory", repo / "scripts/fault_characterization/stage5_detector_inventory.py"),
+        ("stage5_multidimensional_oracle", repo / "scripts/fault_characterization/stage5_multidim_oracle.py"),
+        ("stage5_multidimensional_oracle_validator", repo / "scripts/fault_characterization/stage5_multidim_oracle_validate.py"),
+        ("stage5_phase23_compile_validator", repo / "scripts/fault_characterization/stage5_phase23_compile_validate.py"),
+        ("stage5_phase23_golden_validator", repo / "scripts/fault_characterization/stage5_phase23_golden_validate.py"),
+        ("stage5_phase23_static_driver", repo / "scripts/fault_characterization/run_stage5_phase23_static.sh"),
+        ("stage5_phase23_compile_driver", repo / "scripts/fault_characterization/run_stage5_phase23_compile.sh"),
+        ("stage5_phase23_golden_driver", repo / "scripts/fault_characterization/run_stage5_phase23_golden.sh"),
+        ("stage5_phase2_three_mode_driver", repo / "scripts/fault_characterization/run_stage5_phase2_three_mode_smoke.sh"),
+        ("stage5_phase3_oracle_driver", repo / "scripts/fault_characterization/run_stage5_phase3_smoke_oracle.sh"),
+        ("stage5_artifact_lock", repo / "scripts/fault_characterization/stage5_artifact_lock.py"),
+        ("stage5_execution_input_lock", repo / "scripts/fault_characterization/stage5_execution_input_lock.py"),
         ("netlist_preparation", repo / "platform/cv32e40p/prepare_netlist.py"),
         (
             "tb_subsystem",

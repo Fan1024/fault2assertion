@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0",
+  "policy_version": "stage5_phase2_execution_modes_v1",
+  "design": "cv32e40p",
+  "workload": "crc32",
+  "purpose": "Define Stage-5 Phase-2 detector execution modes without implementing diagnostic continuation behavior yet.",
+  "phase2_scope": {
+    "gate1": "Establish mode infrastructure, compile/elaboration integrity, generated-monitor sanitation, artifact freshness, and explicit rejection of NON_CONTINUABLE as an execution mode.",
+    "gate2": "Prove that the Phase-2 infrastructure in NATIVE mode preserves the frozen Phase-1 golden and fault behavior.",
+    "gate3": "Reserved for implementation and validation of OBSERVE_SAFE and QUARANTINE continuation behavior."
+  },
+  "execution_modes": {
+    "NATIVE": {
+      "executable": true,
+      "run_purpose_when_executed": "NATIVE_CHARACTERIZATION",
+      "phase2_g1_compile_supported": true,
+      "phase2_g2_runtime_supported": true,
+      "continuation_behavior_implemented": true,
+      "existing_detector_action": "PRESERVE_ORIGINAL_ACTION",
+      "functional_side_effect": "PRESERVE_ORIGINAL_BEHAVIOR",
+      "scientific_role": [
+        "native execution baseline",
+        "existing detector baseline",
+        "raw execution facts"
+      ]
+    },
+    "OBSERVE_SAFE": {
+      "executable": true,
+      "run_purpose_when_executed": "DIAGNOSTIC_CONTINUATION",
+      "phase2_g1_compile_supported": true,
+      "phase2_g2_runtime_supported": false,
+      "continuation_behavior_implemented": false,
+      "existing_detector_action": "FUTURE_SUPPRESS_TERMINATION_ONLY",
+      "functional_side_effect": "FUTURE_PRESERVE_ORIGINAL_TRANSACTION",
+      "scientific_role": [
+        "future diagnostic continuation for detectors proven safe to continue"
+      ]
+    },
+    "QUARANTINE": {
+      "executable": true,
+      "run_purpose_when_executed": "DIAGNOSTIC_CONTINUATION",
+      "phase2_g1_compile_supported": true,
+      "phase2_g2_runtime_supported": false,
+      "continuation_behavior_implemented": false,
+      "existing_detector_action": "FUTURE_RECORD_WITHOUT_FATAL_TERMINATION",
+      "functional_side_effect": "FUTURE_SUPPRESS_DEFINED_DANGEROUS_SIDE_EFFECT",
+      "scientific_role": [
+        "future diagnostic continuation for detectors requiring controlled intervention"
+      ]
+    }
+  },
+  "detector_capabilities": {
+    "NON_CONTINUABLE": {
+      "executable": false,
+      "meaning": "The detector or violation cannot be continued safely or meaningfully.",
+      "required_outcome": "DIAGNOSTIC_CONTINUATION_UNSUPPORTED",
+      "must_not_be_accepted_as_execution_mode": true
+    }
+  },
+  "gate1_required_cases": [
+    "golden_native_compile",
+    "fault_native_compile",
+    "fault_observe_safe_compile",
+    "fault_quarantine_compile"
+  ],
+  "gate2_required_cases": [
+    "golden_native_runtime",
+    "fault_native_runtime"
+  ],
+  "guardrails": {
+    "phase2_g1_does_not_modify_existing_assertion_behavior": true,
+    "phase2_g2_runs_only_native_mode": true,
+    "observe_safe_runtime_forbidden_before_gate3": true,
+    "quarantine_runtime_forbidden_before_gate3": true,
+    "non_continuable_is_not_an_execution_mode": true,
+    "ai_assertions_disabled": true,
+    "final_fault_effect_oracle_forbidden": true,
+    "vcd_forbidden": true,
+    "stale_generated_monitor_forbidden": true
+  }
+}

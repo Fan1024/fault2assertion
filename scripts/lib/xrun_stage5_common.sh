@@ -9,7 +9,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     exit 1
 fi
 
-F2A_STAGE5_RUNNER_VERSION="3.0.0"
+F2A_STAGE5_RUNNER_VERSION="4.0.0"
 
 f2a_stage5_die() {
     echo "ERROR: $*" >&2
@@ -134,9 +134,14 @@ for raw in source.read_text(encoding="utf-8").splitlines():
 output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 PY_MANIFEST
 
+    local preflight_run_purpose="NATIVE_CHARACTERIZATION"
+    if [[ "${phase}" == "compile" ]]; then
+        preflight_run_purpose="COMPILE_CHECK"
+    fi
     python3 "${verdict_tool}" \
         --phase "${phase}" \
         --run-kind "${run_kind}" \
+        --run-purpose "${preflight_run_purpose}" \
         --xrun-status "${synthetic_status}" \
         --log "${log_file}" \
         --result-json "${run_dir}/result.json" \
@@ -205,7 +210,7 @@ f2a_stage5_run_xrun() {
             ;;
     esac
     case "${run_purpose}" in
-        COMPILE_CHECK|NATIVE_CHARACTERIZATION|DIAGNOSTIC_CONTINUATION|ASSERTION_EVALUATION_PASSIVE|ASSERTION_DEPLOYMENT_FAILFAST) ;;
+        COMPILE_CHECK|NATIVE_CHARACTERIZATION|DIAGNOSTIC_OBSERVE|DIAGNOSTIC_QUARANTINE) ;;
         *)
             f2a_stage5_die "unsupported STAGE5_RUN_PURPOSE: ${run_purpose}"
             return 1
@@ -213,6 +218,22 @@ f2a_stage5_run_xrun() {
     esac
     if [[ "${phase}" == "compile" && "${run_purpose}" != "COMPILE_CHECK" ]]; then
         f2a_stage5_die "compile phase requires STAGE5_RUN_PURPOSE=COMPILE_CHECK"
+        return 1
+    fi
+    local assertion_mode="native"
+    case "${run_purpose}" in
+        COMPILE_CHECK|NATIVE_CHARACTERIZATION)
+            assertion_mode="native"
+            ;;
+        DIAGNOSTIC_OBSERVE)
+            assertion_mode="observe"
+            ;;
+        DIAGNOSTIC_QUARANTINE)
+            assertion_mode="diagnostic_quarantine"
+            ;;
+    esac
+    if [[ "${RUN_KIND}" == "golden" && "${assertion_mode}" != "native" ]]; then
+        f2a_stage5_die "golden execution supports native assertion mode only"
         return 1
     fi
 
@@ -319,6 +340,43 @@ PY
     }
 
     local tb_subsystem_source="${f2a_home}/platform/cv32e40p/tb/cv32e40p_tb_subsystem.sv"
+    local original_mm_ram_source="${tb_dir}/mm_ram.sv"
+    local assertion_policy="${f2a_home}/platform/cv32e40p/stage5_assertion_policy_v1.json"
+    local assertion_prep="${f2a_home}/platform/cv32e40p/prepare_stage5_mm_ram.py"
+    f2a_stage5_require_file "${original_mm_ram_source}" "original mm_ram source" || return 1
+    f2a_stage5_require_file "${assertion_policy}" "Stage-5 assertion policy" || return 1
+    f2a_stage5_require_file "${assertion_prep}" "Stage-5 mm_ram preparation tool" || return 1
+
+    mkdir -p "${RUN_DIR}" "$(dirname -- "${trace_output}")"
+    local work_dir="${RUN_DIR}/work"
+    mkdir -p "${work_dir}"
+    local stage5_mm_ram_source="${work_dir}/mm_ram.stage5.sv"
+    set +e
+    python3 "${assertion_prep}" \
+        "${original_mm_ram_source}" \
+        "${stage5_mm_ram_source}" \
+        --policy "${assertion_policy}" \
+        --report "${RUN_DIR}/mm_ram_preparation.json" \
+        > "${RUN_DIR}/mm_ram_preparation.log" 2>&1
+    local mm_ram_prepare_status=$?
+    set -e
+    cat "${RUN_DIR}/mm_ram_preparation.log"
+    if [[ "${mm_ram_prepare_status}" -ne 0 || ! -s "${stage5_mm_ram_source}" ]]; then
+        cp -- "${RUN_DIR}/mm_ram_preparation.log" "${RUN_DIR}/preflight_failure.txt"
+        f2a_stage5_finalize_preflight_failure \
+            "${RUN_DIR}" "${work_dir}" "${phase}" "${RUN_KIND}" \
+            "${trace_output}" "${verdict_tool}" "${bundle_tool}" \
+            "stage5_mm_ram_preparation_failed" 93
+        return $?
+    fi
+    sha256sum \
+        "${original_mm_ram_source}" \
+        "${stage5_mm_ram_source}" \
+        "${assertion_policy}" \
+        "${assertion_prep}" \
+        > "${RUN_DIR}/stage5_assertion_adapter.sha256"
+
+    local assertion_event_output="${RUN_DIR}/assertion_events.tsv"
     local -a tb_sources=(
         "${tb_dir}/include/perturbation_pkg.sv"
         "${tb_dir}/amo_shim.sv"
@@ -326,7 +384,7 @@ PY
         "${tb_dir}/dp_ram.sv"
         "${tb_dir}/riscv_gnt_stall.sv"
         "${tb_dir}/riscv_rvalid_stall.sv"
-        "${tb_dir}/mm_ram.sv"
+        "${stage5_mm_ram_source}"
         "${tb_subsystem_source}"
         "${tb_dir}/tb_top.sv"
         "${monitor_source}"
@@ -353,10 +411,6 @@ PY
     f2a_stage5_require_file "${netlist_prep_script}" "netlist preparation script" \
         || return 1
 
-    mkdir -p "${RUN_DIR}" "$(dirname -- "${trace_output}")"
-    local work_dir="${RUN_DIR}/work"
-    mkdir -p "${work_dir}"
-
     cp -- "${firmware}" "${work_dir}/firmware.hex"
     cp -- "${monitor_source}" "${RUN_DIR}/stage5_monitor.sv"
     printf '%s\n' "${firmware}" > "${RUN_DIR}/firmware_source.txt"
@@ -377,6 +431,9 @@ PY
         echo "CV32E40P_CELL_MODEL=${cell_model}"
         echo "STAGE5_PHASE=${phase}"
         echo "STAGE5_RUN_PURPOSE=${run_purpose}"
+        echo "STAGE5_ASSERTION_MODE=${assertion_mode}"
+        echo "STAGE5_ASSERTION_EVENT_OUTPUT=${assertion_event_output}"
+        echo "STAGE5_ASSERTION_POLICY=${assertion_policy}"
         echo "STAGE5_TRACE_OUTPUT=${trace_output}"
         echo "MAXCYCLES=${maxcycles}"
         echo "VCD=${vcd}"
@@ -462,6 +519,11 @@ stage=5
 phase=${phase}
 run_kind=${RUN_KIND}
 run_purpose=${run_purpose}
+assertion_mode=${assertion_mode}
+assertion_event_output=${assertion_event_output}
+assertion_policy=${assertion_policy}
+original_mm_ram_source=${original_mm_ram_source}
+prepared_mm_ram_source=${stage5_mm_ram_source}
 design=${DESIGN}
 workload=${WORKLOAD}
 simulation_level=${SIM_LEVEL}
@@ -532,6 +594,8 @@ PY
         "${tb_sources[@]}"
         "+firmware=${work_dir}/firmware.hex"
         "+maxcycles=${maxcycles}"
+        "+f2a_assert_mode=${assertion_mode}"
+        "+f2a_assert_event_file=${assertion_event_output}"
         -l "${RUN_DIR}/xrun.log"
         +define+TETRAMAX
         -delay_mode zero
@@ -563,6 +627,8 @@ PY
     echo "Simulation     : ${SIM_LEVEL}"
     echo "Phase          : ${phase}"
     echo "Run purpose    : ${run_purpose}"
+    echo "Assertion mode : ${assertion_mode}"
+    echo "Assertion log  : ${assertion_event_output}"
     echo "Fault ID       : ${FAULT_ID:-none}"
     echo "Firmware       : ${firmware}"
     echo "Input netlist  : ${raw_netlist}"
@@ -596,6 +662,11 @@ PY
             >> "${log_file}"
         xrun_status=98
     fi
+    if [[ "${phase}" == "run" && ! -s "${assertion_event_output}" ]]; then
+        echo "F2A_RUNNER_ERROR: run phase did not create a non-empty assertion event file" \
+            >> "${log_file}"
+        xrun_status=99
+    fi
 
     local result_file="${RUN_DIR}/result.txt"
     local result_json="${RUN_DIR}/result.json"
@@ -606,6 +677,7 @@ PY
         --run-purpose "${run_purpose}" \
         --xrun-status "${xrun_status}" \
         --log "${log_file}" \
+        --assert-events "${assertion_event_output}" \
         --result-json "${result_json}" \
         --result-text "${result_file}" \
         --result-env "${result_env}" >/dev/null || return 1
@@ -623,14 +695,14 @@ PY
     local final_status="${result}"
     local exit_status="${recommended_exit_code}"
 
-    if [[ "${final_status}" == "PASS" || "${final_status}" == "OUTPUT_MATCH" ]]; then
+    if [[ "${final_status}" == "PASS" || "${final_status}" == "OUTPUT_MATCH" || "${final_status}" == "DIAGNOSTIC_OUTPUT_MATCH" ]]; then
         grep -Ei "CRC32 PASS:.*vector=(0x)?cbf43926.*signature=(0x)?2d6352b3.*last=(0x)?5650ac83|EXIT SUCCESS" \
             "${log_file}" > "${RUN_DIR}/signature.txt" || true
     fi
 
     local bundle_created=0
     case "${final_status}" in
-        COMPILE_ERROR|GOLDEN_INVALID|ERROR|UNKNOWN|TIMEOUT|OUTPUT_MISMATCH|EXISTING_ASSERTION_DETECTED)
+        COMPILE_ERROR|GOLDEN_INVALID|ERROR|UNKNOWN|TIMEOUT|OUTPUT_MISMATCH|EXISTING_ASSERTION_DETECTED|DIAGNOSTIC_TIMEOUT|DIAGNOSTIC_OUTPUT_MISMATCH)
             set +e
             python3 "${bundle_tool}" \
                 --run-dir "${RUN_DIR}" \
@@ -658,6 +730,9 @@ PY
     if [[ -f "${trace_output}" ]]; then
         echo "Trace  : ${trace_output}"
     fi
+    if [[ -f "${assertion_event_output}" ]]; then
+        echo "Events : ${assertion_event_output}"
+    fi
     if [[ "${bundle_created}" == "1" ]]; then
         echo "Bundle : ${RUN_DIR}/reproduction_bundle.tar.gz"
     fi
@@ -672,7 +747,7 @@ PY
         retention_reason="VCD_present_or_requested"
     else
         case "${final_status}" in
-            COMPILE_ERROR|GOLDEN_INVALID|ERROR|UNKNOWN|TIMEOUT|EXISTING_ASSERTION_DETECTED)
+            COMPILE_ERROR|GOLDEN_INVALID|ERROR|UNKNOWN|TIMEOUT|EXISTING_ASSERTION_DETECTED|DIAGNOSTIC_TIMEOUT)
                 retain_work=1
                 if [[ "${final_status}" == "EXISTING_ASSERTION_DETECTED" ]]; then
                     retention_reason="native_assertion_termination_retained_for_raw_fact_and_oracle_analysis"

@@ -59,11 +59,13 @@ RUN_KIND="fault"
 RUN_NAME="$(basename -- "${RUN_DIR}")"
 STAGE5_FAULT_APPLIER="${F2A_ROOT}/scripts/fault_characterization/stage5_faults.py"
 STAGE5_PHASE="${STAGE5_PHASE:-run}"
+STAGE5_RUN_PURPOSE="${STAGE5_RUN_PURPOSE:-$([[ "${STAGE5_PHASE}" == "compile" ]] && echo COMPILE_CHECK || echo NATIVE_CHARACTERIZATION)}"
 VCD="${VCD:-0}"
 KEEP_WORK="${KEEP_WORK:-0}"
 printf -v WRAPPER_COMMAND \
-    'STAGE5_PHASE=%q STAGE5_TRACE_OUTPUT=%q MAXCYCLES=%q VCD=%q VERBOSE=%q KEEP_WORK=%q %q %q %q %q' \
+    'STAGE5_PHASE=%q STAGE5_RUN_PURPOSE=%q STAGE5_TRACE_OUTPUT=%q MAXCYCLES=%q VCD=%q VERBOSE=%q KEEP_WORK=%q %q %q %q %q' \
     "${STAGE5_PHASE}" \
+    "${STAGE5_RUN_PURPOSE}" \
     "${STAGE5_TRACE_OUTPUT}" \
     "${MAXCYCLES:-2000000}" \
     "${VCD}" \

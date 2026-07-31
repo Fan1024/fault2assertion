@@ -160,13 +160,34 @@ def collect_run_input_hashes(run_dir: Path) -> dict[str, Any]:
     monitor = parse_sha256sum_file(
         run_dir / "stage5_monitor.sha256", "monitor SHA file"
     )
-    if len(prepared) != 1 or len(monitor) != 1:
-        raise GateValidationError(f"unexpected prepared/monitor SHA count: {run_dir}")
+    adapter = parse_sha256sum_file(
+        run_dir / "stage5_assertion_adapter.sha256",
+        "Stage-5 assertion adapter SHA file",
+    )
+    if len(prepared) != 1 or len(monitor) != 1 or len(adapter) != 4:
+        raise GateValidationError(
+            f"unexpected prepared/monitor/adapter SHA count: {run_dir}"
+        )
+    adapter_by_name = {
+        Path(item["path"]).name: item["sha256"] for item in adapter
+    }
+    required_adapter_names = {
+        "mm_ram.sv",
+        "mm_ram.stage5.sv",
+        "stage5_assertion_policy_v1.json",
+        "prepare_stage5_mm_ram.py",
+    }
+    if set(adapter_by_name) != required_adapter_names:
+        raise GateValidationError(
+            "unexpected assertion-adapter SHA entries: "
+            f"{sorted(adapter_by_name)}"
+        )
     return {
         "firmware": firmware,
         "raw_netlist_sha256": netlist_records[0]["sha256"],
         "cell_model_sha256": netlist_records[1]["sha256"],
         "prepared_netlist_sha256": prepared[0]["sha256"],
         "monitor_sha256": monitor[0]["sha256"],
+        "assertion_adapter": adapter_by_name,
     }
 

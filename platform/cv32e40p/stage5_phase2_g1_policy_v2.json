@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "policy_version": "stage5_phase2_g1_v2",
+  "design": "cv32e40p",
+  "workload": "crc32",
+  "purpose": "Validate Phase-2 mode configuration infrastructure, adapter ownership, generated-source consistency, and compile/elaboration without executing diagnostic continuation.",
+  "execution_modes": [
+    "native",
+    "observe",
+    "diagnostic_quarantine"
+  ],
+  "default_mode": "native",
+  "non_continuable_is_execution_mode": false,
+  "gate1_guardrails": {
+    "compile_elaboration_only": true,
+    "adapter_must_not_reference_existing_detector": true,
+    "native_must_not_modify_existing_detector": true,
+    "observe_runtime_not_executed": true,
+    "quarantine_runtime_not_executed": true,
+    "generated_source_transformation_once": true,
+    "no_instrumentation_state_in_adapter": true
+  },
+  "acceptance": {
+    "golden_compile_elaboration": "COMPILE_PASS",
+    "fault_compile_elaboration": "COMPILE_PASS",
+    "simulation_entered": false,
+    "trace_files_generated": 0,
+    "vcd_files_generated": 0,
+    "mm_ram_overlay_used": false
+  }
+}

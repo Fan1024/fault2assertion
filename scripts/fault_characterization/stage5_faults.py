@@ -14,9 +14,12 @@ The public CLI remains identical to v1.0.7:
 * make-golden-monitor
 * make-fault-monitor
 * split-golden-trace
-* analyze
-* aggregate
 * validate
+
+The obsolete single-label ``analyze`` and ``aggregate`` commands are disabled
+by the Phase-2/3 diagnostic-oracle pipeline.  Use ``stage5_multidim_oracle.py``
+and its replay validator instead.  Materialization, monitor generation, trace
+splitting, and validation remain unchanged.
 
 The implementation file must be the exact v1.0.7 source that existed before
 installing this entrypoint.  Keeping it as a separate immutable module makes the
@@ -502,8 +505,20 @@ globals()["preflight_selected_sites"] = preflight_selected_sites
 globals()["command_apply"] = command_apply
 
 
+DISABLED_LEGACY_ORACLE_COMMANDS = {"analyze", "aggregate"}
+
+
 def main(argv: Sequence[str] | None = None) -> int:
-    return int(_impl.main(argv))
+    arguments = list(sys.argv[1:] if argv is None else argv)
+    if arguments and arguments[0] in DISABLED_LEGACY_ORACLE_COMMANDS:
+        print(
+            "ERROR: legacy single-label Stage-5 oracle commands are disabled. "
+            "Use stage5_multidim_oracle.py after native/observe/quarantine "
+            "evidence has been validated.",
+            file=sys.stderr,
+        )
+        return 2
+    return int(_impl.main(arguments))
 
 
 if __name__ == "__main__":

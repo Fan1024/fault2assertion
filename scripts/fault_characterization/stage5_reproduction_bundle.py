@@ -19,10 +19,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 
-PROGRAM_VERSION = "1.0.0"
+PROGRAM_VERSION = "2.0.0"
 DEFAULT_TRACE_LIMIT = 64 * 1024 * 1024
 
 ROOT_FILE_ALLOWLIST = {
+    "assertion_events.tsv",
     "cell_model_source.txt",
     "command.txt",
     "cv32e40p_commit.txt",
@@ -34,6 +35,8 @@ ROOT_FILE_ALLOWLIST = {
     "manifest.json",
     "manifest.txt",
     "materialize.log",
+    "mm_ram_preparation.json",
+    "mm_ram_preparation.log",
     "prepare_netlist.log",
     "preflight_failure.txt",
     "mapped_netlist_source.txt",
@@ -43,6 +46,7 @@ ROOT_FILE_ALLOWLIST = {
     "result.txt",
     "signature.txt",
     "simulation_netlist.sha256",
+    "stage5_assertion_adapter.sha256",
     "stage5_monitor.sha256",
     "stage5_monitor.sv",
     "wrapper_command.txt",
