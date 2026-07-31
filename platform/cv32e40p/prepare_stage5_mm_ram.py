@@ -1,175 +1,74 @@
 #!/usr/bin/env python3
-"""Validate the clean Stage-5 Phase2-G1 compile/elaboration experiment.
+"""Generate and fail-closed audit one Stage-5 diagnostic mm_ram overlay.
 
-Phase2-G1 proves four things only:
-
-1. Mode-configuration infrastructure exists exactly once.
-2. Instrumentation ownership is structurally unambiguous.
-3. Golden and fault runs compile the same single generated overlay.
-4. Compile/elaboration succeeds without entering simulation.
-
-This validator intentionally does not claim full NATIVE runtime equivalence.
-That behavioral equivalence belongs to Phase2-G2.  G1 checks source-level
-NATIVE guardrails: the original fatal call is retained and the NATIVE action
-branch does not write transaction or memory state.
+``prepare_stage5_mm_ram_impl.py`` performs the exact source transformation.
+The diagnostic overlay removes the original ``out_of_bounds_write`` concurrent
+assertion and inserts a same-clock procedural first-event detector.  This
+wrapper never repairs or rewrites generated source; it only audits provenance,
+ownership, assertion removal, detector uniqueness, and managed-state ownership.
 """
 
 from __future__ import annotations
 
 import argparse
-import hashlib
+import importlib.util
 import json
 import re
-import shlex
+import subprocess
 import sys
-from dataclasses import dataclass
-from datetime import datetime, timezone
+from collections import defaultdict
 from pathlib import Path
-from typing import Any, Iterable, Sequence
+from typing import Any, Mapping, Sequence
 
+WRAPPER_VERSION = "3.0.0"
+IMPL_PATH = Path(__file__).resolve().with_name("prepare_stage5_mm_ram_impl.py")
 
-VERSION = "2.1.0"
-MODES = ("native", "observe", "diagnostic_quarantine")
-FATAL_PHRASE = "out of bounds write to %08x with %08x"
+MANAGED_OWNERS = {
+    "f2a_assert_mode_q": "config",
+    "f2a_assert_mode_name": "config",
+    "f2a_assert_event_file": "config",
+    "f2a_assert_event_fd": "config",
+    "f2a_cycle_q": "state",
+    "f2a_assert_event_count_q": "state",
+    "f2a_detector_seen_q": "state",
+}
 
+DECLARATION_RE = re.compile(
+    r"(?m)^[ \t]*"
+    r"(?P<type>int(?:\s+unsigned)?|string|integer|longint\s+unsigned|logic)"
+    r"[ \t]+(?P<name>f2a_[A-Za-z_$][A-Za-z0-9_$]*)"
+    r"[ \t]*(?:=[ \t]*(?P<initializer>[^;]+))?;"
+)
+ASSIGNMENT_RE_TEMPLATE = (
+    r"\b{variable}\b\s*(?:<=|(?<![=!<>])=(?!=))"
+)
 MODE_READER_RE = re.compile(
     r'\$value\$plusargs\s*\(\s*"f2a_assert_mode=%s"\s*,',
     re.DOTALL,
 )
-
 EVENT_FILE_READER_RE = re.compile(
-    r'\$value\$plusargs\s*\(\s*'
-    r'"f2a_assert_event_file=%s"\s*,\s*'
+    r'\$value\$plusargs\s*\(\s*"f2a_assert_event_file=%s"\s*,\s*'
     r'f2a_assert_event_file\s*\)',
     re.DOTALL,
 )
 
-STATE_LABEL_RE = re.compile(
-    r"\bbegin\s*:\s*f2a_assertion_state\b",
-    re.DOTALL,
-)
 
-EVENT_TASK_RE = re.compile(
-    r"\btask\s+automatic\s+"
-    r"f2a_emit_out_of_bounds_write_event\b",
-    re.DOTALL,
-)
-
-NET_TYPES = (
-    "wire",
-    "uwire",
-    "tri",
-    "tri0",
-    "tri1",
-    "wand",
-    "wor",
-    "triand",
-    "trior",
-)
-
-MANAGED_DECLARATIONS = {
-    "f2a_cycle_q",
-    "f2a_oob_write_violation_q",
-    "f2a_assert_mode_q",
-    "f2a_assert_mode_name",
-    "f2a_assert_event_file",
-    "f2a_assert_event_fd",
-    "f2a_assert_event_count_q",
-}
-
-# Variables below are owned through explicit SystemVerilog assignments.
-# f2a_assert_event_file is intentionally absent: $value$plusargs writes its
-# second argument, so its owner is audited separately as a system-function
-# output argument inside the mode-configuration initial block.
-ASSIGNMENT_OWNERS = {
-    "f2a_cycle_q": "state",
-    "f2a_oob_write_violation_q": "state",
-    "f2a_assert_mode_q": "config",
-    "f2a_assert_mode_name": "config",
-    "f2a_assert_event_fd": "config",
-    "f2a_assert_event_count_q": "event",
-}
-
-FORBIDDEN_NATIVE_LHS_RE = re.compile(
-    r"\b(?:"
-    r"data_(?:addr|wdata|be|req|we|gnt|rvalid|rdata)_[io]"
-    r"|mem(?:ory)?[A-Za-z0-9_$]*"
-    r"|ram[A-Za-z0-9_$]*"
-    r")\b"
-    r"\s*(?:\[[^\]]+\]\s*)?"
-    r"(?:<=|(?<![=!<>])=(?!=))",
-    re.DOTALL,
-)
-
-
-class ValidationError(RuntimeError):
-    """Controlled Phase2-G1 validation failure."""
-
-
-@dataclass(frozen=True)
-class Span:
-    start: int
-    stop: int
-    label: str
-
-    def contains(self, position: int) -> bool:
-        return self.start <= position < self.stop
-
-
-@dataclass(frozen=True)
-class Assignment:
-    variable: str
-    operator_position: int
-    statement_start: int
-    statement_stop: int
-    line: int
-    statement: str
-    kind: str
-
-
-@dataclass(frozen=True)
-class ViolationOwner:
-    kind: str
-    line: int
-    statement: str
-
-
-def require_file(path: Path, label: str) -> Path:
-    path = path.expanduser().resolve()
-    if not path.is_file() or path.stat().st_size == 0:
-        raise ValidationError(f"{label} not found or empty: {path}")
-    return path
-
-
-def load_json(path: Path, label: str) -> dict[str, Any]:
-    path = require_file(path, label)
-    try:
-        value = json.loads(path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        raise ValidationError(f"invalid {label}: {path}: {exc}") from exc
-    if not isinstance(value, dict):
-        raise ValidationError(f"{label} must be a JSON object: {path}")
-    return value
+class OverlayError(RuntimeError):
+    """Controlled overlay generation or audit failure."""
 
 
 def sha256_file(path: Path) -> str:
+    import hashlib
+
     digest = hashlib.sha256()
     with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(block)
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
     return digest.hexdigest()
 
 
-def normalize_space(text: str) -> str:
-    return re.sub(r"\s+", " ", text).strip()
-
-
-def line_number(text: str, position: int) -> int:
-    return text.count("\n", 0, position) + 1
-
-
 def mask_comments_and_strings(text: str) -> str:
-    """Mask comments/string contents while preserving source offsets."""
+    """Mask comments and strings while preserving offsets and newlines."""
 
     output = list(text)
     index = 0
@@ -188,7 +87,7 @@ def mask_comments_and_strings(text: str) -> str:
         if text.startswith("/*", index):
             stop = text.find("*/", index + 2)
             if stop < 0:
-                raise ValidationError("unterminated block comment in overlay")
+                raise OverlayError("unterminated block comment")
             stop += 2
             for cursor in range(index, stop):
                 if output[cursor] != "\n":
@@ -198,16 +97,19 @@ def mask_comments_and_strings(text: str) -> str:
 
         if text[index] == '"':
             cursor = index + 1
+            escaped = False
             while cursor < length:
-                if text[cursor] == "\\":
-                    cursor += 2
-                    continue
-                if text[cursor] == '"':
+                character = text[cursor]
+                if escaped:
+                    escaped = False
+                elif character == "\\":
+                    escaped = True
+                elif character == '"':
                     cursor += 1
                     break
                 cursor += 1
             if cursor > length or text[cursor - 1] != '"':
-                raise ValidationError("unterminated string in overlay")
+                raise OverlayError("unterminated string literal")
             for mark in range(index, cursor):
                 if output[mark] != "\n":
                     output[mark] = " "
@@ -219,24 +121,17 @@ def mask_comments_and_strings(text: str) -> str:
     return "".join(output)
 
 
-def keyword_tokens(masked: str, keywords: Iterable[str]) -> list[tuple[str, int, int]]:
-    alternatives = "|".join(re.escape(item) for item in keywords)
-    pattern = re.compile(rf"\b(?:{alternatives})\b")
-    return [
-        (match.group(0), match.start(), match.end())
-        for match in pattern.finditer(masked)
-    ]
+def line_number(text: str, position: int) -> int:
+    return text.count("\n", 0, position) + 1
 
 
-def balanced_begin_span(masked: str, begin_position: int, label: str) -> Span:
-    tokens = keyword_tokens(masked[begin_position:], ("begin", "end"))
+def balanced_begin_span(masked: str, begin_position: int, label: str) -> tuple[int, int]:
+    token_re = re.compile(r"\b(?:begin|end)\b")
     depth = 0
     saw_begin = False
 
-    for token, relative_start, relative_stop in tokens:
-        absolute_start = begin_position + relative_start
-        absolute_stop = begin_position + relative_stop
-
+    for match in token_re.finditer(masked, begin_position):
+        token = match.group(0)
         if token == "begin":
             depth += 1
             saw_begin = True
@@ -244,916 +139,376 @@ def balanced_begin_span(masked: str, begin_position: int, label: str) -> Span:
             depth -= 1
 
         if saw_begin and depth == 0:
-            return Span(begin_position, absolute_stop, label)
-
+            return begin_position, match.end()
         if depth < 0:
             break
 
-    raise ValidationError(f"unterminated {label} begin/end block")
+    raise OverlayError(f"unterminated {label} block")
 
 
-def find_first_begin(masked: str, start: int, stop: int, label: str) -> int:
-    match = re.search(r"\bbegin\b", masked[start:stop])
-    if match is None:
-        raise ValidationError(f"cannot find begin for {label}")
-    return start + match.start()
+def find_named_block(masked: str, label: str) -> tuple[int, int]:
+    pattern = re.compile(rf"\bbegin\s*:\s*{re.escape(label)}\b")
+    matches = list(pattern.finditer(masked))
+    if len(matches) != 1:
+        raise OverlayError(f"expected one {label} block; found {len(matches)}")
+    return balanced_begin_span(masked, matches[0].start(), label)
 
 
-def find_state_span(text: str, masked: str) -> Span:
-    labels = list(STATE_LABEL_RE.finditer(masked))
-    if len(labels) != 1:
-        raise ValidationError(
-            "expected exactly one f2a_assertion_state block; "
-            f"found {len(labels)}"
-        )
-
-    label = labels[0]
-    begin_position = label.start()
-    search_start = max(0, begin_position - 500)
-    prefix = masked[search_start:begin_position]
-
-    if re.search(r"\balways_ff\b", prefix) is None:
-        raise ValidationError(
-            "f2a_assertion_state is not owned by an always_ff process"
-        )
-
-    return balanced_begin_span(masked, begin_position, "f2a_assertion_state")
-
-
-def find_config_span(text: str, masked: str) -> Span:
-    readers = list(MODE_READER_RE.finditer(text))
-    if len(readers) != 1:
-        raise ValidationError(
-            "expected exactly one f2a_assert_mode plusarg reader; "
-            f"found {len(readers)}"
-        )
-
-    reader_position = readers[0].start()
-    initial_matches = list(re.finditer(r"\binitial\b", masked[:reader_position]))
-    if not initial_matches:
-        raise ValidationError("cannot find mode-configuration initial block")
-
-    initial_position = initial_matches[-1].start()
-    begin_position = find_first_begin(
-        masked,
-        initial_position,
-        reader_position,
-        "mode configuration",
+def find_task_span(masked: str) -> tuple[int, int]:
+    start_re = re.compile(
+        r"\btask\s+automatic\s+f2a_emit_out_of_bounds_write_event\b"
     )
-
-    span = balanced_begin_span(masked, begin_position, "mode configuration")
-    if not span.contains(reader_position):
-        raise ValidationError("mode reader is outside resolved configuration block")
-    return span
-
-
-def find_task_span(text: str, masked: str) -> Span:
-    tasks = list(EVENT_TASK_RE.finditer(masked))
-    if len(tasks) != 1:
-        raise ValidationError(
-            "expected exactly one f2a_emit_out_of_bounds_write_event task; "
-            f"found {len(tasks)}"
+    starts = list(start_re.finditer(masked))
+    if len(starts) != 1:
+        raise OverlayError(
+            "expected one f2a_emit_out_of_bounds_write_event task; "
+            f"found {len(starts)}"
         )
-
-    start = tasks[0].start()
-    end_match = re.search(r"\bendtask\b", masked[tasks[0].end():])
+    end_match = re.search(r"\bendtask\b", masked[starts[0].end():])
     if end_match is None:
-        raise ValidationError("unterminated event-emission task")
-
-    stop = tasks[0].end() + end_match.end()
-    return Span(start, stop, "event-emission task")
+        raise OverlayError("unterminated assertion-event task")
+    return starts[0].start(), starts[0].end() + end_match.end()
 
 
-def statement_bounds(masked: str, position: int) -> tuple[int, int]:
-    previous_semicolon = masked.rfind(";", 0, position)
-    previous_begin = max(
-        (match.end() for match in re.finditer(r"\bbegin\b", masked[:position])),
-        default=0,
-    )
-    previous_end = max(
-        (match.end() for match in re.finditer(r"\bend\b", masked[:position])),
-        default=0,
-    )
-    start = max(previous_semicolon + 1, previous_begin, previous_end)
-    stop = masked.find(";", position)
-    if stop < 0:
-        raise ValidationError(
-            f"assignment at line {line_number(masked, position)} has no semicolon"
-        )
-    return start, stop + 1
-
-
-def classify_assignment(statement_masked: str) -> str:
-    stripped = statement_masked.strip()
-    if re.match(r"^assign\b", stripped):
-        return "explicit_continuous_assignment"
-
-    net_prefix = "|".join(re.escape(item) for item in NET_TYPES)
-    if re.match(rf"^(?:{net_prefix})\b", stripped):
-        return "net_declaration_assignment"
-
-    declaration_prefix = re.compile(
-        r"^(?:"
-        r"logic|bit|reg|integer|int|longint|time|string"
-        r"|f2a_[A-Za-z0-9_$]+_e"
-        r")\b"
-    )
-    if declaration_prefix.match(stripped):
-        return "variable_declaration_initializer"
-
-    return "procedural_assignment"
-
-
-def assignments_for(text: str, masked: str, variable: str) -> list[Assignment]:
-    pattern = re.compile(
-        rf"\b{re.escape(variable)}\b\s*"
-        rf"(?:<=|(?<![=!<>])=(?!=))",
-        re.DOTALL,
-    )
-
-    records: list[Assignment] = []
-    seen_statements: set[tuple[int, int]] = set()
-
-    for match in pattern.finditer(masked):
-        start, stop = statement_bounds(masked, match.start())
-        key = (start, stop)
-        if key in seen_statements:
-            continue
-        seen_statements.add(key)
-
-        records.append(
-            Assignment(
-                variable=variable,
-                operator_position=match.start(),
-                statement_start=start,
-                statement_stop=stop,
-                line=line_number(text, match.start()),
-                statement=text[start:stop].strip(),
-                kind=classify_assignment(masked[start:stop]),
+def declarations(text: str, masked: str) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    for match in DECLARATION_RE.finditer(masked):
+        original = DECLARATION_RE.match(text, match.start())
+        if original is None:
+            raise OverlayError(
+                f"declaration offset mismatch at line {line_number(text, match.start())}"
             )
+        records.append(
+            {
+                "name": original.group("name"),
+                "type": original.group("type"),
+                "initializer": (
+                    original.group("initializer").strip()
+                    if original.group("initializer") is not None
+                    else None
+                ),
+                "start": original.start(),
+                "stop": original.end(),
+                "line": line_number(text, original.start()),
+            }
         )
-
     return records
 
 
-def require_assignments_in_spans(
-    assignments: Sequence[Assignment],
-    spans: Sequence[Span],
-    variable: str,
-    owner: str,
-) -> None:
-    if not assignments:
-        raise ValidationError(f"{variable} has no assignment")
-
-    outside = [
-        item.line
-        for item in assignments
-        if not any(span.contains(item.operator_position) for span in spans)
-    ]
-
-    if outside:
-        raise ValidationError(
-            f"{variable} has assignments outside {owner}: lines={outside}"
-        )
-
-    invalid_kinds = [
-        item
-        for item in assignments
-        if item.kind in {
-            "variable_declaration_initializer",
-            "net_declaration_assignment",
-        }
-    ]
-    if invalid_kinds:
-        details = [(item.line, item.kind) for item in invalid_kinds]
-        raise ValidationError(
-            f"{variable} uses declaration-based assignment instead of its "
-            f"declared owner: {details}"
-        )
-
-
-def audit_event_file_owner(
+def assignment_positions(
     text: str,
     masked: str,
-    config_span: Span,
+    variable: str,
+    declaration_records: Sequence[Mapping[str, Any]],
 ) -> list[dict[str, Any]]:
-    """Audit f2a_assert_event_file ownership.
-
-    SystemVerilog $value$plusargs stores the converted value into its second
-    argument.  That write is not represented by an '=' or '<=' token, so it
-    must not be validated with assignments_for().
-
-    The ownership contract is:
-      * exactly one matching $value$plusargs reader;
-      * the reader is inside the resolved mode-configuration initial block;
-      * any optional explicit assignments are also inside that same block;
-      * declaration initializers remain forbidden by the ownership report.
-    """
-
-    readers = list(EVENT_FILE_READER_RE.finditer(text))
-    if len(readers) != 1:
-        raise ValidationError(
-            "expected exactly one f2a_assert_event_file plusarg reader; "
-            f"found {len(readers)}"
-        )
-
-    reader = readers[0]
-    if not config_span.contains(reader.start()):
-        raise ValidationError(
-            "f2a_assert_event_file plusarg reader is outside the "
-            "mode-configuration initial block"
-        )
-
-    explicit = assignments_for(
-        text,
-        masked,
-        "f2a_assert_event_file",
+    pattern = re.compile(
+        ASSIGNMENT_RE_TEMPLATE.format(variable=re.escape(variable)),
+        re.DOTALL,
     )
-
-    outside = [
-        item.line
-        for item in explicit
-        if not config_span.contains(item.operator_position)
+    declaration_spans = [
+        (int(item["start"]), int(item["stop"]))
+        for item in declaration_records
     ]
-    if outside:
-        raise ValidationError(
-            "f2a_assert_event_file has explicit assignments outside the "
-            f"mode-configuration initial block: lines={outside}"
+    records: list[dict[str, Any]] = []
+    for match in pattern.finditer(masked):
+        if any(start <= match.start() < stop for start, stop in declaration_spans):
+            continue
+        records.append(
+            {
+                "position": match.start(),
+                "line": line_number(text, match.start()),
+            }
         )
-
-    invalid = [
-        (item.line, item.kind)
-        for item in explicit
-        if item.kind in {
-            "variable_declaration_initializer",
-            "net_declaration_assignment",
-        }
-    ]
-    if invalid:
-        raise ValidationError(
-            "f2a_assert_event_file uses declaration-based assignment: "
-            f"{invalid}"
-        )
-
-    records: list[dict[str, Any]] = [
-        {
-            "line": line_number(text, reader.start()),
-            "kind": "system_function_output_argument",
-            "statement": normalize_space(
-                text[reader.start():reader.end()]
-            ),
-        }
-    ]
-
-    records.extend(
-        {
-            "line": item.line,
-            "kind": item.kind,
-            "statement": normalize_space(item.statement),
-        }
-        for item in explicit
-    )
-
     return records
 
 
-def parse_version(version: str) -> tuple[int, ...]:
-    try:
-        return tuple(int(part) for part in version.split("."))
-    except ValueError as exc:
-        raise ValidationError(f"invalid ownership wrapper version: {version}") from exc
+def in_span(position: int, span: tuple[int, int]) -> bool:
+    return span[0] <= position < span[1]
 
 
-def audit_ownership_report(overlay_path: Path) -> dict[str, Any]:
-    report_path = overlay_path.with_name("mm_ram.stage5.ownership.json")
-    report = load_json(report_path, "overlay ownership report")
+def audit_overlay(path: Path) -> dict[str, Any]:
+    path = path.expanduser().resolve()
+    if not path.is_file() or path.stat().st_size == 0:
+        raise OverlayError(f"overlay not found or empty: {path}")
 
-    version = str(report.get("wrapper_version", ""))
-    if parse_version(version) < (1, 2, 0):
-        raise ValidationError(
-            "ownership wrapper must be at least 1.2.0; "
-            f"found {version or '<missing>'}"
+    text = path.read_text(encoding="utf-8", errors="strict")
+    masked = mask_comments_and_strings(text)
+
+    if text.count("Fault2Assertion Stage-5 diagnostic detector adapter") != 1:
+        raise OverlayError(
+            "overlay must contain exactly one Stage-5 diagnostic adapter marker"
+        )
+    if text.count("out_of_bounds_write :") != 0:
+        raise OverlayError(
+            "diagnostic overlay still contains the original named assertion"
+        )
+    if text.count("begin : f2a_diagnostic_out_of_bounds_write") != 1:
+        raise OverlayError(
+            "overlay must contain exactly one procedural first-event detector"
+        )
+    if text.count("f2a_oob_write_first_event") < 2:
+        raise OverlayError(
+            "overlay is missing the first-event predicate or detector use"
+        )
+    if len(MODE_READER_RE.findall(text)) != 1:
+        raise OverlayError("overlay must contain exactly one mode plusarg reader")
+    if len(EVENT_FILE_READER_RE.findall(text)) != 1:
+        raise OverlayError("overlay must contain exactly one event-file plusarg reader")
+
+    config_span = find_named_block(masked, "f2a_assertion_mode_init")
+    state_span = find_named_block(masked, "f2a_assertion_state")
+    predicate_span = find_named_block(masked, "f2a_assertion_predicates")
+    detector_span = find_named_block(
+        masked, "f2a_diagnostic_out_of_bounds_write"
+    )
+    task_span = find_task_span(masked)
+
+    declaration_records = declarations(text, masked)
+    grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for record in declaration_records:
+        name = str(record["name"])
+        if name in MANAGED_OWNERS:
+            grouped[name].append(record)
+
+    missing_declarations = sorted(set(MANAGED_OWNERS) - set(grouped))
+    if missing_declarations:
+        raise OverlayError(
+            f"managed declarations are missing: {missing_declarations}"
         )
 
-    if Path(str(report.get("overlay", ""))).resolve() != overlay_path.resolve():
-        raise ValidationError("ownership report overlay path mismatch")
+    duplicate_declarations: list[dict[str, Any]] = []
+    initialized_declarations: list[dict[str, Any]] = []
+    owner_report: dict[str, Any] = {}
 
-    required_zero = {
-        "duplicate_declaration_count": report.get("duplicate_declaration_count"),
-        "managed_declaration_initializer_count": report.get(
-            "managed_declaration_initializer_count"
-        ),
-    }
-    bad_zero = {key: value for key, value in required_zero.items() if value != 0}
-    if bad_zero:
-        raise ValidationError(f"ownership report contains unresolved declarations: {bad_zero}")
-
-    required_one = {
-        "f2a_assertion_state_process_count": report.get(
-            "f2a_assertion_state_process_count"
-        ),
-        "f2a_assert_mode_reader_count": report.get("f2a_assert_mode_reader_count"),
-        "f2a_assertion_event_task_count": report.get(
-            "f2a_assertion_event_task_count"
-        ),
-    }
-    bad_one = {key: value for key, value in required_one.items() if value != 1}
-    if bad_one:
-        raise ValidationError(f"ownership report uniqueness failure: {bad_one}")
-
-    declarations = report.get("final_managed_declarations")
-    if not isinstance(declarations, dict):
-        raise ValidationError("ownership report lacks final_managed_declarations")
-
-    for variable in MANAGED_DECLARATIONS:
-        records = declarations.get(variable)
-        if not isinstance(records, list) or len(records) != 1:
-            raise ValidationError(
-                f"ownership report requires one declaration for {variable}; "
-                f"found {records!r}"
+    for variable, owner_kind in MANAGED_OWNERS.items():
+        records = grouped[variable]
+        if len(records) != 1:
+            duplicate_declarations.append(
+                {
+                    "variable": variable,
+                    "count": len(records),
+                    "lines": [int(item["line"]) for item in records],
+                }
             )
-        if records[0].get("initializer") is not None:
-            raise ValidationError(
-                f"ownership report retains declaration initializer for {variable}"
-            )
+        for record in records:
+            if record["initializer"] is not None:
+                initialized_declarations.append(
+                    {
+                        "variable": variable,
+                        "line": int(record["line"]),
+                        "initializer": record["initializer"],
+                    }
+                )
 
-    return report
-
-
-def find_always_comb_spans(masked: str) -> list[Span]:
-    spans: list[Span] = []
-    for match in re.finditer(r"\balways_comb\b", masked):
-        next_semicolon = masked.find(";", match.end())
-        next_begin = re.search(r"\bbegin\b", masked[match.end():])
-        if next_begin is None:
-            continue
-        begin_position = match.end() + next_begin.start()
-        if next_semicolon >= 0 and next_semicolon < begin_position:
-            continue
-        spans.append(balanced_begin_span(masked, begin_position, "always_comb"))
-    return spans
-
-
-def detect_violation_owner(text: str, masked: str) -> ViolationOwner:
-    variable = "f2a_oob_write_violation"
-    assignments = assignments_for(text, masked, variable)
-
-    explicit = [
-        item for item in assignments if item.kind == "explicit_continuous_assignment"
-    ]
-    net_declarations = [
-        item for item in assignments if item.kind == "net_declaration_assignment"
-    ]
-    variable_initializers = [
-        item for item in assignments if item.kind == "variable_declaration_initializer"
-    ]
-    procedural = [
-        item for item in assignments if item.kind == "procedural_assignment"
-    ]
-
-    owner_candidates: list[ViolationOwner] = []
-
-    owner_candidates.extend(
-        ViolationOwner(item.kind, item.line, item.statement) for item in explicit
-    )
-    owner_candidates.extend(
-        ViolationOwner(item.kind, item.line, item.statement) for item in net_declarations
-    )
-
-    if variable_initializers:
-        details = [(item.line, item.statement) for item in variable_initializers]
-        raise ValidationError(
-            "f2a_oob_write_violation is a dynamic predicate but uses a variable "
-            f"declaration initializer: {details}"
+        assignments = assignment_positions(
+            text,
+            masked,
+            variable,
+            declaration_records,
         )
-
-    if procedural:
-        always_comb_spans = find_always_comb_spans(masked)
-        containing = [
-            span
-            for span in always_comb_spans
-            if any(span.contains(item.operator_position) for item in procedural)
-        ]
-        unique = {(span.start, span.stop): span for span in containing}
-
+        expected_span = config_span if owner_kind == "config" else state_span
         outside = [
-            item.line
-            for item in procedural
-            if not any(span.contains(item.operator_position) for span in containing)
+            int(item["line"])
+            for item in assignments
+            if not in_span(int(item["position"]), expected_span)
         ]
         if outside:
-            raise ValidationError(
-                "f2a_oob_write_violation has procedural assignments outside "
-                f"always_comb: lines={outside}"
+            raise OverlayError(
+                f"{variable} has assignments outside its {owner_kind} owner: "
+                f"lines={outside}"
             )
+        if not assignments:
+            raise OverlayError(f"{variable} has no assignment in its owner")
 
-        for span in unique.values():
-            owner_candidates.append(
-                ViolationOwner(
-                    "always_comb_process",
-                    line_number(text, span.start),
-                    normalize_space(text[span.start:span.stop]),
-                )
-            )
+        owner_report[variable] = {
+            "owner": owner_kind,
+            "declaration_line": int(records[0]["line"]) if records else None,
+            "assignment_lines": [int(item["line"]) for item in assignments],
+        }
 
-    if len(owner_candidates) != 1:
-        details = [
-            {"kind": item.kind, "line": item.line, "statement": item.statement}
-            for item in owner_candidates
-        ]
-        raise ValidationError(
-            "expected exactly one dynamic owner for f2a_oob_write_violation; "
-            f"found {len(owner_candidates)}: {details}"
+    if duplicate_declarations:
+        raise OverlayError(
+            f"managed variables have duplicate declarations: {duplicate_declarations}"
+        )
+    if initialized_declarations:
+        raise OverlayError(
+            "managed declarations must not use declaration initializers: "
+            f"{initialized_declarations}"
         )
 
-    return owner_candidates[0]
-
-
-def extract_fatal_call(text: str) -> tuple[str, int]:
-    phrase_positions = [match.start() for match in re.finditer(re.escape(FATAL_PHRASE), text)]
-    if len(phrase_positions) != 1:
-        raise ValidationError(
-            "expected exactly one out-of-bounds fatal phrase; "
-            f"found {len(phrase_positions)}"
+    task_text = masked[task_span[0]:task_span[1]]
+    task_writes = [
+        variable
+        for variable in MANAGED_OWNERS
+        if re.search(
+            ASSIGNMENT_RE_TEMPLATE.format(variable=re.escape(variable)),
+            task_text,
+            re.DOTALL,
         )
-
-    phrase_position = phrase_positions[0]
-    call_start = text.rfind("$fatal", 0, phrase_position)
-    if call_start < 0:
-        raise ValidationError("fatal phrase is not inside a $fatal call")
-
-    open_paren = text.find("(", call_start, phrase_position)
-    if open_paren < 0:
-        raise ValidationError("cannot locate $fatal opening parenthesis")
-
-    depth = 0
-    in_string = False
-    escaped = False
-    stop = None
-
-    for index in range(open_paren, len(text)):
-        character = text[index]
-        if in_string:
-            if escaped:
-                escaped = False
-            elif character == "\\":
-                escaped = True
-            elif character == '"':
-                in_string = False
-            continue
-
-        if character == '"':
-            in_string = True
-        elif character == "(":
-            depth += 1
-        elif character == ")":
-            depth -= 1
-            if depth == 0:
-                semicolon = text.find(";", index)
-                if semicolon < 0:
-                    raise ValidationError("$fatal call has no terminating semicolon")
-                stop = semicolon + 1
-                break
-
-    if stop is None:
-        raise ValidationError("unterminated $fatal call")
-
-    return normalize_space(text[call_start:stop]), call_start
-
-
-def find_native_action_span(text: str, masked: str, fatal_position: int) -> Span:
-    patterns = (
-        re.compile(r"\bF2A_ASSERT_NATIVE\b\s*:\s*\bbegin\b", re.DOTALL),
-        re.compile(r'"native"\s*:\s*\bbegin\b', re.DOTALL),
-    )
-    candidates: list[Span] = []
-
-    for pattern in patterns:
-        for match in pattern.finditer(masked):
-            begin_match = re.search(r"\bbegin\b", masked[match.start():match.end()])
-            if begin_match is None:
-                continue
-            begin_position = match.start() + begin_match.start()
-            span = balanced_begin_span(masked, begin_position, "NATIVE action branch")
-            if span.contains(fatal_position):
-                candidates.append(span)
-
-    unique = {(span.start, span.stop): span for span in candidates}
-    if len(unique) != 1:
-        raise ValidationError(
-            "cannot resolve exactly one NATIVE action branch containing the "
-            f"original fatal; found {len(unique)}"
-        )
-    return next(iter(unique.values()))
-
-
-def audit_overlay(original_path: Path, overlay_path: Path) -> dict[str, Any]:
-    original_path = require_file(original_path, "original mm_ram")
-    overlay_path = require_file(overlay_path, "generated mm_ram overlay")
-
-    original = original_path.read_text(encoding="utf-8", errors="strict")
-    overlay = overlay_path.read_text(encoding="utf-8", errors="strict")
-    masked = mask_comments_and_strings(overlay)
-
-    ownership_report = audit_ownership_report(overlay_path)
-
-    mode_reader_count = len(MODE_READER_RE.findall(overlay))
-    if mode_reader_count != 1:
-        raise ValidationError(
-            "mode configuration reader count is not one: "
-            f"found {mode_reader_count}"
-        )
-
-    for mode in MODES:
-        if f'"{mode}"' not in overlay:
-            raise ValidationError(f"overlay is missing mode: {mode}")
-
-    state_span = find_state_span(overlay, masked)
-    config_span = find_config_span(overlay, masked)
-    task_span = find_task_span(overlay, masked)
-
-    assignment_audit: dict[str, list[dict[str, Any]]] = {}
-
-    for variable, owner_kind in ASSIGNMENT_OWNERS.items():
-        assignments = assignments_for(overlay, masked, variable)
-        if owner_kind == "state":
-            allowed = [state_span]
-            owner_label = "f2a_assertion_state"
-        elif owner_kind == "config":
-            allowed = [config_span]
-            owner_label = "mode-configuration initial block"
-        else:
-            allowed = [config_span, task_span]
-            owner_label = "event-emission subsystem"
-
-        require_assignments_in_spans(
-            assignments,
-            allowed,
-            variable,
-            owner_label,
-        )
-
-        assignment_audit[variable] = [
-            {
-                "line": item.line,
-                "kind": item.kind,
-                "statement": normalize_space(item.statement),
-            }
-            for item in assignments
-        ]
-
-    assignment_audit["f2a_assert_event_file"] = audit_event_file_owner(
-        overlay,
-        masked,
-        config_span,
-    )
-
-    violation_owner = detect_violation_owner(overlay, masked)
-
-    original_fatal, _ = extract_fatal_call(original)
-    overlay_fatal, overlay_fatal_position = extract_fatal_call(overlay)
-    if original_fatal != overlay_fatal:
-        raise ValidationError("NATIVE $fatal call changed from the original detector")
-
-    native_span = find_native_action_span(
-        overlay,
-        masked,
-        overlay_fatal_position,
-    )
-    native_text = overlay[native_span.start:native_span.stop]
-    native_masked = masked[native_span.start:native_span.stop]
-
-    forbidden_native_assignments = [
-        normalize_space(native_text[match.start():match.end()])
-        for match in FORBIDDEN_NATIVE_LHS_RE.finditer(native_masked)
     ]
-    if forbidden_native_assignments:
-        raise ValidationError(
-            "NATIVE detector branch writes transaction/memory state: "
-            f"{forbidden_native_assignments}"
+    if task_writes:
+        raise OverlayError(
+            f"event task writes managed state instead of reading it: {task_writes}"
         )
 
-    if "FATAL_TERMINATION" not in native_text:
-        raise ValidationError("NATIVE branch does not emit FATAL_TERMINATION")
+    if not in_span(EVENT_FILE_READER_RE.search(text).start(), config_span):
+        raise OverlayError("event-file plusarg reader is outside configuration owner")
+    if not in_span(MODE_READER_RE.search(text).start(), config_span):
+        raise OverlayError("mode plusarg reader is outside configuration owner")
+
+    detector_text = masked[detector_span[0]:detector_span[1]]
+    if detector_text.count("f2a_oob_write_first_event") != 1:
+        raise OverlayError(
+            "procedural detector must consume the first-event predicate once"
+        )
+    detector_calls = re.findall(
+        r"\bf2a_emit_out_of_bounds_write_event\s*\(",
+        detector_text,
+    )
+    if len(detector_calls) != 2:
+        raise OverlayError(
+            "procedural detector must contain the observe and quarantine "
+            f"event actions exactly once each; found {len(detector_calls)} calls"
+        )
 
     return {
-        "overlay": str(overlay_path),
-        "overlay_sha256": sha256_file(overlay_path),
-        "ownership_report": str(
-            overlay_path.with_name("mm_ram.stage5.ownership.json")
-        ),
-        "ownership_wrapper_version": ownership_report["wrapper_version"],
-        "mode_configuration_reader_count": mode_reader_count,
+        "schema_version": "1.0",
+        "wrapper_version": WRAPPER_VERSION,
+        "kind": "stage5_diagnostic_mm_ram_ownership_audit",
+        "status": "PASS",
+        "overlay": str(path),
+        "overlay_sha256": sha256_file(path),
+        "duplicate_declaration_count": 0,
+        "managed_declaration_initializer_count": 0,
+        "mode_reader_count": 1,
         "event_file_reader_count": 1,
-        "supported_modes": list(MODES),
-        "assertion_state_block_count": 1,
+        "configuration_owner_count": 1,
+        "state_owner_count": 1,
+        "predicate_owner_count": 1,
         "event_task_count": 1,
-        "managed_assignment_audit": assignment_audit,
-        "violation_owner": {
-            "kind": violation_owner.kind,
-            "line": violation_owner.line,
-            "statement": normalize_space(violation_owner.statement),
-        },
-        "violation_owner_count": 1,
-        "native_original_fatal_preserved": True,
-        "native_transaction_or_memory_assignments": [],
-        "native_drops_write": False,
-        "native_acknowledges_unsafe_transaction": False,
-        "transformation_signature_count": 1,
-        "native_source_guardrails_validated": True,
-        "native_runtime_equivalence_validated": False,
-        "native_runtime_equivalence_deferred_to_g2": True,
+        "event_task_managed_write_count": 0,
+        "original_assertion_block_count": 0,
+        "procedural_detector_count": 1,
+        "diagnostic_detector_implementation": "PROCEDURAL_FIRST_EVENT",
+        "first_event_policy": "FIRST_VIOLATION_ONLY",
+        "owners": owner_report,
     }
 
 
-def command_source_tokens(command_path: Path) -> list[str]:
-    command = require_file(command_path, "xrun command").read_text(
-        encoding="utf-8", errors="replace"
+def load_impl_module():
+    if not IMPL_PATH.is_file() or IMPL_PATH.stat().st_size == 0:
+        raise OverlayError(f"generator implementation is missing: {IMPL_PATH}")
+    spec = importlib.util.spec_from_file_location(
+        "f2a_prepare_stage5_mm_ram_impl",
+        IMPL_PATH,
     )
-    try:
-        return shlex.split(command)
-    except ValueError as exc:
-        raise ValidationError(
-            f"cannot parse command.txt: {command_path}: {exc}"
-        ) from exc
+    if spec is None or spec.loader is None:
+        raise OverlayError(f"cannot import generator implementation: {IMPL_PATH}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
 
 
-def audit_compile_run(run_dir: Path, expected_kind: str) -> dict[str, Any]:
-    run_dir = run_dir.expanduser().resolve()
-    if not run_dir.is_dir():
-        raise ValidationError(f"run directory not found: {run_dir}")
-
-    result = load_json(run_dir / "result.json", f"{expected_kind} result")
-    if result.get("phase") != "compile":
-        raise ValidationError(f"{expected_kind}: phase is not compile")
-    if result.get("run_kind") != expected_kind:
-        raise ValidationError(f"{expected_kind}: run_kind mismatch")
-    if result.get("run_purpose") != "COMPILE_CHECK":
-        raise ValidationError(f"{expected_kind}: run_purpose is not COMPILE_CHECK")
-    if result.get("status") != "COMPILE_PASS":
-        raise ValidationError(
-            f"{expected_kind}: compile result is not COMPILE_PASS: "
-            f"{result.get('status')!r}"
-        )
-    if result.get("xrun_exit_status") != 0:
-        raise ValidationError(f"{expected_kind}: xrun exit status is nonzero")
-
-    tokens = command_source_tokens(run_dir / "command.txt")
-    if "-elaborate" not in tokens:
-        raise ValidationError(f"{expected_kind}: command did not use -elaborate")
-
-    overlay_tokens = [
-        token for token in tokens if Path(token).name == "mm_ram.stage5.sv"
-    ]
-    original_tokens = [
-        token for token in tokens if Path(token).name == "mm_ram.sv"
-    ]
-    if len(overlay_tokens) != 1:
-        raise ValidationError(
-            f"{expected_kind}: expected one overlay source in command; "
-            f"found {len(overlay_tokens)}"
-        )
-    if original_tokens:
-        raise ValidationError(
-            f"{expected_kind}: original mm_ram.sv and overlay were both compiled"
-        )
-
-    overlays = sorted(run_dir.rglob("mm_ram.stage5.sv"))
-    if len(overlays) != 1:
-        raise ValidationError(
-            f"{expected_kind}: expected one retained overlay file; found {len(overlays)}"
-        )
-    overlay = overlays[0].resolve()
-    if Path(overlay_tokens[0]).resolve() != overlay:
-        raise ValidationError(
-            f"{expected_kind}: command overlay does not match retained overlay"
-        )
-
-    log = require_file(run_dir / "xrun.log", f"{expected_kind} xrun log").read_text(
-        encoding="utf-8", errors="replace"
+def run_impl(args: Sequence[str]) -> int:
+    completed = subprocess.run(
+        [sys.executable, str(IMPL_PATH), *args],
+        check=False,
     )
-    forbidden = (
-        "MULAXX",
-        "ELBERR",
-        "Multiple drivers to always_ff",
-        "xmvlog: *E",
-        "xmelab: *E",
-        "xmsim: *E",
-        "xrun: *E",
-    )
-    found = [marker for marker in forbidden if marker in log]
-    if found:
-        raise ValidationError(f"{expected_kind}: compile log errors: {found}")
-    if "EXIT SUCCESS" in log:
-        raise ValidationError(f"{expected_kind}: compile-only run entered simulation")
-
-    trace_files = list(run_dir.rglob("*.trace.tsv")) + list(
-        run_dir.rglob("*.trace.tsv.gz")
-    )
-    vcd_files = list(run_dir.rglob("*.vcd"))
-    if trace_files:
-        raise ValidationError(f"{expected_kind}: compile generated trace files")
-    if vcd_files:
-        raise ValidationError(f"{expected_kind}: compile generated VCD files")
-
-    return {
-        "run_directory": str(run_dir),
-        "run_kind": expected_kind,
-        "status": "COMPILE_PASS",
-        "xrun_exit_status": 0,
-        "overlay": str(overlay),
-        "overlay_command_occurrences": 1,
-        "original_mm_ram_command_occurrences": 0,
-        "simulation_entered": False,
-        "trace_files_generated": 0,
-        "vcd_files_generated": 0,
-    }
+    return int(completed.returncode)
 
 
-def validate_monitor_metadata(path: Path, role: str) -> dict[str, Any]:
-    metadata = load_json(path, f"{role} monitor metadata")
-    if metadata.get("role") != role:
-        raise ValidationError(f"{role} monitor metadata role mismatch")
-    if metadata.get("change_kind") != "TRACE_PATH_ONLY":
-        raise ValidationError(f"{role} monitor was changed beyond trace path")
-    if metadata.get("mode_adapter_appended") is not False:
-        raise ValidationError(f"{role} monitor contains a second mode adapter")
-
-    generated = require_file(Path(str(metadata["generated_monitor"])), f"{role} monitor")
-    if metadata.get("generated_monitor_sha256") != sha256_file(generated):
-        raise ValidationError(f"{role} monitor digest mismatch")
-
-    text = generated.read_text(encoding="utf-8", errors="strict")
-    forbidden = (
-        "f2a_phase2_g1_mode_adapter",
-        "F2A_PHASE2_G1_ADAPTER_BEGIN",
-        "f2a_assert_mode=%s",
-        "mm_ram.stage5.sv",
-    )
-    found = [marker for marker in forbidden if marker in text]
-    if found:
-        raise ValidationError(
-            f"{role} monitor contains Phase-2 adapter markers: {found}"
-        )
-    return metadata
-
-
-def write_report(path: Path, payload: dict[str, Any]) -> None:
-    path = path.expanduser().resolve()
-    if path.exists():
-        raise ValidationError(f"refusing to overwrite report: {path}")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+def option_value(args: Sequence[str], option: str) -> str | None:
+    for index, token in enumerate(args):
+        if token == option and index + 1 < len(args):
+            return args[index + 1]
+        prefix = option + "="
+        if token.startswith(prefix):
+            return token[len(prefix):]
+    return None
 
 
 def selftest() -> int:
-    text = r'''
-module synthetic;
-  string f2a_assert_event_file;
-  initial begin : f2a_assertion_configuration
-    if (!$value$plusargs(
-          "f2a_assert_event_file=%s",
-          f2a_assert_event_file
-        )) begin
-      $fatal(2, "missing event file");
-    end
-  end
+    module = load_impl_module()
+    synthetic = f"""module synthetic;
+  logic [31:0] error_addr_q;
+{module.DECLARATIONS}
+{module.DIAGNOSTIC_DETECTOR_BLOCK}
 endmodule
-'''
+"""
+    import tempfile
 
-    masked = mask_comments_and_strings(text)
-    reader = EVENT_FILE_READER_RE.search(text)
-    if reader is None:
-        raise ValidationError(
-            "selftest could not detect event-file plusarg reader"
-        )
+    with tempfile.TemporaryDirectory(prefix="f2a_mmram_selftest_") as temporary:
+        path = Path(temporary) / "mm_ram.stage5.sv"
+        path.write_text(synthetic, encoding="utf-8")
+        report = audit_overlay(path)
+        if report["status"] != "PASS":
+            raise OverlayError("ownership selftest did not pass")
 
-    initial = re.search(r"\binitial\b", masked)
-    if initial is None:
-        raise ValidationError("selftest could not find initial block")
-
-    begin = find_first_begin(
-        masked,
-        initial.start(),
-        reader.start(),
-        "selftest configuration",
-    )
-    span = balanced_begin_span(
-        masked,
-        begin,
-        "selftest configuration",
-    )
-
-    records = audit_event_file_owner(
-        text,
-        masked,
-        span,
-    )
-
-    if len(records) != 1:
-        raise ValidationError(
-            "selftest expected one event-file ownership record"
-        )
-
-    if records[0]["kind"] != "system_function_output_argument":
-        raise ValidationError(
-            "selftest classified event-file ownership incorrectly"
-        )
-
-    if assignments_for(
-        text,
-        masked,
-        "f2a_assert_event_file",
-    ):
-        raise ValidationError(
-            "selftest incorrectly found an '=' assignment"
-        )
-
-    print("Phase2-G1 validator selftest: PASS")
+    print("Stage-5 diagnostic overlay ownership selftest: PASS")
     return 0
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    raw_argv = list(sys.argv[1:] if argv is None else argv)
-    if raw_argv == ["--selftest"]:
-        try:
-            return selftest()
-        except ValidationError as exc:
-            print(f"ERROR: {exc}", file=sys.stderr)
-            return 1
+    args = list(sys.argv[1:] if argv is None else argv)
 
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--original-mm-ram", type=Path, required=True)
-    parser.add_argument("--golden-run", type=Path, required=True)
-    parser.add_argument("--fault-run", type=Path, required=True)
-    parser.add_argument("--golden-monitor-metadata", type=Path, required=True)
-    parser.add_argument("--fault-monitor-metadata", type=Path, required=True)
-    parser.add_argument("--report", type=Path, required=True)
-    parser.add_argument("--selftest", action="store_true")
-    args = parser.parse_args(raw_argv)
+    if args == ["--f2a-ownership-selftest"]:
+        return selftest()
+
+    if len(args) == 2 and args[0] == "--f2a-ownership-inspect":
+        print(json.dumps(audit_overlay(Path(args[1])), indent=2))
+        return 0
+
+    if any(token in {"-h", "--help", "--version"} for token in args):
+        return run_impl(args)
+
+    if len(args) < 2:
+        raise OverlayError("source and output arguments are required")
+
+    output = Path(args[1]).expanduser().resolve()
+    report_value = option_value(args, "--report")
+    if report_value is None:
+        raise OverlayError("--report is required")
+    preparation_report = Path(report_value).expanduser().resolve()
+
+    status = run_impl(args)
+    if status != 0:
+        return status
+
+    audit = audit_overlay(output)
+    ownership_report = preparation_report.with_name("mm_ram_ownership.json")
+    if ownership_report.exists():
+        raise OverlayError(f"refusing to overwrite ownership report: {ownership_report}")
+    ownership_report.write_text(json.dumps(audit, indent=2) + "\n", encoding="utf-8")
 
     try:
-        original = require_file(args.original_mm_ram, "original mm_ram")
-        golden_monitor = validate_monitor_metadata(args.golden_monitor_metadata, "golden")
-        fault_monitor = validate_monitor_metadata(args.fault_monitor_metadata, "fault")
-        golden_run = audit_compile_run(args.golden_run, "golden")
-        fault_run = audit_compile_run(args.fault_run, "fault")
-        golden_overlay = audit_overlay(original, Path(golden_run["overlay"]))
-        fault_overlay = audit_overlay(original, Path(fault_run["overlay"]))
+        preparation = json.loads(preparation_report.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError) as exc:
+        raise OverlayError(f"invalid generator preparation report: {exc}") from exc
+    if not isinstance(preparation, dict):
+        raise OverlayError("generator preparation report must be a JSON object")
+    if preparation.get("output_sha256") != audit["overlay_sha256"]:
+        raise OverlayError("generator report and ownership audit SHA mismatch")
 
-        if golden_overlay["overlay_sha256"] != fault_overlay["overlay_sha256"]:
-            raise ValidationError("golden and fault overlays are not byte-identical")
+    preparation["wrapper_version"] = WRAPPER_VERSION
+    preparation["ownership_report"] = str(ownership_report)
+    preparation["ownership_report_sha256"] = sha256_file(ownership_report)
+    preparation["ownership_validation"] = audit
+    preparation_report.write_text(
+        json.dumps(preparation, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
-        report = {
-            "schema_version": "2.1",
-            "program_version": VERSION,
-            "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-            "gate": "stage5_phase2_g1_clean",
-            "status": "PASS",
-            "original_mm_ram": str(original),
-            "original_mm_ram_sha256": sha256_file(original),
-            "golden_monitor": golden_monitor,
-            "fault_monitor": fault_monitor,
-            "golden_run": golden_run,
-            "fault_run": fault_run,
-            "golden_overlay_audit": golden_overlay,
-            "fault_overlay_audit": fault_overlay,
-            "claims": {
-                "mode_configuration_infrastructure_validated": True,
-                "single_mode_configuration_owner": True,
-                "second_monitor_mode_adapter_present": False,
-                "single_assertion_state_block": True,
-                "single_event_task": True,
-                "instrumentation_ownership_validated": True,
-                "each_generated_source_transformed_once": True,
-                "golden_and_fault_overlay_identical": True,
-                "native_source_guardrails_validated": True,
-                "native_original_fatal_preserved": True,
-                "native_drops_write": False,
-                "native_acknowledges_unsafe_transaction": False,
-                "native_runtime_equivalence_validated": False,
-                "native_runtime_equivalence_deferred_to_g2": True,
-                "golden_compile_elaboration_passed": True,
-                "fault_compile_elaboration_passed": True,
-                "observe_runtime_executed": False,
-                "quarantine_runtime_executed": False,
-                "simulation_entered": False,
-                "trace_files_generated": 0,
-                "vcd_files_generated": 0,
-            },
-        }
-
-        write_report(args.report, report)
-
-    except ValidationError as exc:
-        print(f"ERROR: {exc}", file=sys.stderr)
-        return 1
-
-    print("Phase2-G1 clean validation: PASS")
-    print(f"Report: {args.report.expanduser().resolve()}")
-    print("NATIVE runtime equivalence: DEFERRED_TO_PHASE2_G2")
+    print(
+        "F2A_OVERLAY_OWNERSHIP: "
+        f"status=PASS overlay={output} report={ownership_report}"
+    )
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except OverlayError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        raise SystemExit(1)

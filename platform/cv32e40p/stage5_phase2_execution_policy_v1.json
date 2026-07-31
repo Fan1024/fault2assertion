@@ -1,52 +1,78 @@
 {
   "schema_version": "1.0",
-  "policy_version": "stage5_phase2_execution_modes_v1",
+  "policy_version": "stage5_phase2_execution_modes_v3",
   "design": "cv32e40p",
   "workload": "crc32",
-  "purpose": "Define Stage-5 Phase-2 detector execution modes without implementing diagnostic continuation behavior yet.",
+  "purpose": "Define the minimal Stage-5 Phase-2 source profiles, execution modes, and gate contracts. Native preserves the original assertion; diagnostic overlays remove that fatal assertion block and use a procedural first-event surrogate without assigning a final fault-effect oracle.",
   "phase2_scope": {
-    "gate1": "Establish mode infrastructure, compile/elaboration integrity, generated-monitor sanitation, artifact freshness, and explicit rejection of NON_CONTINUABLE as an execution mode.",
-    "gate2": "Prove that the Phase-2 infrastructure in NATIVE mode preserves the frozen Phase-1 golden and fault behavior.",
-    "gate3": "Reserved for implementation and validation of OBSERVE_SAFE and QUARANTINE continuation behavior."
+    "gate1": "Validate mode metadata, monitor provenance, native/diagnostic source-profile selection, exact removal of the original diagnostic-target assertion, procedural first-event detector ownership, and compile/elaboration only.",
+    "gate2": "Prove that the Phase-2 native profile preserves the frozen Phase-1 golden and fault behavior while compiling the original mm_ram.sv.",
+    "gate3": "Run OBSERVE and prove that the procedural first-event surrogate matches the frozen native detector boundary while the original fatal assertion is absent from the diagnostic overlay.",
+    "gate4": "Run QUARANTINE and prove that the same procedural first event is preserved while the documented unsafe write is acknowledged and dropped.",
+    "gate5": "Compare native, observe, and quarantine facts and build the multidimensional diagnostic record."
+  },
+  "mm_ram_profiles": {
+    "native": {
+      "source": "original_mm_ram",
+      "generated_overlay": false,
+      "existing_detector_behavior": "UNMODIFIED",
+      "allowed_run_purposes": [
+        "COMPILE_CHECK",
+        "NATIVE_CHARACTERIZATION"
+      ]
+    },
+    "diagnostic": {
+      "source": "run_local_generated_overlay",
+      "generated_overlay": true,
+      "existing_detector_behavior": "REMOVE_ORIGINAL_ASSERTION_AND_USE_PROCEDURAL_FIRST_EVENT_SURROGATE",
+      "allowed_run_purposes": [
+        "COMPILE_CHECK",
+        "DIAGNOSTIC_OBSERVE",
+        "DIAGNOSTIC_QUARANTINE"
+      ],
+      "original_assertion_block_present": false,
+      "diagnostic_detector_implementation": "PROCEDURAL_FIRST_EVENT",
+      "first_event_policy": "FIRST_VIOLATION_ONLY"
+    }
   },
   "execution_modes": {
     "NATIVE": {
       "executable": true,
+      "plusarg_mode": "native",
       "run_purpose_when_executed": "NATIVE_CHARACTERIZATION",
+      "mm_ram_profile": "native",
       "phase2_g1_compile_supported": true,
       "phase2_g2_runtime_supported": true,
-      "continuation_behavior_implemented": true,
+      "diagnostic_source_implemented": false,
+      "diagnostic_runtime_validated": false,
       "existing_detector_action": "PRESERVE_ORIGINAL_ACTION",
-      "functional_side_effect": "PRESERVE_ORIGINAL_BEHAVIOR",
-      "scientific_role": [
-        "native execution baseline",
-        "existing detector baseline",
-        "raw execution facts"
-      ]
+      "functional_side_effect": "PRESERVE_ORIGINAL_BEHAVIOR"
     },
-    "OBSERVE_SAFE": {
+    "OBSERVE": {
       "executable": true,
-      "run_purpose_when_executed": "DIAGNOSTIC_CONTINUATION",
+      "plusarg_mode": "observe",
+      "run_purpose_when_executed": "DIAGNOSTIC_OBSERVE",
+      "mm_ram_profile": "diagnostic",
       "phase2_g1_compile_supported": true,
       "phase2_g2_runtime_supported": false,
-      "continuation_behavior_implemented": false,
-      "existing_detector_action": "FUTURE_SUPPRESS_TERMINATION_ONLY",
-      "functional_side_effect": "FUTURE_PRESERVE_ORIGINAL_TRANSACTION",
-      "scientific_role": [
-        "future diagnostic continuation for detectors proven safe to continue"
-      ]
+      "diagnostic_source_implemented": true,
+      "diagnostic_runtime_validated": false,
+      "existing_detector_action": "PROCEDURAL_FIRST_EVENT_RECORD_ONLY",
+      "functional_side_effect": "PRESERVE_ORIGINAL_TRANSACTION_MODEL",
+      "diagnostic_detector_implementation": "PROCEDURAL_FIRST_EVENT"
     },
     "QUARANTINE": {
       "executable": true,
-      "run_purpose_when_executed": "DIAGNOSTIC_CONTINUATION",
+      "plusarg_mode": "diagnostic_quarantine",
+      "run_purpose_when_executed": "DIAGNOSTIC_QUARANTINE",
+      "mm_ram_profile": "diagnostic",
       "phase2_g1_compile_supported": true,
       "phase2_g2_runtime_supported": false,
-      "continuation_behavior_implemented": false,
-      "existing_detector_action": "FUTURE_RECORD_WITHOUT_FATAL_TERMINATION",
-      "functional_side_effect": "FUTURE_SUPPRESS_DEFINED_DANGEROUS_SIDE_EFFECT",
-      "scientific_role": [
-        "future diagnostic continuation for detectors requiring controlled intervention"
-      ]
+      "diagnostic_source_implemented": true,
+      "diagnostic_runtime_validated": false,
+      "existing_detector_action": "PROCEDURAL_FIRST_EVENT_RECORD_AND_QUARANTINE",
+      "functional_side_effect": "ACKNOWLEDGE_AND_DROP_UNSAFE_WRITE",
+      "diagnostic_detector_implementation": "PROCEDURAL_FIRST_EVENT"
     }
   },
   "detector_capabilities": {
@@ -60,22 +86,38 @@
   "gate1_required_cases": [
     "golden_native_compile",
     "fault_native_compile",
-    "fault_observe_safe_compile",
+    "fault_observe_compile",
     "fault_quarantine_compile"
   ],
+  "gate1_expected_profiles": {
+    "golden_native_compile": "native",
+    "fault_native_compile": "native",
+    "fault_observe_compile": "diagnostic",
+    "fault_quarantine_compile": "diagnostic"
+  },
   "gate2_required_cases": [
     "golden_native_runtime",
     "fault_native_runtime"
   ],
   "guardrails": {
-    "phase2_g1_does_not_modify_existing_assertion_behavior": true,
+    "native_profile_must_compile_original_mm_ram": true,
+    "diagnostic_profile_must_compile_run_local_overlay": true,
+    "diagnostic_overlay_generated_once_per_run": true,
+    "observe_and_quarantine_overlay_sha_must_match": true,
+    "phase2_g1_compile_elaboration_only": true,
+    "phase2_g1_generates_no_trace": true,
+    "phase2_g1_generates_no_vcd": true,
     "phase2_g2_runs_only_native_mode": true,
-    "observe_safe_runtime_forbidden_before_gate3": true,
-    "quarantine_runtime_forbidden_before_gate3": true,
+    "observe_runtime_forbidden_before_gate3": true,
+    "quarantine_runtime_forbidden_before_gate4": true,
     "non_continuable_is_not_an_execution_mode": true,
     "ai_assertions_disabled": true,
     "final_fault_effect_oracle_forbidden": true,
-    "vcd_forbidden": true,
-    "stale_generated_monitor_forbidden": true
+    "stale_generated_monitor_forbidden": true,
+    "diagnostic_results_are_counterfactual_after_first_event": true,
+    "diagnostic_overlay_must_remove_original_assertion_block": true,
+    "diagnostic_overlay_must_not_contain_replacement_sva_for_target_detector": true,
+    "diagnostic_overlay_must_use_procedural_first_event_detector": true,
+    "diagnostic_first_event_policy": "FIRST_VIOLATION_ONLY"
   }
 }

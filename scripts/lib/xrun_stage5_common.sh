@@ -9,7 +9,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     exit 1
 fi
 
-F2A_STAGE5_RUNNER_VERSION="4.0.0"
+F2A_STAGE5_RUNNER_VERSION="5.0.0"
 
 f2a_stage5_die() {
     echo "ERROR: $*" >&2
@@ -79,6 +79,25 @@ path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 PY
 }
 
+f2a_stage5_manifest_to_json() {
+    local source="$1"
+    local output="$2"
+    python3 - "${source}" "${output}" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+source = Path(sys.argv[1])
+output = Path(sys.argv[2])
+payload = {}
+for raw in source.read_text(encoding="utf-8").splitlines():
+    if raw and "=" in raw:
+        key, value = raw.split("=", 1)
+        payload[key] = value
+output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+PY
+}
+
 f2a_stage5_finalize_preflight_failure() {
     local run_dir="$1"
     local work_dir="$2"
@@ -89,6 +108,8 @@ f2a_stage5_finalize_preflight_failure() {
     local bundle_tool="$7"
     local failure_reason="$8"
     local synthetic_status="${9:-90}"
+    local run_purpose="${10:-${STAGE5_RUN_PURPOSE:-NATIVE_CHARACTERIZATION}}"
+    local mm_ram_profile="${11:-${STAGE5_MM_RAM_PROFILE:-native}}"
     local log_file="${run_dir}/xrun.log"
 
     {
@@ -114,34 +135,22 @@ runner_version=${F2A_STAGE5_RUNNER_VERSION}
 stage=5
 phase=${phase}
 run_kind=${run_kind}
+run_purpose=${run_purpose}
+mm_ram_profile=${mm_ram_profile}
 run_directory=${run_dir}
 work_directory=${work_dir}
 trace_output=${trace_output}
 preflight_failure=${failure_reason}
 MANIFEST
     fi
-    python3 - "${run_dir}/manifest.txt" "${run_dir}/manifest.json" <<'PY_MANIFEST'
-import json
-import sys
-from pathlib import Path
-source = Path(sys.argv[1])
-output = Path(sys.argv[2])
-payload = {}
-for raw in source.read_text(encoding="utf-8").splitlines():
-    if raw and "=" in raw:
-        key, value = raw.split("=", 1)
-        payload[key] = value
-output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-PY_MANIFEST
+    f2a_stage5_manifest_to_json \
+        "${run_dir}/manifest.txt" \
+        "${run_dir}/manifest.json"
 
-    local preflight_run_purpose="NATIVE_CHARACTERIZATION"
-    if [[ "${phase}" == "compile" ]]; then
-        preflight_run_purpose="COMPILE_CHECK"
-    fi
     python3 "${verdict_tool}" \
         --phase "${phase}" \
         --run-kind "${run_kind}" \
-        --run-purpose "${preflight_run_purpose}" \
+        --run-purpose "${run_purpose}" \
         --xrun-status "${synthetic_status}" \
         --log "${log_file}" \
         --result-json "${run_dir}/result.json" \
@@ -157,6 +166,7 @@ PY_MANIFEST
         --output "${run_dir}/reproduction_bundle.tar.gz" \
         --manifest "${run_dir}/reproduction_bundle_manifest.json" \
         || return 5
+
     f2a_stage5_write_retention_json \
         "${run_dir}/retention.json" \
         "${result}" \
@@ -190,6 +200,32 @@ f2a_stage5_run_xrun() {
             run_purpose="NATIVE_CHARACTERIZATION"
         fi
     fi
+
+    local mm_ram_profile="${STAGE5_MM_RAM_PROFILE:-}"
+    if [[ -z "${mm_ram_profile}" ]]; then
+        case "${run_purpose}" in
+            COMPILE_CHECK|NATIVE_CHARACTERIZATION)
+                mm_ram_profile="native"
+                ;;
+            DIAGNOSTIC_OBSERVE|DIAGNOSTIC_QUARANTINE)
+                mm_ram_profile="diagnostic"
+                ;;
+        esac
+    fi
+
+    local assertion_mode="native"
+    case "${run_purpose}" in
+        COMPILE_CHECK|NATIVE_CHARACTERIZATION)
+            assertion_mode="native"
+            ;;
+        DIAGNOSTIC_OBSERVE)
+            assertion_mode="observe"
+            ;;
+        DIAGNOSTIC_QUARANTINE)
+            assertion_mode="diagnostic_quarantine"
+            ;;
+    esac
+
     local maxcycles="${MAXCYCLES:-2000000}"
     local vcd="${VCD:-0}"
     local verbose="${VERBOSE:-0}"
@@ -216,24 +252,33 @@ f2a_stage5_run_xrun() {
             return 1
             ;;
     esac
+    case "${mm_ram_profile}" in
+        native|diagnostic) ;;
+        *)
+            f2a_stage5_die \
+                "STAGE5_MM_RAM_PROFILE must be native or diagnostic; got ${mm_ram_profile}"
+            return 1
+            ;;
+    esac
+
     if [[ "${phase}" == "compile" && "${run_purpose}" != "COMPILE_CHECK" ]]; then
         f2a_stage5_die "compile phase requires STAGE5_RUN_PURPOSE=COMPILE_CHECK"
         return 1
     fi
-    local assertion_mode="native"
-    case "${run_purpose}" in
-        COMPILE_CHECK|NATIVE_CHARACTERIZATION)
-            assertion_mode="native"
-            ;;
-        DIAGNOSTIC_OBSERVE)
-            assertion_mode="observe"
-            ;;
-        DIAGNOSTIC_QUARANTINE)
-            assertion_mode="diagnostic_quarantine"
-            ;;
-    esac
-    if [[ "${RUN_KIND}" == "golden" && "${assertion_mode}" != "native" ]]; then
-        f2a_stage5_die "golden execution supports native assertion mode only"
+    if [[ "${run_purpose}" == "NATIVE_CHARACTERIZATION" && "${mm_ram_profile}" != "native" ]]; then
+        f2a_stage5_die "native characterization must use STAGE5_MM_RAM_PROFILE=native"
+        return 1
+    fi
+    if [[ "${run_purpose}" == "DIAGNOSTIC_OBSERVE" && "${mm_ram_profile}" != "diagnostic" ]]; then
+        f2a_stage5_die "diagnostic observe must use STAGE5_MM_RAM_PROFILE=diagnostic"
+        return 1
+    fi
+    if [[ "${run_purpose}" == "DIAGNOSTIC_QUARANTINE" && "${mm_ram_profile}" != "diagnostic" ]]; then
+        f2a_stage5_die "diagnostic quarantine must use STAGE5_MM_RAM_PROFILE=diagnostic"
+        return 1
+    fi
+    if [[ "${RUN_KIND}" == "golden" && "${mm_ram_profile}" != "native" ]]; then
+        f2a_stage5_die "golden execution supports the native mm_ram profile only"
         return 1
     fi
 
@@ -326,11 +371,12 @@ from pathlib import Path
 monitor = Path(sys.argv[1])
 trace = str(Path(sys.argv[2]).resolve())
 text = monitor.read_text(encoding="utf-8", errors="strict")
-if trace not in text:
+if text.count(trace) != 1:
     raise SystemExit(
-        "ERROR: monitor does not contain the exact STAGE5_TRACE_OUTPUT path\n"
+        "ERROR: monitor must contain the exact STAGE5_TRACE_OUTPUT path once\n"
         f"  monitor: {monitor}\n"
-        f"  trace:   {trace}"
+        f"  trace:   {trace}\n"
+        f"  count:   {text.count(trace)}"
     )
 PY
 
@@ -341,42 +387,78 @@ PY
 
     local tb_subsystem_source="${f2a_home}/platform/cv32e40p/tb/cv32e40p_tb_subsystem.sv"
     local original_mm_ram_source="${tb_dir}/mm_ram.sv"
-    local assertion_policy="${f2a_home}/platform/cv32e40p/stage5_assertion_policy_v1.json"
-    local assertion_prep="${f2a_home}/platform/cv32e40p/prepare_stage5_mm_ram.py"
     f2a_stage5_require_file "${original_mm_ram_source}" "original mm_ram source" || return 1
-    f2a_stage5_require_file "${assertion_policy}" "Stage-5 assertion policy" || return 1
-    f2a_stage5_require_file "${assertion_prep}" "Stage-5 mm_ram preparation tool" || return 1
 
     mkdir -p "${RUN_DIR}" "$(dirname -- "${trace_output}")"
     local work_dir="${RUN_DIR}/work"
     mkdir -p "${work_dir}"
-    local stage5_mm_ram_source="${work_dir}/mm_ram.stage5.sv"
-    set +e
-    python3 "${assertion_prep}" \
-        "${original_mm_ram_source}" \
-        "${stage5_mm_ram_source}" \
-        --policy "${assertion_policy}" \
-        --report "${RUN_DIR}/mm_ram_preparation.json" \
-        > "${RUN_DIR}/mm_ram_preparation.log" 2>&1
-    local mm_ram_prepare_status=$?
-    set -e
-    cat "${RUN_DIR}/mm_ram_preparation.log"
-    if [[ "${mm_ram_prepare_status}" -ne 0 || ! -s "${stage5_mm_ram_source}" ]]; then
-        cp -- "${RUN_DIR}/mm_ram_preparation.log" "${RUN_DIR}/preflight_failure.txt"
-        f2a_stage5_finalize_preflight_failure \
-            "${RUN_DIR}" "${work_dir}" "${phase}" "${RUN_KIND}" \
-            "${trace_output}" "${verdict_tool}" "${bundle_tool}" \
-            "stage5_mm_ram_preparation_failed" 93
-        return $?
+
+    local selected_mm_ram_source="${original_mm_ram_source}"
+    local prepared_mm_ram_source=""
+    local assertion_policy=""
+    local assertion_prep=""
+    local assertion_prep_impl=""
+    local mm_ram_preparation_report=""
+    local mm_ram_ownership_report=""
+
+    if [[ "${mm_ram_profile}" == "diagnostic" ]]; then
+        assertion_policy="${f2a_home}/platform/cv32e40p/stage5_assertion_policy_v1.json"
+        assertion_prep="${f2a_home}/platform/cv32e40p/prepare_stage5_mm_ram.py"
+        assertion_prep_impl="${f2a_home}/platform/cv32e40p/prepare_stage5_mm_ram_impl.py"
+        prepared_mm_ram_source="${work_dir}/mm_ram.stage5.sv"
+        mm_ram_preparation_report="${RUN_DIR}/mm_ram_preparation.json"
+        mm_ram_ownership_report="${RUN_DIR}/mm_ram_ownership.json"
+
+        f2a_stage5_require_file "${assertion_policy}" "Stage-5 assertion policy" || return 1
+        f2a_stage5_require_file "${assertion_prep}" "Stage-5 mm_ram wrapper" || return 1
+        f2a_stage5_require_file "${assertion_prep_impl}" "Stage-5 mm_ram implementation" || return 1
+
+        set +e
+        python3 "${assertion_prep}" \
+            "${original_mm_ram_source}" \
+            "${prepared_mm_ram_source}" \
+            --policy "${assertion_policy}" \
+            --report "${mm_ram_preparation_report}" \
+            > "${RUN_DIR}/mm_ram_preparation.log" 2>&1
+        local mm_ram_prepare_status=$?
+        set -e
+        cat "${RUN_DIR}/mm_ram_preparation.log"
+
+        if [[ "${mm_ram_prepare_status}" -ne 0 \
+              || ! -s "${prepared_mm_ram_source}" \
+              || ! -s "${mm_ram_preparation_report}" \
+              || ! -s "${mm_ram_ownership_report}" ]]; then
+            cp -- "${RUN_DIR}/mm_ram_preparation.log" "${RUN_DIR}/preflight_failure.txt"
+            f2a_stage5_finalize_preflight_failure \
+                "${RUN_DIR}" "${work_dir}" "${phase}" "${RUN_KIND}" \
+                "${trace_output}" "${verdict_tool}" "${bundle_tool}" \
+                "stage5_mm_ram_preparation_failed" 93 \
+                "${run_purpose}" "${mm_ram_profile}"
+            return $?
+        fi
+
+        selected_mm_ram_source="${prepared_mm_ram_source}"
+        sha256sum \
+            "${original_mm_ram_source}" \
+            "${prepared_mm_ram_source}" \
+            "${assertion_policy}" \
+            "${assertion_prep}" \
+            "${assertion_prep_impl}" \
+            > "${RUN_DIR}/stage5_assertion_adapter.sha256"
+    else
+        sha256sum "${original_mm_ram_source}" \
+            > "${RUN_DIR}/stage5_assertion_adapter.sha256"
     fi
-    sha256sum \
-        "${original_mm_ram_source}" \
-        "${stage5_mm_ram_source}" \
-        "${assertion_policy}" \
-        "${assertion_prep}" \
-        > "${RUN_DIR}/stage5_assertion_adapter.sha256"
 
     local assertion_event_output="${RUN_DIR}/assertion_events.tsv"
+    local assertion_event_origin="none_compile_only"
+    if [[ "${phase}" == "run" && "${mm_ram_profile}" == "native" ]]; then
+        printf 'H\tF2A_ASSERT_EVENTS\t1\tnative\n' > "${assertion_event_output}"
+        assertion_event_origin="runner_native_header_only"
+    elif [[ "${phase}" == "run" ]]; then
+        assertion_event_origin="diagnostic_overlay"
+    fi
+
     local -a tb_sources=(
         "${tb_dir}/include/perturbation_pkg.sv"
         "${tb_dir}/amo_shim.sv"
@@ -384,7 +466,7 @@ PY
         "${tb_dir}/dp_ram.sv"
         "${tb_dir}/riscv_gnt_stall.sv"
         "${tb_dir}/riscv_rvalid_stall.sv"
-        "${stage5_mm_ram_source}"
+        "${selected_mm_ram_source}"
         "${tb_subsystem_source}"
         "${tb_dir}/tb_top.sv"
         "${monitor_source}"
@@ -431,8 +513,10 @@ PY
         echo "CV32E40P_CELL_MODEL=${cell_model}"
         echo "STAGE5_PHASE=${phase}"
         echo "STAGE5_RUN_PURPOSE=${run_purpose}"
+        echo "STAGE5_MM_RAM_PROFILE=${mm_ram_profile}"
         echo "STAGE5_ASSERTION_MODE=${assertion_mode}"
         echo "STAGE5_ASSERTION_EVENT_OUTPUT=${assertion_event_output}"
+        echo "STAGE5_ASSERTION_EVENT_ORIGIN=${assertion_event_origin}"
         echo "STAGE5_ASSERTION_POLICY=${assertion_policy}"
         echo "STAGE5_TRACE_OUTPUT=${trace_output}"
         echo "MAXCYCLES=${maxcycles}"
@@ -440,6 +524,7 @@ PY
         echo "VERBOSE=${verbose}"
         echo "KEEP_WORK=${keep_work}"
     } > "${RUN_DIR}/environment.txt"
+
     xrun -version > "${RUN_DIR}/xrun_version.txt" 2>&1 || true
     printf '%s\n' "${WRAPPER_COMMAND:-not_recorded}" \
         > "${RUN_DIR}/wrapper_command.txt"
@@ -472,7 +557,8 @@ PY
             f2a_stage5_finalize_preflight_failure \
                 "${RUN_DIR}" "${work_dir}" "${phase}" "${RUN_KIND}" \
                 "${trace_output}" "${verdict_tool}" "${bundle_tool}" \
-                "fault_materialization_failed" 91
+                "fault_materialization_failed" 91 \
+                "${run_purpose}" "${mm_ram_profile}"
             return $?
         fi
     fi
@@ -494,7 +580,8 @@ PY
         f2a_stage5_finalize_preflight_failure \
             "${RUN_DIR}" "${work_dir}" "${phase}" "${RUN_KIND}" \
             "${trace_output}" "${verdict_tool}" "${bundle_tool}" \
-            "simulation_netlist_preparation_failed" 92
+            "simulation_netlist_preparation_failed" 92 \
+            "${run_purpose}" "${mm_ram_profile}"
         return $?
     fi
 
@@ -519,11 +606,16 @@ stage=5
 phase=${phase}
 run_kind=${RUN_KIND}
 run_purpose=${run_purpose}
+mm_ram_profile=${mm_ram_profile}
 assertion_mode=${assertion_mode}
 assertion_event_output=${assertion_event_output}
+assertion_event_origin=${assertion_event_origin}
 assertion_policy=${assertion_policy}
 original_mm_ram_source=${original_mm_ram_source}
-prepared_mm_ram_source=${stage5_mm_ram_source}
+prepared_mm_ram_source=${prepared_mm_ram_source}
+selected_mm_ram_source=${selected_mm_ram_source}
+mm_ram_preparation_report=${mm_ram_preparation_report}
+mm_ram_ownership_report=${mm_ram_ownership_report}
 design=${DESIGN}
 workload=${WORKLOAD}
 simulation_level=${SIM_LEVEL}
@@ -550,21 +642,9 @@ expected_crc32_signature=0x2D6352B3
 expected_crc32_last=0x5650AC83
 MANIFEST
 
-    python3 - "${RUN_DIR}/manifest.txt" "${RUN_DIR}/manifest.json" <<'PY'
-import json
-import sys
-from pathlib import Path
-
-source = Path(sys.argv[1])
-output = Path(sys.argv[2])
-payload = {}
-for raw in source.read_text(encoding="utf-8").splitlines():
-    if not raw or "=" not in raw:
-        continue
-    key, value = raw.split("=", 1)
-    payload[key] = value
-output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-PY
+    f2a_stage5_manifest_to_json \
+        "${RUN_DIR}/manifest.txt" \
+        "${RUN_DIR}/manifest.json"
 
     local -a include_dirs=(
         "${rtl_dir}/include"
@@ -594,18 +674,20 @@ PY
         "${tb_sources[@]}"
         "+firmware=${work_dir}/firmware.hex"
         "+maxcycles=${maxcycles}"
-        "+f2a_assert_mode=${assertion_mode}"
-        "+f2a_assert_event_file=${assertion_event_output}"
         -l "${RUN_DIR}/xrun.log"
         +define+TETRAMAX
         -delay_mode zero
         -notimingchecks
     )
 
+    if [[ "${mm_ram_profile}" == "diagnostic" ]]; then
+        xrun_args+=(
+            "+f2a_assert_mode=${assertion_mode}"
+            "+f2a_assert_event_file=${assertion_event_output}"
+        )
+    fi
+
     if [[ "${phase}" == "compile" ]]; then
-        # In Xcelium, -elaborate performs compile plus elaboration but does not
-        # enter simulation.  This catches bind/scope errors that -compile alone
-        # would miss, while still producing no monitor trace.
         xrun_args+=(-elaborate)
     fi
     if [[ "${vcd}" == "1" ]]; then
@@ -627,8 +709,9 @@ PY
     echo "Simulation     : ${SIM_LEVEL}"
     echo "Phase          : ${phase}"
     echo "Run purpose    : ${run_purpose}"
+    echo "mm_ram profile : ${mm_ram_profile}"
     echo "Assertion mode : ${assertion_mode}"
-    echo "Assertion log  : ${assertion_event_output}"
+    echo "mm_ram source  : ${selected_mm_ram_source}"
     echo "Fault ID       : ${FAULT_ID:-none}"
     echo "Firmware       : ${firmware}"
     echo "Input netlist  : ${raw_netlist}"
@@ -657,6 +740,11 @@ PY
             >> "${log_file}"
         xrun_status=97
     fi
+    if [[ "${phase}" == "compile" && -e "${assertion_event_output}" ]]; then
+        echo "F2A_RUNNER_ERROR: compile-only phase unexpectedly created assertion events" \
+            >> "${log_file}"
+        xrun_status=96
+    fi
     if [[ "${phase}" == "run" && ! -s "${trace_output}" ]]; then
         echo "F2A_RUNNER_ERROR: run phase did not create a non-empty compact trace" \
             >> "${log_file}"
@@ -682,21 +770,22 @@ PY
         --result-text "${result_file}" \
         --result-env "${result_env}" >/dev/null || return 1
 
-    # The file is generated only by our own verdict tool and contains simple
-    # key=value tokens without shell metacharacters.
     # shellcheck disable=SC1090
     source "${result_env}"
-    # Preserve a readable placeholder for reproduction bundles only after the
-    # verdict engine has recorded that the original log was absent.
+
     if [[ ! -f "${log_file}" ]]; then
         printf '%s\n' 'Original xrun.log was missing after the xrun invocation.' \
             > "${log_file}"
     fi
+
     local final_status="${result}"
     local exit_status="${recommended_exit_code}"
 
-    if [[ "${final_status}" == "PASS" || "${final_status}" == "OUTPUT_MATCH" || "${final_status}" == "DIAGNOSTIC_OUTPUT_MATCH" ]]; then
-        grep -Ei "CRC32 PASS:.*vector=(0x)?cbf43926.*signature=(0x)?2d6352b3.*last=(0x)?5650ac83|EXIT SUCCESS" \
+    if [[ "${final_status}" == "PASS" \
+          || "${final_status}" == "OUTPUT_MATCH" \
+          || "${final_status}" == "DIAGNOSTIC_OUTPUT_MATCH" ]]; then
+        grep -Ei \
+            "CRC32 PASS:.*vector=(0x)?cbf43926.*signature=(0x)?2d6352b3.*last=(0x)?5650ac83|EXIT SUCCESS" \
             "${log_file}" > "${RUN_DIR}/signature.txt" || true
     fi
 
