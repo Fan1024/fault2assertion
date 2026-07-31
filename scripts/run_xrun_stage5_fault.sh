@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Run one Stage-5 TF fault with one compact local monitor.
+# Run one Stage-5 TF fault compile/elaboration or functional simulation.
 # Usage:
+#   STAGE5_PHASE=compile|run \
+#   STAGE5_TRACE_OUTPUT=/absolute/path/to/fault.trace.tsv \
 #   ./scripts/run_xrun_stage5_fault.sh \
 #       <fault.json> <monitor.sv> <absolute-run-dir>
 
@@ -28,9 +30,11 @@ RUN_DIR="${3:?absolute run directory is required}"
     echo "ERROR: run directory already exists: ${RUN_DIR}" >&2
     exit 1
 }
+: "${STAGE5_TRACE_OUTPUT:?STAGE5_TRACE_OUTPUT must be set}"
 
 FAULT_JSON="$(readlink -f -- "${FAULT_JSON}")"
 EXTRA_SV_SOURCE="$(readlink -f -- "${MONITOR_SV}")"
+STAGE5_TRACE_OUTPUT="$(readlink -m -- "${STAGE5_TRACE_OUTPUT}")"
 FAULT_ID="$(python3 - "${FAULT_JSON}" <<'PY'
 import json
 import re
@@ -54,18 +58,26 @@ SIM_LEVEL="netlist"
 RUN_KIND="fault"
 RUN_NAME="$(basename -- "${RUN_DIR}")"
 STAGE5_FAULT_APPLIER="${F2A_ROOT}/scripts/fault_characterization/stage5_faults.py"
+STAGE5_PHASE="${STAGE5_PHASE:-run}"
 VCD="${VCD:-0}"
 KEEP_WORK="${KEEP_WORK:-0}"
+printf -v WRAPPER_COMMAND \
+    'STAGE5_PHASE=%q STAGE5_TRACE_OUTPUT=%q MAXCYCLES=%q VCD=%q VERBOSE=%q KEEP_WORK=%q %q %q %q %q' \
+    "${STAGE5_PHASE}" \
+    "${STAGE5_TRACE_OUTPUT}" \
+    "${MAXCYCLES:-2000000}" \
+    "${VCD}" \
+    "${VERBOSE:-0}" \
+    "${KEEP_WORK}" \
+    "$(readlink -f -- "${BASH_SOURCE[0]}")" \
+    "${FAULT_JSON}" \
+    "${EXTRA_SV_SOURCE}" \
+    "${RUN_DIR}"
 
-cleanup_stage5_run_local_files() {
-    local status=$?
-    rm -f -- \
-        "${RUN_DIR}/work/fault_netlist.v" \
-        "${RUN_DIR}/work/cv32e40p.mapped.sim.v" \
-        2>/dev/null || true
-    return "${status}"
-}
-trap cleanup_stage5_run_local_files EXIT
+# Cleanup is intentionally not implemented as an EXIT trap.  The common runner
+# decides retention only after a strict verdict and after building a compact
+# reproduction bundle.  This prevents compile/simulation failures from losing
+# the run-local netlist and Xcelium work library before debugging.
 
 # shellcheck disable=SC1091
 source "${F2A_ROOT}/scripts/lib/xrun_stage5_common.sh"
