@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.4",
-  "generated_at_utc": "2026-07-30T14:34:12.234895+00:00",
+  "program_version": "1.0.7",
+  "generated_at_utc": "2026-07-31T00:21:59.330112+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000044_SA1",
   "selection_id": "TS000044",
@@ -170,5 +170,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "0bb6c9e6ce65cf54e54b2a028b236f7c9d9653172af01ed16cea8680e6afdab0"
+  "fault_spec_digest_sha256": "9f31dc9656de1fde4f0b7342b2bd2e39ac1c575ee685b5b3e69248f24937f6b6"
 }

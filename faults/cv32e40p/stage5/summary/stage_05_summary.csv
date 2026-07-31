@@ -1,1 +1,0 @@
-fault_id,selection_id,site_id,fault_class,polarity,characterization_class,functional_class,activated,injection_effective,receiver_diverged,earliest_cycle,diagnostic_scope,diagnostic_expression,oracle_confidence,oracle_digest_sha256
