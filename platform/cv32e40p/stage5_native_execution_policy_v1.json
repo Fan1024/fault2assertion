@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.0",
+  "policy_version": "native_execution_raw_facts_v1",
+  "purpose": "Define Stage-5 native fault execution and raw-fact interpretation without assigning final fault-effect oracle classes.",
+  "run_purposes": {
+    "COMPILE_CHECK": "Compile and elaborate only; no simulation outcome is interpreted.",
+    "NATIVE_CHARACTERIZATION": "Run the unmodified existing verification environment. Existing assertions keep their native actions, including fatal termination.",
+    "DIAGNOSTIC_CONTINUATION": "Reserved for the next phase. Existing detector events are recorded while controlled continuation semantics are explicitly documented.",
+    "ASSERTION_EVALUATION_PASSIVE": "Reserved for AI assertion evaluation. Generated assertions record events but do not terminate the reference execution.",
+    "ASSERTION_DEPLOYMENT_FAILFAST": "Reserved for deployment-like experiments where generated assertions may terminate execution."
+  },
+  "raw_fact_layers": {
+    "tool": [
+      "status",
+      "xrun_exit_status",
+      "runner_error_count",
+      "infrastructure_error_count",
+      "infrastructure_events"
+    ],
+    "execution": [
+      "run_purpose",
+      "valid_experiment_execution",
+      "completion",
+      "terminal_event_type",
+      "terminal_log_line",
+      "native_execution",
+      "post_terminal_execution_observed"
+    ],
+    "workload": [
+      "outcome",
+      "architectural_outcome",
+      "exact_signature_observed",
+      "exit_success_observed",
+      "explicit_failure_observed",
+      "timeout_observed"
+    ],
+    "existing_detector_baseline": [
+      "triggered",
+      "event_count",
+      "events"
+    ]
+  },
+  "allowed_values": {
+    "tool_status": ["OK", "ERROR"],
+    "execution_completion": [
+      "COMPILE_ONLY",
+      "COMPLETED",
+      "TIMED_OUT",
+      "TERMINATED_BY_EXISTING_ASSERTION",
+      "UNKNOWN"
+    ],
+    "workload_outcome": ["PASS", "FAIL", "NOT_REACHED", "NOT_RUN", "UNKNOWN"],
+    "architectural_outcome": [
+      "OBSERVED_PASS",
+      "OBSERVED_FAIL",
+      "CENSORED",
+      "NOT_RUN",
+      "UNKNOWN"
+    ],
+    "existing_detector_origin": [
+      "PREEXISTING_TB_ASSERTION",
+      "PREEXISTING_DESIGN_ASSERTION",
+      "PREEXISTING_ASSERTION_UNKNOWN_ORIGIN"
+    ]
+  },
+  "native_fault_rules": [
+    "An xmsim ASRTST event is an existing-detector event, not an Xcelium infrastructure error.",
+    "If a pre-existing assertion terminates a fault execution, tool status remains OK when no independent infrastructure error exists.",
+    "The execution completion is TERMINATED_BY_EXISTING_ASSERTION.",
+    "The workload outcome is NOT_REACHED and the architectural outcome is CENSORED.",
+    "The event proves that an existing detector observed a violation; it does not by itself define the fault-effect oracle class.",
+    "Native characterization does not suppress or replace existing assertions.",
+    "AI-generated assertions do not participate in native characterization or raw-fact generation."
+  ],
+  "gate4_acceptance": {
+    "valid_fault_observation_statuses": [
+      "OUTPUT_MATCH",
+      "OUTPUT_MISMATCH",
+      "TIMEOUT",
+      "EXISTING_ASSERTION_DETECTED"
+    ],
+    "existing_assertion_detection_requires": [
+      "tool.status == OK",
+      "execution.valid_experiment_execution == true",
+      "execution.completion == TERMINATED_BY_EXISTING_ASSERTION",
+      "workload.outcome == NOT_REACHED",
+      "workload.architectural_outcome == CENSORED",
+      "existing_detector_baseline.event_count >= 1",
+      "infrastructure_error_count == 0",
+      "non-empty compact fault trace",
+      "retained work directory",
+      "reproduction bundle"
+    ]
+  },
+  "explicit_non_goals": [
+    "This phase does not infer ILLEGAL_MEMORY_WRITE, CONTROL_FLOW_CORRUPTION, DATA_CORRUPTION, or any other final fault-effect class.",
+    "This phase does not implement diagnostic continuation.",
+    "This phase does not evaluate AI-generated assertions.",
+    "This phase does not use an assertion trigger as self-validating ground truth."
+  ]
+}

@@ -9,7 +9,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     exit 1
 fi
 
-F2A_STAGE5_RUNNER_VERSION="2.0.0"
+F2A_STAGE5_RUNNER_VERSION="3.0.0"
 
 f2a_stage5_die() {
     echo "ERROR: $*" >&2
@@ -177,6 +177,14 @@ f2a_stage5_run_xrun() {
     : "${STAGE5_TRACE_OUTPUT:?STAGE5_TRACE_OUTPUT must be the monitor trace path}"
 
     local phase="${STAGE5_PHASE:-run}"
+    local run_purpose="${STAGE5_RUN_PURPOSE:-}"
+    if [[ -z "${run_purpose}" ]]; then
+        if [[ "${phase}" == "compile" ]]; then
+            run_purpose="COMPILE_CHECK"
+        else
+            run_purpose="NATIVE_CHARACTERIZATION"
+        fi
+    fi
     local maxcycles="${MAXCYCLES:-2000000}"
     local vcd="${VCD:-0}"
     local verbose="${VERBOSE:-0}"
@@ -196,6 +204,17 @@ f2a_stage5_run_xrun() {
             return 1
             ;;
     esac
+    case "${run_purpose}" in
+        COMPILE_CHECK|NATIVE_CHARACTERIZATION|DIAGNOSTIC_CONTINUATION|ASSERTION_EVALUATION_PASSIVE|ASSERTION_DEPLOYMENT_FAILFAST) ;;
+        *)
+            f2a_stage5_die "unsupported STAGE5_RUN_PURPOSE: ${run_purpose}"
+            return 1
+            ;;
+    esac
+    if [[ "${phase}" == "compile" && "${run_purpose}" != "COMPILE_CHECK" ]]; then
+        f2a_stage5_die "compile phase requires STAGE5_RUN_PURPOSE=COMPILE_CHECK"
+        return 1
+    fi
 
     if [[ "${DESIGN}" != "cv32e40p" ]]; then
         f2a_stage5_die "Stage 5 currently supports only cv32e40p; got ${DESIGN}"
@@ -357,6 +376,7 @@ PY
         echo "CV32E40P_HOME=${cv32e40p_home}"
         echo "CV32E40P_CELL_MODEL=${cell_model}"
         echo "STAGE5_PHASE=${phase}"
+        echo "STAGE5_RUN_PURPOSE=${run_purpose}"
         echo "STAGE5_TRACE_OUTPUT=${trace_output}"
         echo "MAXCYCLES=${maxcycles}"
         echo "VCD=${vcd}"
@@ -441,6 +461,7 @@ runner_version=${F2A_STAGE5_RUNNER_VERSION}
 stage=5
 phase=${phase}
 run_kind=${RUN_KIND}
+run_purpose=${run_purpose}
 design=${DESIGN}
 workload=${WORKLOAD}
 simulation_level=${SIM_LEVEL}
@@ -541,6 +562,7 @@ PY
     echo "Workload       : ${WORKLOAD}"
     echo "Simulation     : ${SIM_LEVEL}"
     echo "Phase          : ${phase}"
+    echo "Run purpose    : ${run_purpose}"
     echo "Fault ID       : ${FAULT_ID:-none}"
     echo "Firmware       : ${firmware}"
     echo "Input netlist  : ${raw_netlist}"
@@ -581,6 +603,7 @@ PY
     python3 "${verdict_tool}" \
         --phase "${phase}" \
         --run-kind "${RUN_KIND}" \
+        --run-purpose "${run_purpose}" \
         --xrun-status "${xrun_status}" \
         --log "${log_file}" \
         --result-json "${result_json}" \
@@ -607,7 +630,7 @@ PY
 
     local bundle_created=0
     case "${final_status}" in
-        COMPILE_ERROR|ERROR|UNKNOWN|TIMEOUT|OUTPUT_MISMATCH)
+        COMPILE_ERROR|GOLDEN_INVALID|ERROR|UNKNOWN|TIMEOUT|OUTPUT_MISMATCH|EXISTING_ASSERTION_DETECTED)
             set +e
             python3 "${bundle_tool}" \
                 --run-dir "${RUN_DIR}" \
@@ -649,9 +672,13 @@ PY
         retention_reason="VCD_present_or_requested"
     else
         case "${final_status}" in
-            COMPILE_ERROR|ERROR|UNKNOWN|TIMEOUT)
+            COMPILE_ERROR|GOLDEN_INVALID|ERROR|UNKNOWN|TIMEOUT|EXISTING_ASSERTION_DETECTED)
                 retain_work=1
-                retention_reason="infrastructure_or_timeout_failure_retention"
+                if [[ "${final_status}" == "EXISTING_ASSERTION_DETECTED" ]]; then
+                    retention_reason="native_assertion_termination_retained_for_raw_fact_and_oracle_analysis"
+                else
+                    retention_reason="infrastructure_invalid_or_censored_execution_retention"
+                fi
                 ;;
             *)
                 retain_work=0

@@ -41,6 +41,7 @@ GATE2_DRIVER="$FC/run_stage5_gate2.sh"
 GATE3_DRIVER="$FC/run_stage5_gate3.sh"
 GATE4_DRIVER="$FC/run_stage5_gate4.sh"
 ORACLE_DRIVER="$FC/run_stage5_oracle_freeze.sh"
+NATIVE_POLICY="$F2A_ROOT/platform/cv32e40p/stage5_native_execution_policy_v1.json"
 
 log() {
     printf '\n[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"
@@ -86,7 +87,8 @@ for file in \
     "$GATE2_DRIVER" \
     "$GATE3_DRIVER" \
     "$GATE4_DRIVER" \
-    "$ORACLE_DRIVER"
+    "$ORACLE_DRIVER" \
+    "$NATIVE_POLICY"
 do
     require_file "$file"
 done
@@ -205,7 +207,8 @@ python3 - \
     "$EXECUTION_INPUT_TOOL" \
     "$EXECUTION_INPUT_SELFTEST" \
     "$ARTIFACT_LOCK_TOOL" \
-    "$ARTIFACT_LOCK_SELFTEST" <<'PY'
+    "$ARTIFACT_LOCK_SELFTEST" \
+    "$NATIVE_POLICY" <<'PY'
 import hashlib
 import json
 import sys
@@ -234,7 +237,13 @@ payload = {
         "timeout_retains_work": True,
         "output_mismatch_builds_compact_bundle": True,
         "reproduction_bundle_excludes_fault_netlist_vcd_and_xcelium_work": True,
-        "fault_wrapper_has_no_unconditional_cleanup_trap": True
+        "fault_wrapper_has_no_unconditional_cleanup_trap": True,
+        "native_execution_separates_tool_completion_workload_and_detectors": True,
+        "xmsim_asrtst_is_existing_detector_evidence_not_infrastructure_error": True,
+        "assertion_terminated_workload_is_not_reached": True,
+        "assertion_terminated_architectural_outcome_is_censored": True,
+        "existing_assertion_trigger_is_not_final_fault_effect_oracle": True,
+        "ai_assertions_do_not_participate_in_native_raw_fact_generation": True
     },
     "files": [
         {"path": str(path), "sha256": sha(path), "size_bytes": path.stat().st_size}

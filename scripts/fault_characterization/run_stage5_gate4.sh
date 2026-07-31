@@ -97,6 +97,7 @@ esac
 log "Gate 4: execute one deterministic run-local stuck-at fault"
 set +e
 STAGE5_PHASE=run \
+STAGE5_RUN_PURPOSE=NATIVE_CHARACTERIZATION \
 STAGE5_TRACE_OUTPUT="$FAULT_TRACE" \
 MAXCYCLES=2000000 \
 VCD=0 \
@@ -105,14 +106,15 @@ KEEP_WORK=0 \
 RUNNER_STATUS=$?
 set -e
 
-# 0 = OUTPUT_MATCH; 2 = OUTPUT_MISMATCH or TIMEOUT.  Other values are
-# infrastructure/unknown failures and are rejected by the validator below.
+# 0 = OUTPUT_MATCH.  2 = a valid non-matching/censored fault observation:
+# OUTPUT_MISMATCH, TIMEOUT, or EXISTING_ASSERTION_DETECTED.  Other return
+# values are infrastructure/unknown failures and are rejected below.
 if [[ "$RUNNER_STATUS" -ne 0 && "$RUNNER_STATUS" -ne 2 ]]; then
-    echo "ERROR: fault runner returned infrastructure status $RUNNER_STATUS" >&2
+    echo "ERROR: fault runner returned invalid or infrastructure status $RUNNER_STATUS" >&2
     echo "Inspect: $FAULT_RUN" >&2
 fi
 
-log "Fail-closed Gate-4 infrastructure, trace, retention, and bundle validation"
+log "Fail-closed Gate-4 native-execution, raw-fact, trace, retention, and bundle validation"
 python3 "$GATE4_VALIDATE" \
     --common "$COMMON_VALIDATE" \
     --selection-record "$SMOKE_SELECTION" \
@@ -126,5 +128,5 @@ echo "Fault ID           : $FAULT_ID"
 echo "Fault run          : $FAULT_RUN"
 echo "Fault trace        : $FAULT_TRACE"
 echo "Gate-4 report      : $REPORT"
-echo "Scientific result  : $(cat "$FAULT_RUN/result.txt")"
-echo "Do not delete the fault trace until the v2 oracle is validated."
+echo "Native observation : $(cat "$FAULT_RUN/result.txt")"
+echo "Do not delete the fault trace/work until Phase 2 diagnostic-oracle design is validated."

@@ -143,6 +143,15 @@ case "${F2A_FAKE_MODE:?}" in
     echo 'xmelab: *E,FAKE synthetic error' > "$log"
     exit 1
     ;;
+  assertion_abort)
+    cat > "$log" <<'EOF_ASSERT'
+xmsim: *F,ASRTST: (/tmp/verification/shared/tb/mm_ram.sv,367): (time 780 NS) Assertion tb_top.wrapper_i.ram_i.out_of_bounds_write has failed
+         X         0
+Simulation terminated via $fatal(1) at time 780 NS + 11
+/tmp/verification/shared/tb/mm_ram.sv:367   else $fatal("out of bounds write to %08x with %08x", data_addr_i, data_wdata_i);
+EOF_ASSERT
+    exit 2
+    ;;
   *) exit 8 ;;
 esac
 ''',
@@ -239,6 +248,22 @@ exit "$rc"
         raise IntegrationError(
             f"{name}: status expected={expected_status}, actual={result['status']}"
         )
+    if result.get("schema_version") != "2.0":
+        raise IntegrationError(f"{name}: result schema is not 2.0")
+    if result.get("verdict_engine_version") != "3.0.0":
+        raise IntegrationError(f"{name}: verdict engine is not 3.0.0")
+    if expected_status == "EXISTING_ASSERTION_DETECTED":
+        raw = result["raw_facts"]
+        if raw["tool"]["status"] != "OK":
+            raise IntegrationError(f"{name}: assertion abort was treated as tool error")
+        if raw["execution"]["completion"] != "TERMINATED_BY_EXISTING_ASSERTION":
+            raise IntegrationError(f"{name}: wrong assertion completion")
+        if raw["workload"]["outcome"] != "NOT_REACHED":
+            raise IntegrationError(f"{name}: assertion workload outcome not censored")
+        if raw["workload"]["architectural_outcome"] != "CENSORED":
+            raise IntegrationError(f"{name}: assertion architecture outcome not censored")
+        if raw["existing_detector_baseline"]["event_count"] != 1:
+            raise IntegrationError(f"{name}: assertion detector event missing")
     if (run_dir / "work").exists() != expect_work:
         raise IntegrationError(f"{name}: unexpected work retention")
     bundle_path = run_dir / "reproduction_bundle.tar.gz"
@@ -296,7 +321,20 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "OUTPUT_MATCH", 0, False, False, True, run_kind="fault"
             )
             run_case(tree, root, "exit_only", "run", "exit_only", "UNKNOWN", 3, True, True, True)
-            run_case(tree, root, "timeout", "run", "timeout", "TIMEOUT", 2, True, True, True)
+            run_case(tree, root, "timeout", "run", "timeout", "TIMEOUT", 2, True, True, True, run_kind="fault")
+            run_case(
+                tree,
+                root,
+                "assertion_abort",
+                "run",
+                "assertion_abort",
+                "EXISTING_ASSERTION_DETECTED",
+                2,
+                True,
+                True,
+                True,
+                run_kind="fault",
+            )
             run_case(tree, root, "infra_error", "run", "error", "ERROR", 4, True, True, True)
             run_case(
                 tree,

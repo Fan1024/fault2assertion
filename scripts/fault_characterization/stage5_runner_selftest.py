@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Independent synthetic tests for the Stage-5 verdict and bundle logic."""
+"""Independent synthetic tests for Stage-5 layered native-execution results."""
 
 from __future__ import annotations
 
@@ -31,7 +31,23 @@ def load_module(path: Path, name: str) -> Any:
 def expect(actual: Any, expected: Any, label: str) -> None:
     if actual != expected:
         raise SelfTestError(f"{label}: expected={expected!r}, actual={actual!r}")
-    print(f"{label:42s}: PASS")
+    print(f"{label:58s}: PASS")
+
+
+def assertion_log() -> str:
+    return "\n".join(
+        [
+            "[TB] Netlist fetch enabled",
+            "xmsim: *F,ASRTST: (/tmp/verification/shared/tb/mm_ram.sv,367): "
+            "(time 780 NS) Assertion "
+            "tb_top.wrapper_i.ram_i.out_of_bounds_write has failed",
+            "         X         0",
+            "Simulation terminated via $fatal(1) at time 780 NS + 11",
+            "/tmp/verification/shared/tb/mm_ram.sv:367   "
+            "else $fatal(\"out of bounds write to %08x with %08x\", "
+            "data_addr_i, data_wdata_i);",
+        ]
+    ) + "\n"
 
 
 def verdict_tests(verdict_module: Any) -> None:
@@ -49,7 +65,8 @@ def verdict_tests(verdict_module: Any) -> None:
             "run",
             "fault",
             0,
-            "CRC32 PASS: vector=cbf43926 signature=00000000 last=5650ac83\nEXIT SUCCESS\n",
+            "CRC32 PASS: vector=cbf43926 signature=00000000 last=5650ac83\n"
+            "EXIT SUCCESS\n",
             "OUTPUT_MISMATCH",
         ),
         ("run", "fault", 0, "CRC32 FAIL\nEXIT FAILURE\n", "OUTPUT_MISMATCH"),
@@ -62,15 +79,58 @@ def verdict_tests(verdict_module: Any) -> None:
         ),
         ("run", "fault", 1, "xmelab: *E,CUVMUR unresolved\n", "ERROR"),
         ("run", "fault", 0, "no terminal marker\n", "UNKNOWN"),
+        ("run", "fault", 2, assertion_log(), "EXISTING_ASSERTION_DETECTED"),
+        ("run", "golden", 2, assertion_log(), "GOLDEN_INVALID"),
     ]
-    for index, (phase, kind, status, text, expected) in enumerate(cases, start=1):
+    for index, (phase, kind, xstatus, text, expected) in enumerate(cases, start=1):
         verdict = verdict_module.compute_verdict(
             phase=phase,
             run_kind=kind,
-            xrun_exit_status=status,
+            xrun_exit_status=xstatus,
             log_text=text,
         )
         expect(verdict.status, expected, f"Verdict scenario {index:02d} ({expected})")
+
+    fault_assertion = verdict_module.compute_verdict(
+        phase="run",
+        run_kind="fault",
+        xrun_exit_status=2,
+        log_text=assertion_log(),
+    )
+    raw = fault_assertion.raw_facts
+    expect(raw["tool"]["status"], "OK", "ASRTST is not infrastructure error")
+    expect(
+        raw["tool"]["infrastructure_error_count"],
+        0,
+        "ASRTST infrastructure count",
+    )
+    expect(
+        raw["execution"]["completion"],
+        "TERMINATED_BY_EXISTING_ASSERTION",
+        "ASRTST execution completion",
+    )
+    expect(raw["workload"]["outcome"], "NOT_REACHED", "ASRTST workload outcome")
+    expect(
+        raw["workload"]["architectural_outcome"],
+        "CENSORED",
+        "ASRTST architectural outcome",
+    )
+    detector = raw["existing_detector_baseline"]
+    expect(detector["event_count"], 1, "ASRTST detector count")
+    event = detector["events"][0]
+    expect(
+        event["detector_origin"],
+        "PREEXISTING_TB_ASSERTION",
+        "ASRTST detector origin",
+    )
+    expect(
+        event["assertion_leaf_name"],
+        "out_of_bounds_write",
+        "ASRTST assertion name",
+    )
+    expect(event["action"], "FATAL_TERMINATION", "ASRTST action")
+    expect(event["source_line"], 367, "ASRTST source line")
+    expect(event["simulation_time"], {"value": "780", "unit": "NS"}, "ASRTST time")
 
 
 def bundle_test(bundle_script: Path) -> None:
@@ -80,15 +140,27 @@ def bundle_test(bundle_script: Path) -> None:
         work_dir = run_dir / "work"
         run_dir.mkdir()
         work_dir.mkdir()
-        (run_dir / "xrun.log").write_text("synthetic error\n", encoding="utf-8")
-        (run_dir / "result.txt").write_text("ERROR\n", encoding="utf-8")
-        (run_dir / "command.txt").write_text("xrun -elaborate\n", encoding="utf-8")
-        (run_dir / "stage5_monitor.sv").write_text("module m; endmodule\n", encoding="utf-8")
-        (run_dir / "fault.json").write_text('{"fault_id":"TF000001_SA0"}\n', encoding="utf-8")
+        (run_dir / "xrun.log").write_text(assertion_log(), encoding="utf-8")
+        (run_dir / "result.txt").write_text(
+            "EXISTING_ASSERTION_DETECTED\n", encoding="utf-8"
+        )
+        (run_dir / "command.txt").write_text("xrun\n", encoding="utf-8")
+        (run_dir / "stage5_monitor.sv").write_text(
+            "module m; endmodule\n", encoding="utf-8"
+        )
+        (run_dir / "fault.json").write_text(
+            '{"fault_id":"TF000001_SA0"}\n', encoding="utf-8"
+        )
         (work_dir / "fault_netlist.v").write_text("forbidden\n", encoding="utf-8")
-        (work_dir / "cv32e40p.mapped.sim.v").write_text("forbidden\n", encoding="utf-8")
+        (work_dir / "cv32e40p.mapped.sim.v").write_text(
+            "forbidden\n", encoding="utf-8"
+        )
         trace = root / "fault.trace.tsv"
-        trace.write_text("H\tFAULT\tTF000001_SA0\n", encoding="utf-8")
+        trace.write_text(
+            "H\tFAULT\tTF000001_SA0\n"
+            "F\tTF000001_SA0\t1\t10\ttop.u\t0\t0\t0\n",
+            encoding="utf-8",
+        )
         output = run_dir / "reproduction_bundle.tar.gz"
         manifest = run_dir / "reproduction_bundle_manifest.json"
         completed = subprocess.run(
@@ -98,7 +170,7 @@ def bundle_test(bundle_script: Path) -> None:
                 "--run-dir",
                 str(run_dir),
                 "--status",
-                "ERROR",
+                "EXISTING_ASSERTION_DETECTED",
                 "--trace",
                 str(trace),
                 "--output",
@@ -116,7 +188,11 @@ def bundle_test(bundle_script: Path) -> None:
                 f"bundle helper failed:\n{completed.stdout}\n{completed.stderr}"
             )
         payload = json.loads(manifest.read_text(encoding="utf-8"))
-        expect(payload["status"], "ERROR", "Bundle manifest status")
+        expect(
+            payload["status"],
+            "EXISTING_ASSERTION_DETECTED",
+            "Bundle manifest status",
+        )
         expect(output.is_file(), True, "Bundle archive created")
         with tarfile.open(output, "r:gz") as archive:
             names = archive.getnames()
@@ -152,7 +228,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     except SelfTestError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
-    print("Stage-5 runner self-test                 : PASS")
+    print("Stage-5 runner self-test                             : PASS")
     return 0
 
 
