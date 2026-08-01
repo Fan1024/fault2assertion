@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000203_SA0/fault_netlist.v
-@@ -29786,7 +29786,7 @@
+@@ -29214,6 +29214,9 @@
+      mhpmevent_branch_taken_o, mhpmevent_compressed_o,
+      mhpmevent_jr_stall_o, mhpmevent_imiss_o, mhpmevent_ld_stall_o,
+      mhpmevent_pipe_stall_o, perf_imiss_i, mcounteren_i);
++  // Fault2Assertion Stage-5 fault TF000203_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000203_sa0;
++
+   input clk, clk_ungated_i, rst_n, scan_cg_en_i, fetch_enable_i,
+        instr_valid_i, is_compressed_i, illegal_c_insn_i,
+        branch_decision_i, is_fetch_failed_i, ex_ready_i, wb_ready_i,
+@@ -29786,7 +29789,7 @@
         (regfile_alu_wdata_fw_i), .we_b_i (regfile_alu_we_ex_o_3591));
    OR3_X1 g15573(.A1 (id_ready_o), .A2 (halt_id), .A3 (branch_taken_ex),
         .ZN (clear_instr_valid_o));
@@ -9,13 +19,12 @@
    NOR3_X1 g15575(.A1 (load_stall), .A2 (data_misaligned_i), .A3
         (jr_stall), .ZN (n_820));
    AND4_X1 g15967(.A1 (n_817), .A2 (n_778), .A3 (n_786), .A4 (n_785),
-@@ -32489,6 +32489,10 @@
+@@ -32489,6 +32492,9 @@
         (n_1168));
    XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
         (n_1169));
 +
-+  // Fault2Assertion Stage-5 fault TF000203_SA0 run-local driver split
-+  wire f2a_pre_tf000203_sa0;
++  // Fault2Assertion Stage-5 fault TF000203_SA0: run-local stuck-at assignment
 +  assign id_ready_o = 1'b0;
  endmodule
  

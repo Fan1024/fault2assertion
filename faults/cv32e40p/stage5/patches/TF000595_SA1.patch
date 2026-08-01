@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000595_SA1/fault_netlist.v
-@@ -33999,7 +33999,7 @@
+@@ -33720,6 +33720,9 @@
+ module cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2(clk_i, rst_ni,
+      flush_i, flush_but_first_i, testmode_i, full_o, empty_o, cnt_o,
+      data_i, push_i, data_o, pop_i);
++  // Fault2Assertion Stage-5 fault TF000595_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000595_sa1;
++
+   input clk_i, rst_ni, flush_i, flush_but_first_i, testmode_i, push_i,
+        pop_i;
+   input [31:0] data_i;
+@@ -33999,7 +34002,7 @@
    NOR2_X1 g3679(.A1 (n_21), .A2 (flush_i), .ZN (n_24));
    OAI22_X1 g3680(.A1 (n_18), .A2 (flush_i), .B1 (n_10), .B2 (cnt_o[0]),
         .ZN (n_23));
@@ -9,13 +19,12 @@
    AOI21_X1 g3715(.A (n_16), .B1 (n_9), .B2 (write_pointer_q), .ZN
         (n_21));
    NOR2_X1 g3716(.A1 (n_15), .A2 (flush_i), .ZN (n_20));
-@@ -34023,6 +34023,10 @@
+@@ -34023,6 +34026,9 @@
    INV_X1 g3733(.A (pop_i), .ZN (n_4));
    INV_X1 g3734(.A (push_i), .ZN (n_3));
    INV_X1 g3735(.A (flush_i), .ZN (n_2));
 +
-+  // Fault2Assertion Stage-5 fault TF000595_SA1 run-local driver split
-+  wire f2a_pre_tf000595_sa1;
++  // Fault2Assertion Stage-5 fault TF000595_SA1: run-local stuck-at assignment
 +  assign n_22 = 1'b1;
  endmodule
  

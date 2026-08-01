@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000390_SA1/fault_netlist.v
-@@ -20416,7 +20416,7 @@
+@@ -20139,6 +20139,9 @@
+      halt_if_o, halt_id_o, misaligned_stall_o, jr_stall_o,
+      load_stall_o, id_ready_i, id_valid_i, ex_valid_i, wb_ready_i,
+      perf_pipeline_stall_o);
++  // Fault2Assertion Stage-5 fault TF000390_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000390_sa1;
++
+   input clk, clk_ungated_i, rst_n, fetch_enable_i, is_fetch_failed_i,
+        illegal_insn_i, ecall_insn_i, mret_insn_i, uret_insn_i,
+        dret_insn_i, mret_dec_i, uret_dec_i, dret_dec_i, wfi_i,
+@@ -20416,7 +20419,7 @@
    AND2_X1 g9968(.A1 (n_180), .A2 (n_182), .ZN (n_282));
    NAND2_X1 g9969(.A1 (n_178), .A2 (n_181), .ZN (n_276));
    NAND2_X1 g9970(.A1 (n_174), .A2 (n_190), .ZN
@@ -9,13 +19,12 @@
    NAND2_X1 g9971(.A1 (n_153), .A2 (n_0), .ZN (n_299));
    NOR2_X1 g9972(.A1 (n_291), .A2 (illegal_insn_q), .ZN (n_207));
    INV_X1 g9975(.A (n_201), .ZN (n_202));
-@@ -20726,6 +20726,10 @@
+@@ -20726,6 +20729,9 @@
         (n_0), .ZN (n_412));
    AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
         .ZN (n_413));
 +
-+  // Fault2Assertion Stage-5 fault TF000390_SA1 run-local driver split
-+  wire f2a_pre_tf000390_sa1;
++  // Fault2Assertion Stage-5 fault TF000390_SA1: run-local stuck-at assignment
 +  assign operand_a_fw_mux_sel_o[0] = 1'b1;
  endmodule
  

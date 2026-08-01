@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000381_SA0/fault_netlist.v
-@@ -35004,7 +35004,7 @@
+@@ -34910,6 +34910,9 @@
+      m_exc_vec_pc_mux_i, u_exc_vec_pc_mux_i, csr_mtvec_init_o,
+      jump_target_id_i, jump_target_ex_i, hwlp_jump_i, hwlp_target_i,
+      halt_if_i, id_ready_i, if_busy_o, perf_imiss_o);
++  // Fault2Assertion Stage-5 fault TF000381_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000381_sa0;
++
+   input clk, rst_n, req_i, instr_gnt_i, instr_rvalid_i, instr_err_i,
+        instr_err_pmp_i, clear_instr_valid_i, pc_set_i, hwlp_jump_i,
+        halt_if_i, id_ready_i;
+@@ -35004,7 +35007,7 @@
         (clk), .rst_n (rst_n), .req_i (req_i), .branch_i (pc_set_i),
         .branch_addr_i ({branch_addr_n[31:2], UNCONNECTED_HIER_Z602,
         UNCONNECTED_HIER_Z601}), .fetch_ready_i (fetch_ready),
@@ -9,13 +19,12 @@
         .instr_req_o (instr_req_o), .instr_gnt_i (instr_gnt_i),
         .instr_addr_o ({instr_addr_o[31:2], UNCONNECTED1451,
         UNCONNECTED1450}), .instr_rdata_i (instr_rdata_i),
-@@ -35711,6 +35711,10 @@
+@@ -35711,6 +35714,9 @@
         (n_184));
    XOR2_X1 \add_167_42/g787 (.A (\add_167_42/n_2 ), .B (pc_id_o[12]), .Z
         (n_176));
 +
-+  // Fault2Assertion Stage-5 fault TF000381_SA0 run-local driver split
-+  wire f2a_pre_tf000381_sa0;
++  // Fault2Assertion Stage-5 fault TF000381_SA0: run-local stuck-at assignment
 +  assign fetch_rdata[16] = 1'b0;
  endmodule
  

@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000474_SA0/fault_netlist.v
-@@ -6735,7 +6735,7 @@
+@@ -5126,6 +5126,9 @@
+ module cv32e40p_alu_div(Clk_CI, Rst_RBI, OpA_DI, OpB_DI, OpBShift_DI,
+      OpBIsZero_SI, OpBSign_SI, OpCode_SI, InVld_SI, OutRdy_SI,
+      OutVld_SO, Res_DO);
++  // Fault2Assertion Stage-5 fault TF000474_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000474_sa0;
++
+   input Clk_CI, Rst_RBI, OpBIsZero_SI, OpBSign_SI, InVld_SI, OutRdy_SI;
+   input [31:0] OpA_DI, OpB_DI;
+   input [5:0] OpBShift_DI;
+@@ -6735,7 +6738,7 @@
         (\gt_105_58/n_87 ), .B1 (\gt_105_58/n_61 ), .B2 (\gt_105_58/n_48
         ), .ZN (\gt_105_58/n_108 ));
    NOR2_X1 \gt_105_58/g1429 (.A1 (\gt_105_58/n_101 ), .A2
@@ -9,13 +19,12 @@
    NOR2_X1 \gt_105_58/g1430 (.A1 (\gt_105_58/n_102 ), .A2
         (\gt_105_58/n_97 ), .ZN (\gt_105_58/n_106 ));
    AOI22_X1 \gt_105_58/g1431 (.A1 (\gt_105_58/n_62 ), .A2 (BReg_DP[1]),
-@@ -7134,6 +7134,10 @@
+@@ -7134,6 +7137,9 @@
    OAI211_X1 g58(.A (n_530), .B (ResInv_SP), .C1 (\minus_102_33/n_81 ),
         .C2 (n_529), .ZN (n_532));
    XOR2_X1 g2(.A (n_522), .B (n_524), .Z (Res_DO[31]));
 +
-+  // Fault2Assertion Stage-5 fault TF000474_SA0 run-local driver split
-+  wire f2a_pre_tf000474_sa0;
++  // Fault2Assertion Stage-5 fault TF000474_SA0: run-local stuck-at assignment
 +  assign \gt_105_58/n_107  = 1'b0;
  endmodule
  

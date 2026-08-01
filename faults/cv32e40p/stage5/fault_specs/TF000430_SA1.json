@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:25:50.027517+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:21:55.227915+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000430_SA1",
   "selection_id": "TS000430",
@@ -158,9 +158,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000430_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000430_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign \\csa_tree_add_111_42_groupi/n_119 = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_mult",
@@ -172,6 +176,16 @@
       "connection_start": 785674,
       "connection_end": 785707
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_mult",
+      "temporary_net": "f2a_pre_tf000430_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 393,
+      "driver_use_offset_in_module": 226142,
+      "assignment_offset_in_module": 466339,
+      "assignment": "assign \\csa_tree_add_111_42_groupi/n_119  = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -180,5 +194,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "9e22bbe58d950fc449ba5197b09e9e99b983cfe1b46adff055513a1c3ec8094e"
+  "fault_spec_digest_sha256": "866f48ed2497279952feb8c5ed6a79c11e78098d12a6be32f51e60babe1f2cbe"
 }

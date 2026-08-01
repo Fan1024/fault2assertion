@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:27:10.612081+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:23:32.746317+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000551_SA1",
   "selection_id": "TS000551",
@@ -409,9 +409,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000551_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000551_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign n_17 = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_compressed_decoder_FPU0_ZFINX0",
@@ -423,6 +427,16 @@
       "connection_start": 1784428,
       "connection_end": 1784432
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_compressed_decoder_FPU0_ZFINX0",
+      "temporary_net": "f2a_pre_tf000551_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 211,
+      "driver_use_offset_in_module": 22053,
+      "assignment_offset_in_module": 22945,
+      "assignment": "assign n_17 = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -431,5 +445,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "51db5f0229926e58258b791379424cb7f8db990996fc326bbacf0a24d6325d81"
+  "fault_spec_digest_sha256": "4fb1fadc95299988924259f0394e94cd8638e0f50b5619879dc607e97f8acf64"
 }

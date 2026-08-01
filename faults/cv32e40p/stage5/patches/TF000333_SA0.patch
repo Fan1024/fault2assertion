@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000333_SA0/fault_netlist.v
-@@ -20322,7 +20322,7 @@
+@@ -20139,6 +20139,9 @@
+      halt_if_o, halt_id_o, misaligned_stall_o, jr_stall_o,
+      load_stall_o, id_ready_i, id_valid_i, ex_valid_i, wb_ready_i,
+      perf_pipeline_stall_o);
++  // Fault2Assertion Stage-5 fault TF000333_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000333_sa0;
++
+   input clk, clk_ungated_i, rst_n, fetch_enable_i, is_fetch_failed_i,
+        illegal_insn_i, ecall_insn_i, mret_insn_i, uret_insn_i,
+        dret_insn_i, mret_dec_i, uret_dec_i, dret_dec_i, wfi_i,
+@@ -20322,7 +20325,7 @@
    NOR2_X1 g9887(.A1 (n_209), .A2 (n_268), .ZN (n_253));
    INV_X1 g9888(.A (n_246), .ZN (n_247));
    OAI21_X1 g9889(.A (n_200), .B1 (n_12), .B2 (n_289), .ZN
@@ -9,13 +19,12 @@
    NAND3_X1 g9890(.A1 (ex_valid_i), .A2 (n_220), .A3 (n_8), .ZN (n_243));
    NOR3_X1 g9891(.A1 (n_235), .A2 (n_187), .A3 (illegal_insn_q), .ZN
         (n_242));
-@@ -20726,6 +20726,10 @@
+@@ -20726,6 +20729,9 @@
         (n_0), .ZN (n_412));
    AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
         .ZN (n_413));
 +
-+  // Fault2Assertion Stage-5 fault TF000333_SA0 run-local driver split
-+  wire f2a_pre_tf000333_sa0;
++  // Fault2Assertion Stage-5 fault TF000333_SA0: run-local stuck-at assignment
 +  assign ctrl_busy_o = 1'b0;
  endmodule
  

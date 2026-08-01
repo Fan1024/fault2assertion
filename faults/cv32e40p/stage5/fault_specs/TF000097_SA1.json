@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:22:31.045740+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:17:49.175959+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000097_SA1",
   "selection_id": "TS000097",
@@ -607,9 +607,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000097_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000097_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign RemSel_SP = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_alu_div",
@@ -621,6 +625,16 @@
       "connection_start": 323451,
       "connection_end": 323460
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_alu_div",
+      "temporary_net": "f2a_pre_tf000097_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 264,
+      "driver_use_offset_in_module": 35931,
+      "assignment_offset_in_module": 104240,
+      "assignment": "assign RemSel_SP = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -629,5 +643,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "01dd9b1cd2f8107850b841a76deff850b1bbb8e60f957a16d0ccdf4d50e43d70"
+  "fault_spec_digest_sha256": "7891b9ec5891c343661f31aa5728b1d67127a3a0b603231d120d33f03ce0dac7"
 }

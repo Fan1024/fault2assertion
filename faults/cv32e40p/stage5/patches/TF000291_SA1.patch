@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000291_SA1/fault_netlist.v
-@@ -37611,7 +37611,7 @@
+@@ -37567,6 +37567,9 @@
+      data_rdata_i, irq_i, irq_ack_o, irq_id_o, debug_req_i,
+      debug_havereset_o, debug_running_o, debug_halted_o,
+      fetch_enable_i, core_sleep_o);
++  // Fault2Assertion Stage-5 fault TF000291_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000291_sa1;
++
+   input clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i, instr_gnt_i,
+        instr_rvalid_i, data_gnt_i, data_rvalid_i, debug_req_i,
+        fetch_enable_i;
+@@ -37611,7 +37614,7 @@
         (instr_req_o), .instr_gnt_i (instr_gnt_i), .instr_rvalid_i
         (instr_rvalid_i), .instr_addr_o ({instr_addr_o[31:2],
         UNCONNECTED1905, UNCONNECTED1904}), .instr_rdata_i
@@ -9,13 +19,12 @@
         (data_gnt_i), .data_rvalid_i (data_rvalid_i), .data_we_o
         (data_we_o), .data_be_o (data_be_o), .data_addr_o (data_addr_o),
         .data_wdata_o (data_wdata_o), .data_rdata_i (data_rdata_i),
-@@ -37626,5 +37626,9 @@
+@@ -37626,5 +37629,8 @@
         .debug_havereset_o (debug_havereset_o), .debug_running_o
         (debug_running_o), .debug_halted_o (debug_halted_o),
         .fetch_enable_i (fetch_enable_i), .core_sleep_o (core_sleep_o));
 +
-+  // Fault2Assertion Stage-5 fault TF000291_SA1 run-local driver split
-+  wire f2a_pre_tf000291_sa1;
++  // Fault2Assertion Stage-5 fault TF000291_SA1: run-local stuck-at assignment
 +  assign data_req_o = 1'b1;
  endmodule
  

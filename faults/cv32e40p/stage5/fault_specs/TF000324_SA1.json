@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:24:40.837451+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:20:30.322352+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000324_SA1",
   "selection_id": "TS000324",
@@ -128,9 +128,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000324_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000324_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign irq_id_o[4] = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "hierarchical_instance_output",
       "module": "cv32e40p_top",
@@ -142,6 +146,16 @@
       "connection_start": 1994189,
       "connection_end": 1994197
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_top",
+      "temporary_net": "f2a_pre_tf000324_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 579,
+      "driver_use_offset_in_module": 3638,
+      "assignment_offset_in_module": 3968,
+      "assignment": "assign irq_id_o[4] = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -150,5 +164,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "a38d2bcd29ce6892e7b0cbf4116466ec5767d1bbc89b101fb9b5a1b319e07812"
+  "fault_spec_digest_sha256": "c45aeb0a8b24ffafe115a898454a658a60c6d517d42abb27c1cf435ab2b92eed"
 }

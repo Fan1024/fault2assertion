@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:26:19.675053+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:22:31.695716+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000479_SA1",
   "selection_id": "TS000479",
@@ -145,9 +145,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000479_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000479_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign \\gt_105_58/n_84 = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_alu_div",
@@ -159,6 +163,16 @@
       "connection_start": 373301,
       "connection_end": 373316
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_alu_div",
+      "temporary_net": "f2a_pre_tf000479_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 264,
+      "driver_use_offset_in_module": 85781,
+      "assignment_offset_in_module": 104234,
+      "assignment": "assign \\gt_105_58/n_84  = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -167,5 +181,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "aa0f094d67b6c8940a09914350f4a069434263cb14f252d1ca774194c81104d7"
+  "fault_spec_digest_sha256": "2adf6b1ebfbdcf9ca8f5d6ab06591531e268477db5a3d81dcff7077e8abff47d"
 }

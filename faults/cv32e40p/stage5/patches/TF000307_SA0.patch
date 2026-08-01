@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000307_SA0/fault_netlist.v
-@@ -34285,7 +34285,7 @@
+@@ -34216,6 +34216,9 @@
+      resp_valid_i, fetch_ready_i, fetch_valid_o, fifo_push_o,
+      fifo_pop_o, fifo_flush_o, fifo_flush_but_first_o, fifo_cnt_i,
+      fifo_empty_i);
++  // Fault2Assertion Stage-5 fault TF000307_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000307_sa0;
++
+   input clk, rst_n, req_i, branch_i, hwlp_jump_i, trans_ready_i,
+        resp_valid_i, fetch_ready_i, fifo_empty_i;
+   input [31:0] branch_addr_i, hwlp_target_i;
+@@ -34285,7 +34288,7 @@
    AOI21_X1 g1564(.A (n_210), .B1 (n_99), .B2 (fifo_empty_i), .ZN
         (fetch_valid_o));
    OR2_X1 g1565(.A1 (n_259), .A2 (branch_i), .ZN (n_210));
@@ -9,13 +19,12 @@
    NAND2_X1 g2457(.A1 (n_145), .A2 (n_133), .ZN (trans_addr_o[14]));
    NAND2_X1 g2458(.A1 (n_152), .A2 (n_128), .ZN (trans_addr_o[29]));
    NAND2_X1 g2459(.A1 (n_155), .A2 (n_132), .ZN (trans_addr_o[25]));
-@@ -34790,6 +34790,10 @@
+@@ -34790,6 +34793,9 @@
    NAND2_X1 g132(.A1 (req_i), .A2 (n_95), .ZN (n_276));
    OAI21_X1 g126(.A (n_270), .B1 (n_263), .B2 (n_276), .ZN
         (trans_valid_o));
 +
-+  // Fault2Assertion Stage-5 fault TF000307_SA0 run-local driver split
-+  wire f2a_pre_tf000307_sa0;
++  // Fault2Assertion Stage-5 fault TF000307_SA0: run-local stuck-at assignment
 +  assign busy_o = 1'b0;
  endmodule
  

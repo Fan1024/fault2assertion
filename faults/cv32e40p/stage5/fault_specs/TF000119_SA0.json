@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:22:44.744411+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:18:06.489088+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000119_SA0",
   "selection_id": "TS000119",
@@ -185,9 +185,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000119_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000119_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign pc_o[3] = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_aligner",
@@ -199,6 +203,16 @@
       "connection_start": 1733045,
       "connection_end": 1733052
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_aligner",
+      "temporary_net": "f2a_pre_tf000119_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 306,
+      "driver_use_offset_in_module": 11637,
+      "assignment_offset_in_module": 41180,
+      "assignment": "assign pc_o[3] = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -207,5 +221,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "3e08ee7a34cce3521b3f3f90ae29ee6f7c6663df4fdbcdfe1db0ca9065c0dacb"
+  "fault_spec_digest_sha256": "01629bf3204101797b9855d1e91c133220a854013f187379e9c1f51154d9d88a"
 }

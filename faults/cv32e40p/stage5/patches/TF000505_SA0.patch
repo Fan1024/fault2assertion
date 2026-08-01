@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000505_SA0/fault_netlist.v
-@@ -10243,7 +10243,7 @@
+@@ -7475,6 +7475,9 @@
+      operand_b_i, operand_c_i, vector_mode_i, bmask_a_i, bmask_b_i,
+      imm_vec_ext_i, is_clpx_i, is_subrot_i, clpx_shift_i, result_o,
+      comparison_result_o, ready_o, ex_ready_i);
++  // Fault2Assertion Stage-5 fault TF000505_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000505_sa0;
++
+   input clk, rst_n, enable_i, is_clpx_i, is_subrot_i, ex_ready_i;
+   input [6:0] operator_i;
+   input [31:0] operand_a_i, operand_b_i, operand_c_i;
+@@ -10243,7 +10246,7 @@
         (\srl_300_44/n_4 ), .ZN (\srl_300_44/n_6 ));
    INV_X1 \srl_300_44/g5047 (.A (n_786), .ZN (\srl_300_44/n_4 ));
    INV_X1 \srl_300_44/g5048 (.A (n_787), .ZN (\srl_300_44/n_3 ));
@@ -9,13 +19,12 @@
    INV_X4 \srl_300_44/g5050 (.A (n_784), .ZN (\srl_300_44/n_1 ));
    INV_X4 \srl_300_44/g5051 (.A (n_783), .ZN (\srl_300_44/n_0 ));
    AOI21_X1 g28168(.A (n_713), .B1 (n_60), .B2 (operator_i[0]), .ZN
-@@ -10275,6 +10275,10 @@
+@@ -10275,6 +10278,9 @@
    AOI21_X1 g220(.A (n_1079), .B1 (n_1076), .B2 (n_1078), .ZN (n_1088));
    XNOR2_X1 g224(.A (n_605), .B (n_1074), .ZN (n_1089));
    XNOR2_X1 g217(.A (n_1079), .B (n_1082), .ZN (n_1090));
 +
-+  // Fault2Assertion Stage-5 fault TF000505_SA0 run-local driver split
-+  wire f2a_pre_tf000505_sa0;
++  // Fault2Assertion Stage-5 fault TF000505_SA0: run-local stuck-at assignment
 +  assign \srl_300_44/n_2  = 1'b0;
  endmodule
  

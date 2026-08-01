@@ -1,0 +1,166 @@
+{
+  "schema_version": "1.0",
+  "program_version": "1.0.1",
+  "kind": "stage4_and_stage5_batch_interface_freeze",
+  "generated_at_utc": "2026-08-01T09:15:02.803280+00:00",
+  "repository_root": "/raid/spring2026/fwu44/research/fault2assertion",
+  "repository_head": "e08369928e73fc1be4c70000abfe0fcd1273d1ad",
+  "stage4": {
+    "candidates": {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_candidates.json",
+      "repository_relative_path": "faults/cv32e40p/site_catalog/stage_04_candidates.json",
+      "sha256": "e15abab45ff12b46a766fe3e5004fac7ef632a7a31581b3d8a341be682fb1578",
+      "bytes": 79942937
+    },
+    "selection": {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_selection.json",
+      "repository_relative_path": "faults/cv32e40p/site_catalog/stage_04_selection.json",
+      "sha256": "9a85dca7226b16cc5eaf37a72b37ca45cb247b0883127e2721a833f871269c28",
+      "bytes": 1224039
+    },
+    "candidate_digest_sha256": "5c5ec529eb3cb9fffb69246e0e7beb433c871d20d2f0981bcd905b1e65739da2",
+    "selection_digest_sha256": "8f20e4f98ce4f549cccf90af317d337b4374e8d6d319d66edb74da7c329d58a9",
+    "selected_unique_site_count": 600,
+    "selected_fault_instance_count": 1056,
+    "selection_has_seed_parameter": false,
+    "selection_order_contract": "deterministic Stage-4 score/module/site-ID ordering"
+  },
+  "reference": {
+    "schema_version": "1.0",
+    "kind": "stage5_canonical_reference_identity",
+    "generated_at_utc": "2026-08-01T09:15:02.770950+00:00",
+    "recovery_method": "smoke fault physical identity mapped into deterministic canonical Stage-4 selection",
+    "smoke_fault_id": "TF000002_SA0",
+    "smoke_fault_spec": {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/runs/stage5_dev/mini_smoke_v1/campaign/fault_specs/TF000002_SA0.json",
+      "repository_relative_path": "runs/stage5_dev/mini_smoke_v1/campaign/fault_specs/TF000002_SA0.json",
+      "sha256": "73cd6a9ccecf863c29fbc13d26c37e09d711b5e153df6b4171063f0c625aedb7",
+      "bytes": 7565
+    },
+    "smoke_source_selection": {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/runs/stage5_dev/mini_smoke_v1/input/stage_04_mini_selection.json",
+      "repository_relative_path": "runs/stage5_dev/mini_smoke_v1/input/stage_04_mini_selection.json",
+      "sha256": "188ccad17d709244fbad6f84d74284b1d0693967d3d329c5085f4af6999eebc4",
+      "bytes": 16275
+    },
+    "canonical_fault_id": "TF000181_SA0",
+    "canonical_base_fault_id": "TF000181",
+    "canonical_selection_id": "TS000181",
+    "canonical_selection_rank": 181,
+    "canonical_site_id": "RS003822",
+    "fault_class": "control_path",
+    "module": "cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1",
+    "source_net": "branch_decision",
+    "polarity": "SA0",
+    "stuck_at": 0,
+    "mini_smoke_origin": {
+      "fault_id": "TF000181_SA0",
+      "selection_id": "TS000181",
+      "selection_rank": 181
+    },
+    "mini_smoke_origin_cross_check": "PASS",
+    "checkpoint_expected": {
+      "natural_architectural_outcome": "CENSORED",
+      "observe_runner_status": "DIAGNOSTIC_TIMEOUT",
+      "diagnostic_quarantine_runner_status": "DIAGNOSTIC_TIMEOUT",
+      "validated_capability": "NON_CONTINUABLE",
+      "capability_scope": "CURRENT_REGISTERED_QUARANTINE_POLICY",
+      "first_observable_detector_cycle": 58,
+      "first_observable_detector_time": "780ns"
+    }
+  },
+  "checkpoint_manifest": {
+    "path": "/raid/spring2026/fwu44/research/fault2assertion/docs/stage5/phase2_g5_checkpoint_manifest.json",
+    "repository_relative_path": "docs/stage5/phase2_g5_checkpoint_manifest.json",
+    "sha256": "9793f27e29d637aedaded6e6e385dfa095987222a804e9aa259bfe1aa5814a00",
+    "bytes": 5242
+  },
+  "checkpoint_validation": {
+    "path": "/raid/spring2026/fwu44/research/fault2assertion/runs/stage5_dev/phase2_v1/g5_oracle/reports/TF000002_SA0_validation.json",
+    "repository_relative_path": "runs/stage5_dev/phase2_v1/g5_oracle/reports/TF000002_SA0_validation.json",
+    "sha256": "c4db728818b8839695c5c675cc456893308b4654d8716dc631dcefcf9112e56f",
+    "bytes": 1059
+  },
+  "smoke_fault_provenance": {
+    "path": "/raid/spring2026/fwu44/research/fault2assertion/runs/stage5_dev/mini_smoke_v1/provenance/smoke_fault_selection.json",
+    "repository_relative_path": "runs/stage5_dev/mini_smoke_v1/provenance/smoke_fault_selection.json",
+    "sha256": "e72bed93951ec4a4a31e4663867fb9c7bc63ec7d2ad69b5a55765186672ac3bc",
+    "bytes": 1561
+  },
+  "frozen_interface_files": [
+    {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/scripts/fault_characterization/stage5_batch.py",
+      "repository_relative_path": "scripts/fault_characterization/stage5_batch.py",
+      "sha256": "e8f146b610dca27911381fe2abf6616cbe9025813470907a11a5ffd370d6d311",
+      "bytes": 40685
+    },
+    {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/scripts/fault_characterization/stage5_batch_oracle.py",
+      "repository_relative_path": "scripts/fault_characterization/stage5_batch_oracle.py",
+      "sha256": "3fa858163087babca6f18d1a3ce5b871f9b77c9237e2ca717ea8a1a663f81840",
+      "bytes": 20393
+    },
+    {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/scripts/fault_characterization/stage5_batch_oracle_validate.py",
+      "repository_relative_path": "scripts/fault_characterization/stage5_batch_oracle_validate.py",
+      "sha256": "caf5b764194770c12d20ec772d83a3594859e33c3c56cf0a6ff5b83b1867fdc9",
+      "bytes": 15717
+    },
+    {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/scripts/fault_characterization/stage5_faults.py",
+      "repository_relative_path": "scripts/fault_characterization/stage5_faults.py",
+      "sha256": "78ff9a4bb7275bfe70c98eb014819f97d09a6cbcee59e86f6006fbcb2482525b",
+      "bytes": 19417
+    },
+    {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/scripts/fault_characterization/stage5_faults_v107_impl.py",
+      "repository_relative_path": "scripts/fault_characterization/stage5_faults_v107_impl.py",
+      "sha256": "a5d574064c3ac21943750af55581e2a4c04be1a036b5f48621325aba059801b1",
+      "bytes": 89802
+    },
+    {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/scripts/fault_characterization/stage5_phase2_modes.py",
+      "repository_relative_path": "scripts/fault_characterization/stage5_phase2_modes.py",
+      "sha256": "ad58222abd9252fc7c08d3db19f3e4dd3ee141613fc246ddc92ab4c5bbe6467b",
+      "bytes": 47862
+    },
+    {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/scripts/fault_characterization/stage5_verdict.py",
+      "repository_relative_path": "scripts/fault_characterization/stage5_verdict.py",
+      "sha256": "52b3b367cbba63e05ce022b0ce2a88e2aeef7a15ddac7a295c25e8152bcde892",
+      "bytes": 22782
+    },
+    {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/scripts/run_xrun_stage5_fault.sh",
+      "repository_relative_path": "scripts/run_xrun_stage5_fault.sh",
+      "sha256": "79a0568c02033130823304d21ec98d5e90cfd49a579292fd56e05592859c304e",
+      "bytes": 2963
+    },
+    {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/scripts/lib/xrun_stage5_common.sh",
+      "repository_relative_path": "scripts/lib/xrun_stage5_common.sh",
+      "sha256": "23fbf3ff7b12bf28f44d66d753a1a5a6c90dd7aa600edd3699068f0b8d3c8eed",
+      "bytes": 30526
+    },
+    {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/platform/cv32e40p/stage5_phase2_execution_policy_v1.json",
+      "repository_relative_path": "platform/cv32e40p/stage5_phase2_execution_policy_v1.json",
+      "sha256": "4f5b36a5ba3056e3e9db912494b148de47d938c4be83a9071624f0caf97eb479",
+      "bytes": 5562
+    },
+    {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/platform/cv32e40p/stage5_assertion_policy_v1.json",
+      "repository_relative_path": "platform/cv32e40p/stage5_assertion_policy_v1.json",
+      "sha256": "825f9bbf2aa6be8dd272ac1dc76110fe2a96fafcc181124cacd33ca5b21ebb37",
+      "bytes": 1815
+    }
+  ],
+  "contract": {
+    "stage4_is_not_regenerated_for_batch_size": true,
+    "canonical_fault_ids_are_preserved": true,
+    "batch_size_means_unique_site_count": true,
+    "every_selected_site_keeps_all_stage4_fault_instances": true,
+    "reference_site_is_always_included": true,
+    "no_xcelium_was_run_by_this_freeze": true
+  }
+}

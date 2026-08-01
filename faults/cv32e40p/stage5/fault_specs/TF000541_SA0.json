@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:27:03.237221+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:23:23.817334+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000541_SA0",
   "selection_id": "TS000541",
@@ -384,9 +384,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000541_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000541_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign n_131 = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_aligner",
@@ -398,6 +402,16 @@
       "connection_start": 1732383,
       "connection_end": 1732388
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_aligner",
+      "temporary_net": "f2a_pre_tf000541_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 306,
+      "driver_use_offset_in_module": 10975,
+      "assignment_offset_in_module": 41182,
+      "assignment": "assign n_131 = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -406,5 +420,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "0ffadee202f177489d3ff073754dac38c8c6bdc78bcf86d71d0379b18d226db3"
+  "fault_spec_digest_sha256": "442645465b100712de60c0b39832e3ac8e0da7e80825cdd7911a0109bd782bde"
 }

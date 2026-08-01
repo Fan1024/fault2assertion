@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000084_SA1/fault_netlist.v
-@@ -33850,7 +33850,7 @@
+@@ -33720,6 +33720,9 @@
+ module cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2(clk_i, rst_ni,
+      flush_i, flush_but_first_i, testmode_i, full_o, empty_o, cnt_o,
+      data_i, push_i, data_o, pop_i);
++  // Fault2Assertion Stage-5 fault TF000084_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000084_sa1;
++
+   input clk_i, rst_ni, flush_i, flush_but_first_i, testmode_i, push_i,
+        pop_i;
+   input [31:0] data_i;
+@@ -33850,7 +33853,7 @@
         (\mem_q[0] [13]));
    SDFFR_X1 \mem_q_reg[0][14] (.RN (rst_ni), .CK (clk_i), .D
         (\mem_q[0] [14]), .SE (n_16), .SI (data_i[14]), .Q
@@ -9,13 +19,12 @@
    SDFFR_X1 \mem_q_reg[0][15] (.RN (rst_ni), .CK (clk_i), .D
         (\mem_q[0] [15]), .SE (n_16), .SI (data_i[15]), .Q
         (\mem_q[0] [15]));
-@@ -34023,6 +34023,10 @@
+@@ -34023,6 +34026,9 @@
    INV_X1 g3733(.A (pop_i), .ZN (n_4));
    INV_X1 g3734(.A (push_i), .ZN (n_3));
    INV_X1 g3735(.A (flush_i), .ZN (n_2));
 +
-+  // Fault2Assertion Stage-5 fault TF000084_SA1 run-local driver split
-+  wire f2a_pre_tf000084_sa1;
++  // Fault2Assertion Stage-5 fault TF000084_SA1: run-local stuck-at assignment
 +  assign \mem_q[0] [14] = 1'b1;
  endmodule
  

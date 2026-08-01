@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000184_SA1/fault_netlist.v
-@@ -37433,7 +37433,7 @@
+@@ -37178,6 +37178,9 @@
+      apu_result_i, apu_flags_i, irq_i, irq_ack_o, irq_id_o,
+      debug_req_i, debug_havereset_o, debug_running_o, debug_halted_o,
+      fetch_enable_i, core_sleep_o);
++  // Fault2Assertion Stage-5 fault TF000184_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000184_sa1;
++
+   input clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i, instr_gnt_i,
+        instr_rvalid_i, data_gnt_i, data_rvalid_i, apu_gnt_i,
+        apu_rvalid_i, debug_req_i, fetch_enable_i;
+@@ -37433,7 +37436,7 @@
         csr_cause[3], irq_id_o[2], csr_cause[1:0]}), .csr_save_if_o
         (csr_save_if), .csr_save_id_o (csr_save_id),
         .csr_restore_mret_id_o (csr_restore_mret_id), .csr_save_cause_o
@@ -9,13 +19,12 @@
         (data_we_o), .data_type_ex_o (data_type_ex), .data_sign_ext_ex_o
         ({UNCONNECTED1873, data_sign_ext_ex[0]}), .data_misaligned_ex_o
         (data_misaligned_ex), .prepost_useincr_ex_o (useincr_addr_ex),
-@@ -37557,6 +37557,10 @@
+@@ -37557,6 +37560,9 @@
         (csr_addr[8]));
    AND2_X1 g162(.A1 (alu_operand_b_ex[6]), .A2 (csr_access_ex), .ZN
         (csr_addr[6]));
 +
-+  // Fault2Assertion Stage-5 fault TF000184_SA1 run-local driver split
-+  wire f2a_pre_tf000184_sa1;
++  // Fault2Assertion Stage-5 fault TF000184_SA1: run-local stuck-at assignment
 +  assign data_req_ex = 1'b1;
  endmodule
  

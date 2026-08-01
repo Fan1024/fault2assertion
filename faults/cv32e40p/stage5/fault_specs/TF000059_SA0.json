@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:22:09.674529+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:17:21.974551+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000059_SA0",
   "selection_id": "TS000059",
@@ -301,9 +301,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000059_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000059_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign pc_o[1] = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_aligner",
@@ -315,6 +319,16 @@
       "connection_start": 1737779,
       "connection_end": 1737786
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_aligner",
+      "temporary_net": "f2a_pre_tf000059_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 306,
+      "driver_use_offset_in_module": 16371,
+      "assignment_offset_in_module": 41180,
+      "assignment": "assign pc_o[1] = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -323,5 +337,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "5ea8c86496df4bc9956c8df451100c6c3b3666582af8469b431bca2a2cdd1d72"
+  "fault_spec_digest_sha256": "4e2c6d34fae9ac68d23a336f832fe5958db6d0d1fd0aa638793231c2688bd788"
 }

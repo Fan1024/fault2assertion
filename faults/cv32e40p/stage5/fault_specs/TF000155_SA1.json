@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:22:59.955821+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:18:25.371447+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000155_SA1",
   "selection_id": "TS000155",
@@ -145,9 +145,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000155_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000155_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign mip_o[22] = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_int_controller_PULP_SECURE0",
@@ -159,6 +163,16 @@
       "connection_start": 1106552,
       "connection_end": 1106561
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_int_controller_PULP_SECURE0",
+      "temporary_net": "f2a_pre_tf000155_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 315,
+      "driver_use_offset_in_module": 4590,
+      "assignment_offset_in_module": 8705,
+      "assignment": "assign mip_o[22] = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -167,5 +181,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "ed88c1ebcc7e37e8f6419042acab45ef7caf13f6372d094e81af538cb733d9e4"
+  "fault_spec_digest_sha256": "746958b2604d3e5f5e2cd86ca85573dacffd652cb6985919e10a30abebaf4390"
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:26:46.075092+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:23:03.195020+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000516_SA1",
   "selection_id": "TS000516",
@@ -149,9 +149,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000516_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000516_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign n_358 = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_load_store_unit_PULP_OBI0",
@@ -163,6 +167,16 @@
       "connection_start": 1902298,
       "connection_end": 1902303
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_load_store_unit_PULP_OBI0",
+      "temporary_net": "f2a_pre_tf000516_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 666,
+      "driver_use_offset_in_module": 8860,
+      "assignment_offset_in_module": 75227,
+      "assignment": "assign n_358 = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -171,5 +185,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "5134e291e5bf551385f3247cb64a1df7313b5bcceefedd21d976ae4e28d7f3aa"
+  "fault_spec_digest_sha256": "393052fffd5cf407be17617736bfe5b065bad9e214a1a79e4c938356ec82944f"
 }

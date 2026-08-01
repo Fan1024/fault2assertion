@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000348_SA0/fault_netlist.v
-@@ -35554,7 +35554,7 @@
+@@ -34910,6 +34910,9 @@
+      m_exc_vec_pc_mux_i, u_exc_vec_pc_mux_i, csr_mtvec_init_o,
+      jump_target_id_i, jump_target_ex_i, hwlp_jump_i, hwlp_target_i,
+      halt_if_i, id_ready_i, if_busy_o, perf_imiss_o);
++  // Fault2Assertion Stage-5 fault TF000348_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000348_sa0;
++
+   input clk, rst_n, req_i, instr_gnt_i, instr_rvalid_i, instr_err_i,
+        instr_err_pmp_i, clear_instr_valid_i, pc_set_i, hwlp_jump_i,
+        halt_if_i, id_ready_i;
+@@ -35554,7 +35557,7 @@
         (n_3));
    INV_X4 g3941(.A (n_2), .ZN (n_1));
    AND2_X2 g3942(.A1 (if_valid), .A2 (instr_valid), .ZN (n_2));
@@ -9,13 +19,12 @@
    INV_X1 g3948(.A (n_14), .ZN (instr_rdata_id_o[20]));
    INV_X1 g3950(.A (n_16), .ZN (instr_rdata_id_o[22]));
    INV_X1 g3953(.A (n_13), .ZN (instr_rdata_id_o[19]));
-@@ -35711,6 +35711,10 @@
+@@ -35711,6 +35714,9 @@
         (n_184));
    XOR2_X1 \add_167_42/g787 (.A (\add_167_42/n_2 ), .B (pc_id_o[12]), .Z
         (n_176));
 +
-+  // Fault2Assertion Stage-5 fault TF000348_SA0 run-local driver split
-+  wire f2a_pre_tf000348_sa0;
++  // Fault2Assertion Stage-5 fault TF000348_SA0: run-local stuck-at assignment
 +  assign instr_rdata_id_o[17] = 1'b0;
  endmodule
  

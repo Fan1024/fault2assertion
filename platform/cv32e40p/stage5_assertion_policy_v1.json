@@ -32,6 +32,27 @@
       "purpose": "Record the detector event, acknowledge and drop the unsafe transaction, and continue diagnostic tracing."
     }
   },
+  "signature_policy": {
+    "policy_version": "stage5_limited_signature_enumeration_v1",
+    "unknown_runtime_behavior": "FAIL_CLOSED",
+    "ambiguous_signature_behavior": "FAIL_CLOSED",
+    "deduplication_key": [
+      "semantic_class",
+      "tool",
+      "mnemonic",
+      "detector_id",
+      "normalized_signature"
+    ],
+    "true_infrastructure_message_regexes": [
+      "segmentation fault",
+      "core dumped",
+      "internal error",
+      "license checkout failed",
+      "unable to obtain.*license",
+      "failed to load snapshot",
+      "database is corrupt"
+    ]
+  },
   "detectors": [
     {
       "detector_id": "cv32e40p.mm_ram.out_of_bounds_write",
@@ -40,7 +61,27 @@
       "assertion_leaf_name": "out_of_bounds_write",
       "effect_hint": "ILLEGAL_MEMORY_WRITE",
       "quarantine_action": "ACKNOWLEDGE_AND_DROP_WRITE",
-      "guardrail": "The quarantine run is counterfactual after the first detector event and cannot define the natural architectural outcome."
+      "termination_signatures": [
+        {
+          "signature_id": "xcelium_asrtst_registered_leaf_v1",
+          "phase": "run",
+          "tool": "xmsim",
+          "mnemonic": "ASRTST",
+          "terminal_kind": "ASSERTION_FAILURE",
+          "require_source_suffix": true,
+          "require_assertion_leaf_name": true
+        },
+        {
+          "signature_id": "xcelium_fatsev_registered_source_v1",
+          "phase": "run",
+          "tool": "xmsim",
+          "mnemonic": "FATSEV",
+          "terminal_kind": "USER_FATAL",
+          "require_source_suffix": true,
+          "require_assertion_leaf_name": false
+        }
+      ],
+      "guardrail": "Only explicitly listed termination signatures may resolve this detector. Unknown or ambiguous runtime termination remains fail-closed."
     }
   ],
   "unsupported_detector_behavior": {

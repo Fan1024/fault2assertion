@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:25:35.969350+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:21:38.105858+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000410_SA1",
   "selection_id": "TS000410",
@@ -142,9 +142,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000410_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000410_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign data_req_o = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_load_store_unit_PULP_OBI0",
@@ -156,6 +160,16 @@
       "connection_start": 1965184,
       "connection_end": 1965194
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_load_store_unit_PULP_OBI0",
+      "temporary_net": "f2a_pre_tf000410_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 666,
+      "driver_use_offset_in_module": 71746,
+      "assignment_offset_in_module": 75222,
+      "assignment": "assign data_req_o = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -164,5 +178,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "8d527eea6c213a9a67c2ec9238562f0a3999e62fb87ec1094042b2cfa6791d46"
+  "fault_spec_digest_sha256": "2ef414ea0dbb4b1c18ba47b9ceaae8499447995ed9417d8472190302ca962f17"
 }

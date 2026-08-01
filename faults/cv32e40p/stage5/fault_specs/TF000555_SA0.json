@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:27:13.180272+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:23:35.757174+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000555_SA0",
   "selection_id": "TS000555",
@@ -269,9 +269,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000555_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000555_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign n_18 = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_compressed_decoder_FPU0_ZFINX0",
@@ -283,6 +287,16 @@
       "connection_start": 1784363,
       "connection_end": 1784367
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_compressed_decoder_FPU0_ZFINX0",
+      "temporary_net": "f2a_pre_tf000555_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 211,
+      "driver_use_offset_in_module": 21988,
+      "assignment_offset_in_module": 22945,
+      "assignment": "assign n_18 = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -291,5 +305,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "88b320e4f98fc93c364624045c52ed52efd0b5e3575ff48f519055a80836d618"
+  "fault_spec_digest_sha256": "46df35a37cee80814b42b090f80368b66b06d33cb096280ea916b54069407bf4"
 }

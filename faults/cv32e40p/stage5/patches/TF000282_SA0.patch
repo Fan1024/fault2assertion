@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000282_SA0/fault_netlist.v
-@@ -20846,7 +20846,7 @@
+@@ -20752,6 +20752,9 @@
+      debug_mode_i, debug_wfi_no_sleep_i, ctrl_transfer_insn_in_dec_o,
+      ctrl_transfer_insn_in_id_o, ctrl_transfer_target_mux_sel_o,
+      mcounteren_i);
++  // Fault2Assertion Stage-5 fault TF000282_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000282_sa0;
++
+   input deassert_we_i, illegal_c_insn_i, fs_off_i, debug_mode_i,
+        debug_wfi_no_sleep_i;
+   input [31:0] instr_rdata_i, mcounteren_i;
+@@ -20846,7 +20849,7 @@
    AND2_X1 g4721(.A1 (n_232), .A2 (n_262), .ZN (alu_en_o));
    AND2_X1 g4722(.A1 (n_232), .A2 (regfile_alu_we_dec_o), .ZN
         (regfile_alu_we_o));
@@ -9,13 +19,12 @@
    AND2_X1 g4724(.A1 (n_232), .A2 (ctrl_transfer_insn_in_dec_o[1]), .ZN
         (ctrl_transfer_insn_in_id_o[1]));
    AND2_X1 g4725(.A1 (n_232), .A2 (n_259), .ZN (data_req_o));
-@@ -21252,6 +21252,10 @@
+@@ -21252,6 +21255,9 @@
         (instr_rdata_i[23]), .ZN (n_354));
    AOI211_X1 g8768(.A (n_52), .B (n_167), .C1 (n_91), .C2 (n_56), .ZN
         (n_355));
 +
-+  // Fault2Assertion Stage-5 fault TF000282_SA0 run-local driver split
-+  wire f2a_pre_tf000282_sa0;
++  // Fault2Assertion Stage-5 fault TF000282_SA0: run-local stuck-at assignment
 +  assign mult_int_en_o = 1'b0;
  endmodule
  

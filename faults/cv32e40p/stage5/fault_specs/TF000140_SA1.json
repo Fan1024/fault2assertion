@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:22:54.348381+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:18:18.545720+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000140_SA1",
   "selection_id": "TS000140",
@@ -148,9 +148,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000140_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000140_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign jump_done_q = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0",
@@ -162,6 +166,16 @@
       "connection_start": 1064598,
       "connection_end": 1064609
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0",
+      "temporary_net": "f2a_pre_tf000140_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 2182,
+      "driver_use_offset_in_module": 23102,
+      "assignment_offset_in_module": 33010,
+      "assignment": "assign jump_done_q = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -170,5 +184,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "01f00a6b019ff63905adc213a02ebf2080285e6ec1149d6f57953c22b418a24b"
+  "fault_spec_digest_sha256": "07de97b5df33b5a961cd798aefb0e10189cb50a4801aa9d533e16a1bd26106fe"
 }

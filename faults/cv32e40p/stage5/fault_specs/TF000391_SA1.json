@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:25:22.589087+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:21:21.594810+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000391_SA1",
   "selection_id": "TS000391",
@@ -145,9 +145,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000391_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000391_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign result_o[5] = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_popcnt",
@@ -159,6 +163,16 @@
       "connection_start": 399642,
       "connection_end": 399653
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_popcnt",
+      "temporary_net": "f2a_pre_tf000391_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 146,
+      "driver_use_offset_in_module": 3117,
+      "assignment_offset_in_module": 11348,
+      "assignment": "assign result_o[5] = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -167,5 +181,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "d5bbf918c746bdd88e3e16d99136d3073fa8072a5a4025a15380e908a14249a6"
+  "fault_spec_digest_sha256": "f77bc1d853ef2dbce6d4bab505e069382b76040e16fedea6aa7ff6b2f227d12a"
 }

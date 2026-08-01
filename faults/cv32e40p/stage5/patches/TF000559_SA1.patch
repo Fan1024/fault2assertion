@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000559_SA1/fault_netlist.v
-@@ -20078,7 +20078,7 @@
+@@ -19851,6 +19851,9 @@
+      regfile_alu_we_fw_power_o, regfile_alu_wdata_fw_o, jump_target_o,
+      branch_decision_o, is_decoding_i, lsu_ready_ex_i, lsu_err_i,
+      ex_ready_o, ex_valid_o, wb_ready_i);
++  // Fault2Assertion Stage-5 fault TF000559_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000559_sa1;
++
+   input clk, rst_n, alu_en_i, alu_is_clpx_i, alu_is_subrot_i,
+        mult_en_i, mult_sel_subword_i, mult_is_clpx_i, mult_clpx_img_i,
+        data_req_i, data_rvalid_i, data_misaligned_ex_i,
+@@ -20078,7 +20081,7 @@
    NAND2_X1 g2511(.A1 (csr_rdata_i[30]), .A2 (csr_access_i), .ZN (n_8));
    AND2_X1 g2512(.A1 (mult_ready), .A2 (alu_ready), .ZN (n_13));
    AND2_X2 g2513(.A1 (mult_en_i), .A2 (n_5), .ZN (n_12));
@@ -9,13 +19,12 @@
    INV_X1 g2515(.A (mult_en_i), .ZN (n_6));
    INV_X1 g2516(.A (csr_access_i), .ZN (n_5));
    SDFFR_X1 \regfile_waddr_lsu_reg[0] (.RN (rst_n), .CK (clk), .D
-@@ -20104,6 +20104,10 @@
+@@ -20104,6 +20107,9 @@
    AOI222_X1 g2(.A1 (alu_result[31]), .A2 (n_20), .B1 (mult_result[31]),
         .B2 (n_12), .C1 (csr_rdata_i[31]), .C2 (csr_access_i), .ZN
         (n_383));
 +
-+  // Fault2Assertion Stage-5 fault TF000559_SA1 run-local driver split
-+  wire f2a_pre_tf000559_sa1;
++  // Fault2Assertion Stage-5 fault TF000559_SA1: run-local stuck-at assignment
 +  assign n_7 = 1'b1;
  endmodule
  

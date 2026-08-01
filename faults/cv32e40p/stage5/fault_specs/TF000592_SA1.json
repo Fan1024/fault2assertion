@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:27:33.498450+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:24:00.109767+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000592_SA1",
   "selection_id": "TS000592",
@@ -141,9 +141,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000592_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000592_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign n_10 = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2",
@@ -155,6 +159,16 @@
       "connection_start": 1799933,
       "connection_end": 1799937
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2",
+      "temporary_net": "f2a_pre_tf000592_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 282,
+      "driver_use_offset_in_module": 14829,
+      "assignment_offset_in_module": 15273,
+      "assignment": "assign n_10 = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -163,5 +177,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "d4b6cedaaa41e07548402abd34b0a46842182ab6adc0deeea488a6bac9753d9a"
+  "fault_spec_digest_sha256": "5a2acc80aea980d5558e0fa0353bc887130fb44c36daa3f872fa956de81654f2"
 }

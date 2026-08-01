@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:27:24.114123+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:23:48.775408+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000574_SA0",
   "selection_id": "TS000574",
@@ -159,9 +159,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000574_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000574_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign n_138 = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_int_controller_PULP_SECURE0",
@@ -173,6 +177,16 @@
       "connection_start": 1107315,
       "connection_end": 1107320
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_int_controller_PULP_SECURE0",
+      "temporary_net": "f2a_pre_tf000574_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 315,
+      "driver_use_offset_in_module": 5353,
+      "assignment_offset_in_module": 8709,
+      "assignment": "assign n_138 = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -181,5 +195,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "30abd459e18402a44fb9898d9d8f549a0052950f8063a2489dc286e3039bafdc"
+  "fault_spec_digest_sha256": "68ecffc448deb2cfc14093769a709292f75fe19309ce64133db199297ddd094c"
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:25:44.110926+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:21:47.719965+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000422_SA0",
   "selection_id": "TS000422",
@@ -127,9 +127,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000422_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000422_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign instr_aligned_o[0] = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_aligner",
@@ -141,6 +145,16 @@
       "connection_start": 1727958,
       "connection_end": 1727976
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_aligner",
+      "temporary_net": "f2a_pre_tf000422_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 306,
+      "driver_use_offset_in_module": 6550,
+      "assignment_offset_in_module": 41169,
+      "assignment": "assign instr_aligned_o[0] = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -149,5 +163,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "c8208d7bd029d0ee9ea7ab686c95f9944289f40dad70f72bbb12469d77751178"
+  "fault_spec_digest_sha256": "c54b576f943232a7e36901abc6d1f7aefa24c51535427306144b6f7cf74b8c80"
 }

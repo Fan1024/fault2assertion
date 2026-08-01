@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:25:53.197098+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:21:59.321960+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000435_SA0",
   "selection_id": "TS000435",
@@ -141,9 +141,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000435_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000435_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign csr_rdata_o[0] = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1",
@@ -155,6 +159,16 @@
       "connection_start": 32735,
       "connection_end": 32749
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1",
+      "temporary_net": "f2a_pre_tf000435_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 1961,
+      "driver_use_offset_in_module": 32683,
+      "assignment_offset_in_module": 287674,
+      "assignment": "assign csr_rdata_o[0] = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -163,5 +177,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "37294760f23abd5c5e0359ca56fabbd101b72bbf07a2e6d0e7e4dbc7dabec783"
+  "fault_spec_digest_sha256": "8fd553159fd9f86733a3f835df7cf071d78d2f2c088b07c0e857d8bb01073018"
 }

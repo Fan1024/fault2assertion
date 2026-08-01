@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000376_SA1/fault_netlist.v
-@@ -20276,7 +20276,7 @@
+@@ -20139,6 +20139,9 @@
+      halt_if_o, halt_id_o, misaligned_stall_o, jr_stall_o,
+      load_stall_o, id_ready_i, id_valid_i, ex_valid_i, wb_ready_i,
+      perf_pipeline_stall_o);
++  // Fault2Assertion Stage-5 fault TF000376_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000376_sa1;
++
+   input clk, clk_ungated_i, rst_n, fetch_enable_i, is_fetch_failed_i,
+        illegal_insn_i, ecall_insn_i, mret_insn_i, uret_insn_i,
+        dret_insn_i, mret_dec_i, uret_dec_i, dret_dec_i, wfi_i,
+@@ -20276,7 +20279,7 @@
         .ZN (csr_save_cause_o));
    AOI211_X1 g9856(.A (reg_d_ex_is_reg_b_i), .B (reg_d_ex_is_reg_a_i),
         .C1 (n_256), .C2 (is_decoding_o), .ZN (n_265));
@@ -9,13 +19,12 @@
    INV_X1 g9858(.A (n_264), .ZN (irq_id_o[3]));
    AND2_X1 g9859(.A1 (irq_ack_o), .A2 (irq_id_ctrl_i[2]), .ZN
         (irq_id_o[2]));
-@@ -20726,6 +20726,10 @@
+@@ -20726,6 +20729,9 @@
         (n_0), .ZN (n_412));
    AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
         .ZN (n_413));
 +
-+  // Fault2Assertion Stage-5 fault TF000376_SA1 run-local driver split
-+  wire f2a_pre_tf000376_sa1;
++  // Fault2Assertion Stage-5 fault TF000376_SA1: run-local stuck-at assignment
 +  assign pc_mux_o[1] = 1'b1;
  endmodule
  

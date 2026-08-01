@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:27:21.630261+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:23:45.794681+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000568_SA0",
   "selection_id": "TS000568",
@@ -159,9 +159,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000568_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000568_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign n_144 = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_int_controller_PULP_SECURE0",
@@ -173,6 +177,16 @@
       "connection_start": 1107499,
       "connection_end": 1107504
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_int_controller_PULP_SECURE0",
+      "temporary_net": "f2a_pre_tf000568_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 315,
+      "driver_use_offset_in_module": 5537,
+      "assignment_offset_in_module": 8709,
+      "assignment": "assign n_144 = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -181,5 +195,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "1e64a61333201e2d675436d0214ca1eb8314233f69e399eba0b8d79c3c6ba294"
+  "fault_spec_digest_sha256": "cfd4af725a53755a94b025845950627ac72f324980bd51ccecbc8251546f24fc"
 }

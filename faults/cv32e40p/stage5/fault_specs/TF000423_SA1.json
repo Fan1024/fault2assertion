@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:25:45.091865+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:21:49.132148+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000423_SA1",
   "selection_id": "TS000423",
@@ -127,9 +127,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000423_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000423_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign instr_aligned_o[14] = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_aligner",
@@ -141,6 +145,16 @@
       "connection_start": 1727592,
       "connection_end": 1727611
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_aligner",
+      "temporary_net": "f2a_pre_tf000423_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 306,
+      "driver_use_offset_in_module": 6184,
+      "assignment_offset_in_module": 41168,
+      "assignment": "assign instr_aligned_o[14] = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -149,5 +163,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "346a5251537c60db6b172ec38f395fda62cbe7e0ca3ef56b08243c856ad3433a"
+  "fault_spec_digest_sha256": "98c10cacc41bb97cb3326cb2cb175d3745f44a6f864b285b64e197d1faa21e21"
 }

@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000525_SA1/fault_netlist.v
-@@ -31980,7 +31980,7 @@
+@@ -29214,6 +29214,9 @@
+      mhpmevent_branch_taken_o, mhpmevent_compressed_o,
+      mhpmevent_jr_stall_o, mhpmevent_imiss_o, mhpmevent_ld_stall_o,
+      mhpmevent_pipe_stall_o, perf_imiss_i, mcounteren_i);
++  // Fault2Assertion Stage-5 fault TF000525_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000525_sa1;
++
+   input clk, clk_ungated_i, rst_n, scan_cg_en_i, fetch_enable_i,
+        instr_valid_i, is_compressed_i, illegal_c_insn_i,
+        branch_decision_i, is_fetch_failed_i, ex_ready_i, wb_ready_i,
+@@ -31980,7 +31983,7 @@
         (\add_576_38_Y_add_575_38_Y_add_579_49/n_144 ));
    FA_X1 \add_576_38_Y_add_575_38_Y_add_579_49/g1273 (.A (n_825), .B
         (n_857), .CI (\add_576_38_Y_add_575_38_Y_add_579_49/n_7 ), .CO
@@ -9,13 +19,12 @@
         (jump_target_o[1]));
    OAI211_X1 \add_576_38_Y_add_575_38_Y_add_579_49/g1274 (.A
         (\add_576_38_Y_add_575_38_Y_add_579_49/n_135 ), .B
-@@ -32489,6 +32489,10 @@
+@@ -32489,6 +32492,9 @@
         (n_1168));
    XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
         (n_1169));
 +
-+  // Fault2Assertion Stage-5 fault TF000525_SA1 run-local driver split
-+  wire f2a_pre_tf000525_sa1;
++  // Fault2Assertion Stage-5 fault TF000525_SA1: run-local stuck-at assignment
 +  assign \add_576_38_Y_add_575_38_Y_add_579_49/n_143  = 1'b1;
  endmodule
  

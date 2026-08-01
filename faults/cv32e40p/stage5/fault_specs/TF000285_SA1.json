@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:24:21.154093+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:20:06.263757+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000285_SA1",
   "selection_id": "TS000285",
@@ -134,9 +134,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000285_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000285_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign halt_if_o = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "hierarchical_instance_output",
       "module": "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1",
@@ -148,6 +152,16 @@
       "connection_start": 1567343,
       "connection_end": 1567352
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1",
+      "temporary_net": "f2a_pre_tf000285_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 3350,
+      "driver_use_offset_in_module": 31148,
+      "assignment_offset_in_module": 185424,
+      "assignment": "assign halt_if_o = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -156,5 +170,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "f55d717d48ba58e8f0dfd869aba08db2fe1556f131b68b55d8815af3f49f4ce9"
+  "fault_spec_digest_sha256": "30c8fffae67bdc799bbafa94c2bfcf74bd47f1f2234697c71432efc8f56ab11b"
 }

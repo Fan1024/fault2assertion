@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000313_SA0/fault_netlist.v
-@@ -21284,7 +21284,7 @@
+@@ -21258,6 +21258,9 @@
+      irq_sec_i, irq_req_ctrl_o, irq_sec_ctrl_o, irq_id_ctrl_o,
+      irq_wu_ctrl_o, mie_bypass_i, mip_o, m_ie_i, u_ie_i,
+      current_priv_lvl_i);
++  // Fault2Assertion Stage-5 fault TF000313_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000313_sa0;
++
+   input clk, rst_n, irq_sec_i, m_ie_i, u_ie_i;
+   input [31:0] irq_i, mie_bypass_i;
+   input [1:0] current_priv_lvl_i;
+@@ -21284,7 +21287,7 @@
    AOI21_X1 g4365(.A (n_9), .B1 (n_74), .B2 (n_151), .ZN (n_75));
    OAI21_X1 g4366(.A (n_14), .B1 (n_73), .B2 (n_26), .ZN (n_74));
    OAI21_X1 g4367(.A (n_34), .B1 (n_72), .B2 (n_156), .ZN
@@ -9,13 +19,12 @@
    AOI21_X1 g4368(.A (n_17), .B1 (n_69), .B2 (n_146), .ZN (n_73));
    AOI21_X1 g4371(.A (n_152), .B1 (n_68), .B2 (n_38), .ZN (n_72));
    OAI21_X1 g4373(.A (n_64), .B1 (n_149), .B2 (n_164), .ZN
-@@ -21415,6 +21415,10 @@
+@@ -21415,6 +21418,9 @@
         (irq_i[30]), .B2 (mie_bypass_i[30]), .ZN (n_181));
    AOI22_X1 g162(.A1 (irq_i[29]), .A2 (mie_bypass_i[29]), .B1
         (irq_i[28]), .B2 (mie_bypass_i[28]), .ZN (n_182));
 +
-+  // Fault2Assertion Stage-5 fault TF000313_SA0 run-local driver split
-+  wire f2a_pre_tf000313_sa0;
++  // Fault2Assertion Stage-5 fault TF000313_SA0: run-local stuck-at assignment
 +  assign irq_id_ctrl_o[1] = 1'b0;
  endmodule
  

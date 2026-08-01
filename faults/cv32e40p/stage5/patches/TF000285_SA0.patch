@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000285_SA0/fault_netlist.v
-@@ -29717,7 +29717,7 @@
+@@ -29214,6 +29214,9 @@
+      mhpmevent_branch_taken_o, mhpmevent_compressed_o,
+      mhpmevent_jr_stall_o, mhpmevent_imiss_o, mhpmevent_ld_stall_o,
+      mhpmevent_pipe_stall_o, perf_imiss_i, mcounteren_i);
++  // Fault2Assertion Stage-5 fault TF000285_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000285_sa0;
++
+   input clk, clk_ungated_i, rst_n, scan_cg_en_i, fetch_enable_i,
+        instr_valid_i, is_compressed_i, illegal_c_insn_i,
+        branch_decision_i, is_fetch_failed_i, ex_ready_i, wb_ready_i,
+@@ -29717,7 +29720,7 @@
         .reg_d_wb_is_reg_b_i (reg_d_wb_is_reg_b_id),
         .reg_d_alu_is_reg_a_i (reg_d_alu_is_reg_a_id),
         .reg_d_alu_is_reg_b_i (reg_d_alu_is_reg_b_id), .halt_if_o
@@ -9,13 +19,12 @@
         .load_stall_o (load_stall), .id_ready_i (id_ready_o),
         .ex_valid_i (ex_valid_i), .wb_ready_i (wb_ready_i));
    cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1
-@@ -32489,6 +32489,10 @@
+@@ -32489,6 +32492,9 @@
         (n_1168));
    XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
         (n_1169));
 +
-+  // Fault2Assertion Stage-5 fault TF000285_SA0 run-local driver split
-+  wire f2a_pre_tf000285_sa0;
++  // Fault2Assertion Stage-5 fault TF000285_SA0: run-local stuck-at assignment
 +  assign halt_if_o = 1'b0;
  endmodule
  

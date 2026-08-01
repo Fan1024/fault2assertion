@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000259_SA1/fault_netlist.v
-@@ -34885,7 +34885,7 @@
+@@ -34797,6 +34797,9 @@
+      fetch_ready_i, fetch_valid_o, fetch_rdata_o, instr_req_o,
+      instr_gnt_i, instr_addr_o, instr_rdata_i, instr_rvalid_i,
+      instr_err_i, instr_err_pmp_i, busy_o);
++  // Fault2Assertion Stage-5 fault TF000259_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000259_sa1;
++
+   input clk, rst_n, req_i, branch_i, hwlp_jump_i, fetch_ready_i,
+        instr_gnt_i, instr_rvalid_i, instr_err_i, instr_err_pmp_i;
+   input [31:0] branch_addr_i, hwlp_target_i, instr_rdata_i;
+@@ -34885,7 +34888,7 @@
    MUX2_X1 g842(.A (fifo_rdata[15]), .B (instr_rdata_i[15]), .S
         (fifo_empty), .Z (fetch_rdata_o[15]));
    MUX2_X1 g843(.A (fifo_rdata[13]), .B (instr_rdata_i[13]), .S
@@ -9,13 +19,12 @@
    MUX2_X1 g844(.A (fifo_rdata[11]), .B (instr_rdata_i[11]), .S
         (fifo_empty), .Z (fetch_rdata_o[11]));
    MUX2_X1 g845(.A (fifo_rdata[10]), .B (instr_rdata_i[10]), .S
-@@ -34896,6 +34896,10 @@
+@@ -34896,6 +34899,9 @@
         (fifo_empty), .Z (fetch_rdata_o[0]));
    MUX2_X1 g848(.A (fifo_rdata[22]), .B (instr_rdata_i[22]), .S
         (fifo_empty), .Z (fetch_rdata_o[22]));
 +
-+  // Fault2Assertion Stage-5 fault TF000259_SA1 run-local driver split
-+  wire f2a_pre_tf000259_sa1;
++  // Fault2Assertion Stage-5 fault TF000259_SA1: run-local stuck-at assignment
 +  assign fetch_rdata_o[13] = 1'b1;
  endmodule
  

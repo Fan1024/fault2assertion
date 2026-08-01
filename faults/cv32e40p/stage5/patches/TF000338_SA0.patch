@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000338_SA0/fault_netlist.v
-@@ -29690,7 +29690,7 @@
+@@ -29214,6 +29214,9 @@
+      mhpmevent_branch_taken_o, mhpmevent_compressed_o,
+      mhpmevent_jr_stall_o, mhpmevent_imiss_o, mhpmevent_ld_stall_o,
+      mhpmevent_pipe_stall_o, perf_imiss_i, mcounteren_i);
++  // Fault2Assertion Stage-5 fault TF000338_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000338_sa0;
++
+   input clk, clk_ungated_i, rst_n, scan_cg_en_i, fetch_enable_i,
+        instr_valid_i, is_compressed_i, illegal_c_insn_i,
+        branch_decision_i, is_fetch_failed_i, ex_ready_i, wb_ready_i,
+@@ -29690,7 +29693,7 @@
         (irq_req_ctrl), .irq_id_ctrl_i (irq_id_ctrl), .irq_wu_ctrl_i
         (irq_wu_ctrl), .irq_ack_o (csr_cause_o[5]), .irq_id_o
         ({csr_cause_o[4], irq_id_o[3], csr_cause_o[2], irq_id_o[1:0]}),
@@ -9,13 +19,12 @@
         .debug_csr_save_o (debug_csr_save_o), .debug_req_i
         (debug_req_i), .debug_single_step_i (debug_single_step_i),
         .debug_ebreakm_i (debug_ebreakm_i), .trigger_match_i
-@@ -32489,6 +32489,10 @@
+@@ -32489,6 +32492,9 @@
         (n_1168));
    XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
         (n_1169));
 +
-+  // Fault2Assertion Stage-5 fault TF000338_SA0 run-local driver split
-+  wire f2a_pre_tf000338_sa0;
++  // Fault2Assertion Stage-5 fault TF000338_SA0: run-local stuck-at assignment
 +  assign debug_cause_o[0] = 1'b0;
  endmodule
  

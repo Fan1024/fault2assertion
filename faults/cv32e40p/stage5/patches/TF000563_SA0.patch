@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000563_SA0/fault_netlist.v
-@@ -37475,7 +37475,7 @@
+@@ -37178,6 +37178,9 @@
+      apu_result_i, apu_flags_i, irq_i, irq_ack_o, irq_id_o,
+      debug_req_i, debug_havereset_o, debug_running_o, debug_halted_o,
+      fetch_enable_i, core_sleep_o);
++  // Fault2Assertion Stage-5 fault TF000563_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000563_sa0;
++
+   input clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i, instr_gnt_i,
+        instr_rvalid_i, data_gnt_i, data_rvalid_i, apu_gnt_i,
+        apu_rvalid_i, debug_req_i, fetch_enable_i;
+@@ -37475,7 +37478,7 @@
         .mhpmevent_branch_taken_o (mhpmevent_branch_taken),
         .mhpmevent_compressed_o (mhpmevent_compressed),
         .mhpmevent_jr_stall_o (mhpmevent_jr_stall), .mhpmevent_imiss_o
@@ -9,13 +19,12 @@
         .perf_imiss_i (perf_imiss));
    cv32e40p_if_stage_COREV_PULP0_PULP_OBI0_PULP_SECURE0_FPU0_ZFINX0
         if_stage_i(.clk (clk), .rst_n (rst_ni), .m_trap_base_addr_i
-@@ -37557,6 +37557,10 @@
+@@ -37557,6 +37560,9 @@
         (csr_addr[8]));
    AND2_X1 g162(.A1 (alu_operand_b_ex[6]), .A2 (csr_access_ex), .ZN
         (csr_addr[6]));
 +
-+  // Fault2Assertion Stage-5 fault TF000563_SA0 run-local driver split
-+  wire f2a_pre_tf000563_sa0;
++  // Fault2Assertion Stage-5 fault TF000563_SA0: run-local stuck-at assignment
 +  assign mhpmevent_imiss = 1'b0;
  endmodule
  

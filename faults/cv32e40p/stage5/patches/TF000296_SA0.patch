@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000296_SA0/fault_netlist.v
-@@ -12415,7 +12415,7 @@
+@@ -10282,6 +10282,9 @@
+      dot_op_a_i, dot_op_b_i, dot_op_c_i, is_clpx_i, clpx_shift_i,
+      clpx_img_i, result_o, multicycle_o, mulh_active_o, ready_o,
+      ex_ready_i);
++  // Fault2Assertion Stage-5 fault TF000296_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000296_sa0;
++
+   input clk, rst_n, enable_i, short_subword_i, is_clpx_i, clpx_img_i,
+        ex_ready_i;
+   input [2:0] operator_i;
+@@ -12415,7 +12418,7 @@
    AOI222_X1 g2177(.A1 (n_86), .A2 (n_19), .B1 (n_117), .B2 (n_18), .C1
         (n_102), .C2 (n_20), .ZN (n_24));
    AND2_X1 g2178(.A1 (short_mac_msb1), .A2 (n_22), .ZN (n_23));
@@ -9,13 +19,12 @@
    AND2_X1 g2180(.A1 (n_20), .A2 (mulh_CS[1]), .ZN (n_22));
    NOR3_X1 g2181(.A1 (n_71), .A2 (n_14), .A3 (mulh_CS[2]), .ZN (n_21));
    NOR2_X2 g2182(.A1 (n_14), .A2 (n_69), .ZN (n_20));
-@@ -19820,6 +19820,10 @@
+@@ -19820,6 +19823,9 @@
         .ZN (n_1366));
    XOR2_X1 g210(.A (n_1332), .B (n_1347), .Z (n_1365));
    NAND2_X1 g206(.A1 (n_1365), .A2 (n_1352), .ZN (n_1367));
 +
-+  // Fault2Assertion Stage-5 fault TF000296_SA0 run-local driver split
-+  wire f2a_pre_tf000296_sa0;
++  // Fault2Assertion Stage-5 fault TF000296_SA0: run-local stuck-at assignment
 +  assign ready_o = 1'b0;
  endmodule
  

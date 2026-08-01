@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:24:35.522974+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:20:23.873746+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000311_SA1",
   "selection_id": "TS000311",
@@ -128,9 +128,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000311_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000311_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign debug_running_o = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "hierarchical_instance_output",
       "module": "cv32e40p_top",
@@ -142,6 +146,16 @@
       "connection_start": 1994300,
       "connection_end": 1994315
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_top",
+      "temporary_net": "f2a_pre_tf000311_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 579,
+      "driver_use_offset_in_module": 3696,
+      "assignment_offset_in_module": 3907,
+      "assignment": "assign debug_running_o = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -150,5 +164,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "91aabd1ba722973a5a53a70c3415d39f6c0535aa8b3c6dcfb684ab6a20702f63"
+  "fault_spec_digest_sha256": "78c0c8a2b5abce940e4ae6505390f6dd4c9e9b3dc7cce6e0e8d87f2d726d36f1"
 }

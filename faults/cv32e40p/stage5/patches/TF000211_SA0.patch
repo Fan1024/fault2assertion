@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000211_SA0/fault_netlist.v
-@@ -37410,7 +37410,7 @@
+@@ -37178,6 +37178,9 @@
+      apu_result_i, apu_flags_i, irq_i, irq_ack_o, irq_id_o,
+      debug_req_i, debug_havereset_o, debug_running_o, debug_halted_o,
+      fetch_enable_i, core_sleep_o);
++  // Fault2Assertion Stage-5 fault TF000211_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000211_sa0;
++
+   input clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i, instr_gnt_i,
+        instr_rvalid_i, data_gnt_i, data_rvalid_i, apu_gnt_i,
+        apu_rvalid_i, debug_req_i, fetch_enable_i;
+@@ -37410,7 +37413,7 @@
         ({instr_rdata_id[31:2], UNCONNECTED_HIER_Z1263,
         instr_rdata_id[1]}), .instr_req_o (instr_req_int),
         .is_compressed_i (is_compressed_id), .illegal_c_insn_i
@@ -9,13 +19,12 @@
         .branch_decision_i (branch_decision), .jump_target_o
         (jump_target_id), .clear_instr_valid_o (clear_instr_valid),
         .pc_set_o (pc_set), .pc_mux_o ({UNCONNECTED1707,
-@@ -37557,6 +37557,10 @@
+@@ -37557,6 +37560,9 @@
         (csr_addr[8]));
    AND2_X1 g162(.A1 (alu_operand_b_ex[6]), .A2 (csr_access_ex), .ZN
         (csr_addr[6]));
 +
-+  // Fault2Assertion Stage-5 fault TF000211_SA0 run-local driver split
-+  wire f2a_pre_tf000211_sa0;
++  // Fault2Assertion Stage-5 fault TF000211_SA0: run-local stuck-at assignment
 +  assign branch_in_ex = 1'b0;
  endmodule
  

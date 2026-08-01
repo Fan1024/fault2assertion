@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000486_SA0/fault_netlist.v
-@@ -26481,7 +26481,7 @@
+@@ -21421,6 +21421,9 @@
+      rst_n, scan_cg_en_i, raddr_a_i, rdata_a_o, raddr_b_i, rdata_b_o,
+      raddr_c_i, rdata_c_o, waddr_a_i, wdata_a_i, we_a_i, waddr_b_i,
+      wdata_b_i, we_b_i);
++  // Fault2Assertion Stage-5 fault TF000486_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000486_sa0;
++
+   input clk, rst_n, scan_cg_en_i, we_a_i, we_b_i;
+   input [5:0] raddr_a_i, raddr_b_i, raddr_c_i, waddr_a_i, waddr_b_i;
+   input [31:0] wdata_a_i, wdata_b_i;
+@@ -26481,7 +26484,7 @@
    AND2_X2 g489(.A1 (n_2449), .A2 (n_2439), .ZN (n_2334));
    AND2_X2 g490(.A1 (n_2449), .A2 (n_2440), .ZN (n_2333));
    AND2_X2 g491(.A1 (n_2446), .A2 (n_2440), .ZN (n_2345));
@@ -9,13 +19,12 @@
    AND2_X2 g493(.A1 (n_2446), .A2 (n_2438), .ZN (n_2338));
    AND2_X2 g494(.A1 (n_2446), .A2 (n_2439), .ZN (n_2346));
    AND2_X2 g495(.A1 (n_2449), .A2 (n_2434), .ZN (n_2325));
-@@ -29162,6 +29162,10 @@
+@@ -29162,6 +29165,9 @@
    OR2_X1 g172(.A1 (n_85), .A2 (n_3750), .ZN (n_3751));
    INV_X1 g190(.A (n_3737), .ZN (n_3750));
    NAND2_X1 g175(.A1 (n_3732), .A2 (n_3739), .ZN (n_3752));
 +
-+  // Fault2Assertion Stage-5 fault TF000486_SA0 run-local driver split
-+  wire f2a_pre_tf000486_sa0;
++  // Fault2Assertion Stage-5 fault TF000486_SA0: run-local stuck-at assignment
 +  assign n_2320 = 1'b0;
  endmodule
  

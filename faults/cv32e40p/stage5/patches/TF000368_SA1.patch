@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000368_SA1/fault_netlist.v
-@@ -26574,7 +26574,7 @@
+@@ -21421,6 +21421,9 @@
+      rst_n, scan_cg_en_i, raddr_a_i, rdata_a_o, raddr_b_i, rdata_b_o,
+      raddr_c_i, rdata_c_o, waddr_a_i, wdata_a_i, we_a_i, waddr_b_i,
+      wdata_b_i, we_b_i);
++  // Fault2Assertion Stage-5 fault TF000368_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000368_sa1;
++
+   input clk, rst_n, scan_cg_en_i, we_a_i, we_b_i;
+   input [5:0] raddr_a_i, raddr_b_i, raddr_c_i, waddr_a_i, waddr_b_i;
+   input [31:0] wdata_a_i, wdata_b_i;
+@@ -26574,7 +26577,7 @@
    OR4_X1 g3413(.A1 (n_2997), .A2 (n_2989), .A3 (n_3005), .A4 (n_2981),
         .ZN (rdata_a_o[6]));
    OR4_X1 g3414(.A1 (n_2996), .A2 (n_2988), .A3 (n_3004), .A4 (n_3012),
@@ -9,13 +19,12 @@
    OR4_X1 g3415(.A1 (n_2995), .A2 (n_2987), .A3 (n_3003), .A4 (n_2979),
         .ZN (rdata_a_o[14]));
    OR4_X1 g3416(.A1 (n_2994), .A2 (n_2986), .A3 (n_3002), .A4 (n_2978),
-@@ -29162,6 +29162,10 @@
+@@ -29162,6 +29165,9 @@
    OR2_X1 g172(.A1 (n_85), .A2 (n_3750), .ZN (n_3751));
    INV_X1 g190(.A (n_3737), .ZN (n_3750));
    NAND2_X1 g175(.A1 (n_3732), .A2 (n_3739), .ZN (n_3752));
 +
-+  // Fault2Assertion Stage-5 fault TF000368_SA1 run-local driver split
-+  wire f2a_pre_tf000368_sa1;
++  // Fault2Assertion Stage-5 fault TF000368_SA1: run-local stuck-at assignment
 +  assign rdata_a_o[4] = 1'b1;
  endmodule
  

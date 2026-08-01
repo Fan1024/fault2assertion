@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:26:38.658242+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:22:54.239160+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000506_SA0",
   "selection_id": "TS000506",
@@ -365,9 +365,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000506_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000506_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign \\srl_300_44/n_3 = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_alu",
@@ -379,6 +383,16 @@
       "connection_start": 557866,
       "connection_end": 557881
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_alu",
+      "temporary_net": "f2a_pre_tf000506_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 357,
+      "driver_use_offset_in_module": 150202,
+      "assignment_offset_in_module": 152073,
+      "assignment": "assign \\srl_300_44/n_3  = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -387,5 +401,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "7de2e5905cac8bb71f36f78351c2caacf752e22b27446cf68f8d7d5c4f1799f8"
+  "fault_spec_digest_sha256": "14d01727846a47afe031c20393dcec2c0f565aba474f52ff934a0ea8a1b86e13"
 }

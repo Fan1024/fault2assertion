@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000598_SA1/fault_netlist.v
-@@ -34205,9 +34205,13 @@
+@@ -34030,6 +34030,9 @@
+      trans_wdata_i, trans_atop_i, resp_valid_o, resp_rdata_o,
+      resp_err_o, obi_req_o, obi_gnt_i, obi_addr_o, obi_we_o, obi_be_o,
+      obi_wdata_o, obi_atop_o, obi_rdata_i, obi_rvalid_i, obi_err_i);
++  // Fault2Assertion Stage-5 fault TF000598_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000598_sa1;
++
+   input clk, rst_n, trans_valid_i, trans_we_i, obi_gnt_i, obi_rvalid_i,
+        obi_err_i;
+   input [31:0] trans_addr_i, trans_wdata_i, obi_rdata_i;
+@@ -34205,9 +34208,12 @@
    AND3_X2 g1262(.A1 (n_0), .A2 (trans_valid_i), .A3 (trans_ready_o),
         .ZN (n_2));
    AND2_X1 g1263(.A1 (n_0), .A2 (obi_req_o), .ZN (n_1));
@@ -9,8 +19,7 @@
    NAND2_X1 g4(.A1 (n_149), .A2 (trans_ready_o), .ZN (obi_req_o));
    INV_X1 g5(.A (trans_valid_i), .ZN (n_149));
 +
-+  // Fault2Assertion Stage-5 fault TF000598_SA1 run-local driver split
-+  wire f2a_pre_tf000598_sa1;
++  // Fault2Assertion Stage-5 fault TF000598_SA1: run-local stuck-at assignment
 +  assign n_0 = 1'b1;
  endmodule
  

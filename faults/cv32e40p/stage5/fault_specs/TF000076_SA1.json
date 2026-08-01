@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:22:20.294900+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:17:35.613041+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000076_SA1",
   "selection_id": "TS000076",
@@ -161,9 +161,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000076_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000076_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign \\gen_trigger_regs.tmatch_value_q [29] = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1",
@@ -175,6 +179,16 @@
       "connection_start": 106124,
       "connection_end": 106161
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1",
+      "temporary_net": "f2a_pre_tf000076_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 1961,
+      "driver_use_offset_in_module": 106072,
+      "assignment_offset_in_module": 287651,
+      "assignment": "assign \\gen_trigger_regs.tmatch_value_q [29] = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -183,5 +197,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "31a622860a13fdace7ff55ffe6b4969fd9259d97fb007e81180d7e598ecf940e"
+  "fault_spec_digest_sha256": "910c80b3652f1074f8a16e53ad061c6e3eb8fa6a7d8ec0e36030f1a22896689d"
 }

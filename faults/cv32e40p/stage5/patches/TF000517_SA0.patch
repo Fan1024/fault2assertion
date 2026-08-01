@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000517_SA0/fault_netlist.v
-@@ -36424,7 +36424,7 @@
+@@ -35722,6 +35722,9 @@
+      addr_useincr_ex_i, data_misaligned_ex_i, data_misaligned_o,
+      data_atop_ex_i, data_atop_o, p_elw_start_o, p_elw_finish_o,
+      lsu_ready_ex_o, lsu_ready_wb_o, busy_o);
++  // Fault2Assertion Stage-5 fault TF000517_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000517_sa0;
++
+   input clk, rst_n, data_gnt_i, data_rvalid_i, data_err_i,
+        data_err_pmp_i, data_we_ex_i, data_load_event_ex_i,
+        data_req_ex_i, addr_useincr_ex_i, data_misaligned_ex_i;
+@@ -36424,7 +36427,7 @@
    INV_X1 g12821(.A (cnt_q[1]), .ZN (n_92));
    INV_X1 g12823(.A (data_addr_int[0]), .ZN (n_90));
    INV_X1 g12824(.A (data_misaligned_ex_i), .ZN (n_1));
@@ -9,13 +19,12 @@
    INV_X1 g12826(.A (data_addr_int[1]), .ZN (n_87));
    INV_X1 fopt12837(.A (n_0), .ZN (n_82));
    INV_X1 fopt12842(.A (data_rvalid_i), .ZN (n_0));
-@@ -37124,6 +37124,10 @@
+@@ -37124,6 +37127,9 @@
    NAND2_X1 g15(.A1 (n_582), .A2 (n_583), .ZN (busy_o));
    INV_X1 g17(.A (data_req_ex_i), .ZN (n_583));
    OR2_X1 g14(.A1 (data_rvalid_i), .A2 (n_582), .ZN (lsu_ready_wb_o));
 +
-+  // Fault2Assertion Stage-5 fault TF000517_SA0 run-local driver split
-+  wire f2a_pre_tf000517_sa0;
++  // Fault2Assertion Stage-5 fault TF000517_SA0: run-local stuck-at assignment
 +  assign n_88 = 1'b0;
  endmodule
  

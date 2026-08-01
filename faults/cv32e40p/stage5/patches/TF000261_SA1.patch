@@ -1,14 +1,23 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000261_SA1/fault_netlist.v
-@@ -34789,7 +34789,11 @@
+@@ -34216,6 +34216,9 @@
+      resp_valid_i, fetch_ready_i, fetch_valid_o, fifo_push_o,
+      fifo_pop_o, fifo_flush_o, fifo_flush_but_first_o, fifo_cnt_i,
+      fifo_empty_i);
++  // Fault2Assertion Stage-5 fault TF000261_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000261_sa1;
++
+   input clk, rst_n, req_i, branch_i, hwlp_jump_i, trans_ready_i,
+        resp_valid_i, fetch_ready_i, fifo_empty_i;
+   input [31:0] branch_addr_i, hwlp_target_i;
+@@ -34789,7 +34792,10 @@
    OR2_X1 g130(.A1 (n_276), .A2 (n_271), .ZN (n_277));
    NAND2_X1 g132(.A1 (req_i), .A2 (n_95), .ZN (n_276));
    OAI21_X1 g126(.A (n_270), .B1 (n_263), .B2 (n_276), .ZN
 -       (trans_valid_o));
 +       (f2a_pre_tf000261_sa1));
 +
-+  // Fault2Assertion Stage-5 fault TF000261_SA1 run-local driver split
-+  wire f2a_pre_tf000261_sa1;
++  // Fault2Assertion Stage-5 fault TF000261_SA1: run-local stuck-at assignment
 +  assign trans_valid_o = 1'b1;
  endmodule
  

@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000435_SA0/fault_netlist.v
-@@ -541,7 +541,7 @@
+@@ -32,6 +32,9 @@
+      mhpmevent_compressed_i, mhpmevent_jr_stall_i, mhpmevent_imiss_i,
+      mhpmevent_ld_stall_i, mhpmevent_pipe_stall_i, apu_typeconflict_i,
+      apu_contention_i, apu_dep_i, apu_wb_i);
++  // Fault2Assertion Stage-5 fault TF000435_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000435_sa0;
++
+   input clk, rst_n, csr_mtvec_init_i, fflags_we_i, fregs_we_i,
+        csr_irq_sec_i, debug_mode_i, debug_csr_save_i, csr_save_if_i,
+        csr_save_id_i, csr_save_ex_i, csr_restore_mret_i,
+@@ -541,7 +544,7 @@
    NAND4_X1 g42257__2398(.A1 (n_1326), .A2 (n_1280), .A3 (n_1305), .A4
         (n_1044), .ZN (csr_rdata_o[2]));
    NAND4_X1 g42258__5107(.A1 (n_1327), .A2 (n_1243), .A3 (n_1207), .A4
@@ -9,13 +19,12 @@
    AOI221_X1 g42259__6260(.A (n_1358), .B1 (\mhpmcounter_q[0] [54]), .B2
         (n_981), .C1 (\mhpmcounter_q[3] [22]), .C2 (n_1028), .ZN
         (n_1372));
-@@ -5121,6 +5121,10 @@
+@@ -5121,6 +5124,9 @@
         (\gen_trigger_regs.tmatch_value_q [31]), .ZN (n_1870));
    XOR2_X1 g485(.A (pc_id_i[28]), .B
         (\gen_trigger_regs.tmatch_value_q [28]), .Z (n_1872));
 +
-+  // Fault2Assertion Stage-5 fault TF000435_SA0 run-local driver split
-+  wire f2a_pre_tf000435_sa0;
++  // Fault2Assertion Stage-5 fault TF000435_SA0: run-local stuck-at assignment
 +  assign csr_rdata_o[0] = 1'b0;
  endmodule
  

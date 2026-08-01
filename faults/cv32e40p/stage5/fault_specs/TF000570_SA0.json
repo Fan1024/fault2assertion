@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:27:22.293686+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:23:46.604908+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000570_SA0",
   "selection_id": "TS000570",
@@ -187,9 +187,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000570_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000570_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign n_1336 = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_mult",
@@ -201,6 +205,16 @@
       "connection_start": 1023793,
       "connection_end": 1023799
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_mult",
+      "temporary_net": "f2a_pre_tf000570_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 393,
+      "driver_use_offset_in_module": 464261,
+      "assignment_offset_in_module": 466366,
+      "assignment": "assign n_1336 = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -209,5 +223,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "35b8c6af1c48b909f65bd601deccc400a6684dd31dff84c122bd895c753eb29f"
+  "fault_spec_digest_sha256": "ef912f6e9e85ef62387e98b520919b82fbfb441b648beb404ac42145cee42057"
 }

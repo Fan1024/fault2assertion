@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000527_SA1/fault_netlist.v
-@@ -29954,7 +29954,7 @@
+@@ -29214,6 +29214,9 @@
+      mhpmevent_branch_taken_o, mhpmevent_compressed_o,
+      mhpmevent_jr_stall_o, mhpmevent_imiss_o, mhpmevent_ld_stall_o,
+      mhpmevent_pipe_stall_o, perf_imiss_i, mcounteren_i);
++  // Fault2Assertion Stage-5 fault TF000527_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000527_sa1;
++
+   input clk, clk_ungated_i, rst_n, scan_cg_en_i, fetch_enable_i,
+        instr_valid_i, is_compressed_i, illegal_c_insn_i,
+        branch_decision_i, is_fetch_failed_i, ex_ready_i, wb_ready_i,
+@@ -29954,7 +29957,7 @@
    AND2_X1 g16353(.A1 (n_763), .A2 (instr_rdata_i[20]), .ZN (n_856));
    INV_X1 g16354(.A (n_765), .ZN (n_764));
    NAND2_X1 g16355(.A1 (ctrl_transfer_target_mux_sel[0]), .A2
@@ -9,13 +19,12 @@
    NOR2_X1 g16356(.A1 (n_763), .A2 (ctrl_transfer_target_mux_sel[1]),
         .ZN (n_765));
    INV_X1 g16357(.A (ctrl_transfer_target_mux_sel[0]), .ZN (n_763));
-@@ -32489,6 +32489,10 @@
+@@ -32489,6 +32492,9 @@
         (n_1168));
    XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
         (n_1169));
 +
-+  // Fault2Assertion Stage-5 fault TF000527_SA1 run-local driver split
-+  wire f2a_pre_tf000527_sa1;
++  // Fault2Assertion Stage-5 fault TF000527_SA1: run-local stuck-at assignment
 +  assign n_766 = 1'b1;
  endmodule
  

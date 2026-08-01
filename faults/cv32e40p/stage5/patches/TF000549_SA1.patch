@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000549_SA1/fault_netlist.v
-@@ -32692,7 +32692,7 @@
+@@ -32494,6 +32494,9 @@
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,
+      if_valid_i, fetch_rdata_i, instr_aligned_o, instr_valid_o,
+      branch_addr_i, branch_i, hwlp_addr_i, hwlp_update_pc_i, pc_o);
++  // Fault2Assertion Stage-5 fault TF000549_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000549_sa1;
++
+   input clk, rst_n, fetch_valid_i, if_valid_i, branch_i,
+        hwlp_update_pc_i;
+   input [31:0] fetch_rdata_i, branch_addr_i, hwlp_addr_i;
+@@ -32692,7 +32695,7 @@
    INV_X1 g4058(.A (n_133), .ZN (n_134));
    INV_X1 g4059(.A (n_161), .ZN (n_132));
    NAND2_X1 g4060(.A1 (pc_o[1]), .A2 (state[1]), .ZN (n_133));
@@ -9,13 +19,12 @@
    AND2_X1 g4062(.A1 (n_126), .A2 (pc_o[1]), .ZN (n_131));
    INV_X1 g4063(.A (fetch_rdata_i[1]), .ZN (n_130));
    INV_X1 g4064(.A (fetch_valid_i), .ZN (n_129));
-@@ -33273,6 +33273,10 @@
+@@ -33273,6 +33276,9 @@
         (\add_64_26/n_14 ));
    OR2_X1 \add_64_26/g410 (.A1 (pc_o[2]), .A2 (pc_o[3]), .ZN
         (\add_64_26/n_13 ));
 +
-+  // Fault2Assertion Stage-5 fault TF000549_SA1 run-local driver split
-+  wire f2a_pre_tf000549_sa1;
++  // Fault2Assertion Stage-5 fault TF000549_SA1: run-local stuck-at assignment
 +  assign n_161 = 1'b1;
  endmodule
  

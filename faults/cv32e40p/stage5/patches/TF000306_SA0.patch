@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000306_SA0/fault_netlist.v
-@@ -37121,9 +37121,13 @@
+@@ -35722,6 +35722,9 @@
+      addr_useincr_ex_i, data_misaligned_ex_i, data_misaligned_o,
+      data_atop_ex_i, data_atop_o, p_elw_start_o, p_elw_finish_o,
+      lsu_ready_ex_o, lsu_ready_wb_o, busy_o);
++  // Fault2Assertion Stage-5 fault TF000306_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000306_sa0;
++
+   input clk, rst_n, data_gnt_i, data_rvalid_i, data_err_i,
+        data_err_pmp_i, data_we_ex_i, data_load_event_ex_i,
+        data_req_ex_i, addr_useincr_ex_i, data_misaligned_ex_i;
+@@ -37121,9 +37124,12 @@
    MUX2_X1 g437(.A (rdata_q[31]), .B (n_580), .S (data_rvalid_i), .Z
         (data_rdata_ex_o[31]));
    NOR2_X1 g16(.A1 (cnt_q[1]), .A2 (cnt_q[0]), .ZN (n_582));
@@ -9,8 +19,7 @@
    INV_X1 g17(.A (data_req_ex_i), .ZN (n_583));
    OR2_X1 g14(.A1 (data_rvalid_i), .A2 (n_582), .ZN (lsu_ready_wb_o));
 +
-+  // Fault2Assertion Stage-5 fault TF000306_SA0 run-local driver split
-+  wire f2a_pre_tf000306_sa0;
++  // Fault2Assertion Stage-5 fault TF000306_SA0: run-local stuck-at assignment
 +  assign busy_o = 1'b0;
  endmodule
  

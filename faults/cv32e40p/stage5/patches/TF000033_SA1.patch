@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000033_SA1/fault_netlist.v
-@@ -30197,7 +30197,7 @@
+@@ -29214,6 +29214,9 @@
+      mhpmevent_branch_taken_o, mhpmevent_compressed_o,
+      mhpmevent_jr_stall_o, mhpmevent_imiss_o, mhpmevent_ld_stall_o,
+      mhpmevent_pipe_stall_o, perf_imiss_i, mcounteren_i);
++  // Fault2Assertion Stage-5 fault TF000033_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000033_sa1;
++
+   input clk, clk_ungated_i, rst_n, scan_cg_en_i, fetch_enable_i,
+        instr_valid_i, is_compressed_i, illegal_c_insn_i,
+        branch_decision_i, is_fetch_failed_i, ex_ready_i, wb_ready_i,
+@@ -30197,7 +30200,7 @@
    DFFR_X1 \alu_operator_ex_o_reg[5] (.RN (rst_n), .CK (clk), .D
         (n_387), .Q (alu_operator_ex_o[5]), .QN (n_698));
    DFFR_X1 branch_in_ex_o_reg(.RN (rst_n), .CK (clk), .D (n_326), .Q
@@ -9,13 +19,12 @@
    DFFR_X1 csr_access_ex_o_reg(.RN (rst_n), .CK (clk), .D (n_327), .QN
         (n_690));
    DFFR_X1 \csr_op_ex_o_reg[0] (.RN (rst_n), .CK (clk), .D (n_325), .QN
-@@ -32489,6 +32489,10 @@
+@@ -32489,6 +32492,9 @@
         (n_1168));
    XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
         (n_1169));
 +
-+  // Fault2Assertion Stage-5 fault TF000033_SA1 run-local driver split
-+  wire f2a_pre_tf000033_sa1;
++  // Fault2Assertion Stage-5 fault TF000033_SA1: run-local stuck-at assignment
 +  assign branch_in_ex_o = 1'b1;
  endmodule
  

@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000356_SA1/fault_netlist.v
-@@ -21211,7 +21211,7 @@
+@@ -20752,6 +20752,9 @@
+      debug_mode_i, debug_wfi_no_sleep_i, ctrl_transfer_insn_in_dec_o,
+      ctrl_transfer_insn_in_id_o, ctrl_transfer_target_mux_sel_o,
+      mcounteren_i);
++  // Fault2Assertion Stage-5 fault TF000356_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000356_sa1;
++
+   input deassert_we_i, illegal_c_insn_i, fs_off_i, debug_mode_i,
+        debug_wfi_no_sleep_i;
+   input [31:0] instr_rdata_i, mcounteren_i;
+@@ -21211,7 +21214,7 @@
    INV_X1 g8715(.A (n_255), .ZN (n_41));
    INV_X1 g8716(.A (n_250), .ZN (n_40));
    INV_X1 g8717(.A (n_7), .ZN (n_39));
@@ -9,13 +19,12 @@
    INV_X1 g8719(.A (n_247), .ZN (alu_op_c_mux_sel_o[1]));
    INV_X1 g8720(.A (n_249), .ZN (n_37));
    INV_X1 g8721(.A (instr_rdata_i[30]), .ZN (n_36));
-@@ -21252,6 +21252,10 @@
+@@ -21252,6 +21255,9 @@
         (instr_rdata_i[23]), .ZN (n_354));
    AOI211_X1 g8768(.A (n_52), .B (n_167), .C1 (n_91), .C2 (n_56), .ZN
         (n_355));
 +
-+  // Fault2Assertion Stage-5 fault TF000356_SA1 run-local driver split
-+  wire f2a_pre_tf000356_sa1;
++  // Fault2Assertion Stage-5 fault TF000356_SA1: run-local stuck-at assignment
 +  assign alu_op_c_mux_sel_o[0] = 1'b1;
  endmodule
  

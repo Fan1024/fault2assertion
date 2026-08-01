@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000540_SA1/fault_netlist.v
-@@ -20066,7 +20066,7 @@
+@@ -19851,6 +19851,9 @@
+      regfile_alu_we_fw_power_o, regfile_alu_wdata_fw_o, jump_target_o,
+      branch_decision_o, is_decoding_i, lsu_ready_ex_i, lsu_err_i,
+      ex_ready_o, ex_valid_o, wb_ready_i);
++  // Fault2Assertion Stage-5 fault TF000540_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000540_sa1;
++
+   input clk, rst_n, alu_en_i, alu_is_clpx_i, alu_is_subrot_i,
+        mult_en_i, mult_sel_subword_i, mult_is_clpx_i, mult_clpx_img_i,
+        data_req_i, data_rvalid_i, data_misaligned_ex_i,
+@@ -20066,7 +20069,7 @@
         .ZN (n_22));
    OR4_X1 g2500(.A1 (mult_en_i), .A2 (alu_en_i), .A3 (lsu_en_i), .A4
         (csr_access_i), .ZN (n_21));
@@ -9,13 +19,12 @@
    NAND2_X1 g2503(.A1 (csr_rdata_i[27]), .A2 (csr_access_i), .ZN (n_18));
    NAND2_X1 g2504(.A1 (csr_rdata_i[29]), .A2 (csr_access_i), .ZN (n_17));
    NAND2_X1 g2505(.A1 (csr_rdata_i[24]), .A2 (csr_access_i), .ZN (n_16));
-@@ -20104,6 +20104,10 @@
+@@ -20104,6 +20107,9 @@
    AOI222_X1 g2(.A1 (alu_result[31]), .A2 (n_20), .B1 (mult_result[31]),
         .B2 (n_12), .C1 (csr_rdata_i[31]), .C2 (csr_access_i), .ZN
         (n_383));
 +
-+  // Fault2Assertion Stage-5 fault TF000540_SA1 run-local driver split
-+  wire f2a_pre_tf000540_sa1;
++  // Fault2Assertion Stage-5 fault TF000540_SA1: run-local stuck-at assignment
 +  assign n_20 = 1'b1;
  endmodule
  

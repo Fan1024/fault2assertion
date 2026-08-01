@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000524_SA1/fault_netlist.v
-@@ -20459,7 +20459,7 @@
+@@ -20139,6 +20139,9 @@
+      halt_if_o, halt_id_o, misaligned_stall_o, jr_stall_o,
+      load_stall_o, id_ready_i, id_valid_i, ex_valid_i, wb_ready_i,
+      perf_pipeline_stall_o);
++  // Fault2Assertion Stage-5 fault TF000524_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000524_sa1;
++
+   input clk, clk_ungated_i, rst_n, fetch_enable_i, is_fetch_failed_i,
+        illegal_insn_i, ecall_insn_i, mret_insn_i, uret_insn_i,
+        dret_insn_i, mret_dec_i, uret_dec_i, dret_dec_i, wfi_i,
+@@ -20459,7 +20462,7 @@
    NAND2_X1 g10003(.A1 (n_175), .A2 (instr_valid_i), .ZN (n_297));
    NAND2_X1 g10004(.A1 (irq_req_ctrl_i), .A2 (n_0), .ZN (n_302));
    OR2_X1 g10006(.A1 (ebrk_insn_i), .A2 (ecall_insn_i), .ZN (n_291));
@@ -9,13 +19,12 @@
    INV_X1 g10009(.A (n_288), .ZN (n_178));
    NOR2_X1 g10010(.A1 (uret_dec_i), .A2 (mret_dec_i), .ZN (n_177));
    NAND2_X1 g10011(.A1 (reg_d_alu_is_reg_b_i), .A2
-@@ -20726,6 +20726,10 @@
+@@ -20726,6 +20729,9 @@
         (n_0), .ZN (n_412));
    AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
         .ZN (n_413));
 +
-+  // Fault2Assertion Stage-5 fault TF000524_SA1 run-local driver split
-+  wire f2a_pre_tf000524_sa1;
++  // Fault2Assertion Stage-5 fault TF000524_SA1: run-local stuck-at assignment
 +  assign n_180 = 1'b1;
  endmodule
  

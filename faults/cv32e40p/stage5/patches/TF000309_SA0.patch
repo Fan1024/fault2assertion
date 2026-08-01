@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000309_SA0/fault_netlist.v
-@@ -35008,7 +35008,7 @@
+@@ -34910,6 +34910,9 @@
+      m_exc_vec_pc_mux_i, u_exc_vec_pc_mux_i, csr_mtvec_init_o,
+      jump_target_id_i, jump_target_ex_i, hwlp_jump_i, hwlp_target_i,
+      halt_if_i, id_ready_i, if_busy_o, perf_imiss_o);
++  // Fault2Assertion Stage-5 fault TF000309_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000309_sa0;
++
+   input clk, rst_n, req_i, instr_gnt_i, instr_rvalid_i, instr_err_i,
+        instr_err_pmp_i, clear_instr_valid_i, pc_set_i, hwlp_jump_i,
+        halt_if_i, id_ready_i;
+@@ -35008,7 +35011,7 @@
         .instr_req_o (instr_req_o), .instr_gnt_i (instr_gnt_i),
         .instr_addr_o ({instr_addr_o[31:2], UNCONNECTED1451,
         UNCONNECTED1450}), .instr_rdata_i (instr_rdata_i),
@@ -9,13 +19,12 @@
    NAND4_X1 g6019(.A1 (n_158), .A2 (n_135), .A3 (n_103), .A4 (n_72), .ZN
         (branch_addr_n[12]));
    NAND4_X1 g6020(.A1 (n_163), .A2 (n_89), .A3 (n_109), .A4 (n_57), .ZN
-@@ -35711,6 +35711,10 @@
+@@ -35711,6 +35714,9 @@
         (n_184));
    XOR2_X1 \add_167_42/g787 (.A (\add_167_42/n_2 ), .B (pc_id_o[12]), .Z
         (n_176));
 +
-+  // Fault2Assertion Stage-5 fault TF000309_SA0 run-local driver split
-+  wire f2a_pre_tf000309_sa0;
++  // Fault2Assertion Stage-5 fault TF000309_SA0: run-local stuck-at assignment
 +  assign if_busy_o = 1'b0;
  endmodule
  

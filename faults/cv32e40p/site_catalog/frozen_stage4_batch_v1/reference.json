@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "kind": "stage5_canonical_reference_identity",
+  "generated_at_utc": "2026-08-01T09:15:02.770950+00:00",
+  "recovery_method": "smoke fault physical identity mapped into deterministic canonical Stage-4 selection",
+  "smoke_fault_id": "TF000002_SA0",
+  "smoke_fault_spec": {
+    "path": "/raid/spring2026/fwu44/research/fault2assertion/runs/stage5_dev/mini_smoke_v1/campaign/fault_specs/TF000002_SA0.json",
+    "repository_relative_path": "runs/stage5_dev/mini_smoke_v1/campaign/fault_specs/TF000002_SA0.json",
+    "sha256": "73cd6a9ccecf863c29fbc13d26c37e09d711b5e153df6b4171063f0c625aedb7",
+    "bytes": 7565
+  },
+  "smoke_source_selection": {
+    "path": "/raid/spring2026/fwu44/research/fault2assertion/runs/stage5_dev/mini_smoke_v1/input/stage_04_mini_selection.json",
+    "repository_relative_path": "runs/stage5_dev/mini_smoke_v1/input/stage_04_mini_selection.json",
+    "sha256": "188ccad17d709244fbad6f84d74284b1d0693967d3d329c5085f4af6999eebc4",
+    "bytes": 16275
+  },
+  "canonical_fault_id": "TF000181_SA0",
+  "canonical_base_fault_id": "TF000181",
+  "canonical_selection_id": "TS000181",
+  "canonical_selection_rank": 181,
+  "canonical_site_id": "RS003822",
+  "fault_class": "control_path",
+  "module": "cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1",
+  "source_net": "branch_decision",
+  "polarity": "SA0",
+  "stuck_at": 0,
+  "mini_smoke_origin": {
+    "fault_id": "TF000181_SA0",
+    "selection_id": "TS000181",
+    "selection_rank": 181
+  },
+  "mini_smoke_origin_cross_check": "PASS",
+  "checkpoint_expected": {
+    "natural_architectural_outcome": "CENSORED",
+    "observe_runner_status": "DIAGNOSTIC_TIMEOUT",
+    "diagnostic_quarantine_runner_status": "DIAGNOSTIC_TIMEOUT",
+    "validated_capability": "NON_CONTINUABLE",
+    "capability_scope": "CURRENT_REGISTERED_QUARANTINE_POLICY",
+    "first_observable_detector_cycle": 58,
+    "first_observable_detector_time": "780ns"
+  }
+}

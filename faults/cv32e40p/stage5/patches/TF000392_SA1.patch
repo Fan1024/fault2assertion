@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000392_SA1/fault_netlist.v
-@@ -7342,7 +7342,7 @@
+@@ -7236,6 +7236,9 @@
+ endmodule
+ 
+ module cv32e40p_popcnt(in_i, result_o);
++  // Fault2Assertion Stage-5 fault TF000392_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000392_sa1;
++
+   input [31:0] in_i;
+   output [5:0] result_o;
+   wire [31:0] in_i;
+@@ -7342,7 +7345,7 @@
    XNOR2_X1 \WALLACE_CSA_DUMMY_OP_groupi/g1337 (.A
         (\WALLACE_CSA_DUMMY_OP_groupi/n_47 ), .B
         (\WALLACE_CSA_DUMMY_OP_groupi/n_33 ), .ZN
@@ -9,13 +19,12 @@
    NAND2_X1 \WALLACE_CSA_DUMMY_OP_groupi/g1338 (.A1
         (\WALLACE_CSA_DUMMY_OP_groupi/n_47 ), .A2
         (\WALLACE_CSA_DUMMY_OP_groupi/n_39 ), .ZN
-@@ -7469,6 +7469,10 @@
+@@ -7469,6 +7472,9 @@
    FA_X1 \WALLACE_CSA_DUMMY_OP_groupi/g1365 (.A (in_i[30]), .B
         (in_i[0]), .CI (in_i[31]), .CO (\WALLACE_CSA_DUMMY_OP_groupi/n_1
         ), .S (\WALLACE_CSA_DUMMY_OP_groupi/n_0 ));
 +
-+  // Fault2Assertion Stage-5 fault TF000392_SA1 run-local driver split
-+  wire f2a_pre_tf000392_sa1;
++  // Fault2Assertion Stage-5 fault TF000392_SA1: run-local stuck-at assignment
 +  assign \WALLACE_CSA_DUMMY_OP_groupi/n_49  = 1'b1;
  endmodule
  

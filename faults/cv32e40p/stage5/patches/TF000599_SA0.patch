@@ -1,14 +1,23 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000599_SA0/fault_netlist.v
-@@ -37163,7 +37163,11 @@
+@@ -37140,6 +37140,9 @@
+      fetch_enable_o, if_busy_i, ctrl_busy_i, lsu_busy_i, apu_busy_i,
+      pulp_clock_en_i, p_elw_start_i, p_elw_finish_i,
+      debug_p_elw_no_sleep_i, wake_from_sleep_i);
++  // Fault2Assertion Stage-5 fault TF000599_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000599_sa0;
++
+   input clk_ungated_i, rst_n, scan_cg_en_i, fetch_enable_i, if_busy_i,
+        ctrl_busy_i, lsu_busy_i, apu_busy_i, pulp_clock_en_i,
+        p_elw_start_i, p_elw_finish_i, debug_p_elw_no_sleep_i,
+@@ -37163,7 +37166,10 @@
    INV_X1 g100(.A (fetch_enable_o), .ZN (n_1));
    DFFR_X1 fetch_enable_q_reg(.RN (rst_n), .CK (clk_ungated_i), .D
         (n_0), .Q (fetch_enable_o));
 -  OR2_X1 g68(.A1 (fetch_enable_o), .A2 (fetch_enable_i), .ZN (n_0));
 +  OR2_X1 g68(.A1 (fetch_enable_o), .A2 (fetch_enable_i), .ZN (f2a_pre_tf000599_sa0));
 +
-+  // Fault2Assertion Stage-5 fault TF000599_SA0 run-local driver split
-+  wire f2a_pre_tf000599_sa0;
++  // Fault2Assertion Stage-5 fault TF000599_SA0: run-local stuck-at assignment
 +  assign n_0 = 1'b0;
  endmodule
  

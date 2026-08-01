@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:26:37.341812+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:22:52.598929+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000504_SA0",
   "selection_id": "TS000504",
@@ -813,9 +813,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000504_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000504_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign \\srl_300_44/n_1 = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_alu",
@@ -827,6 +831,16 @@
       "connection_start": 557996,
       "connection_end": 558011
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_alu",
+      "temporary_net": "f2a_pre_tf000504_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 357,
+      "driver_use_offset_in_module": 150332,
+      "assignment_offset_in_module": 152073,
+      "assignment": "assign \\srl_300_44/n_1  = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -835,5 +849,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "de055102e8af41a8c6ddd9fe7fecd552022cb647c528cb890e266d5b9e6e5159"
+  "fault_spec_digest_sha256": "09ab3612c3d10f619b8f865909036f9cc4431dfebcf96577e929c466cb3d89e9"
 }

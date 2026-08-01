@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000406_SA0/fault_netlist.v
-@@ -20374,7 +20374,7 @@
+@@ -20139,6 +20139,9 @@
+      halt_if_o, halt_id_o, misaligned_stall_o, jr_stall_o,
+      load_stall_o, id_ready_i, id_valid_i, ex_valid_i, wb_ready_i,
+      perf_pipeline_stall_o);
++  // Fault2Assertion Stage-5 fault TF000406_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000406_sa0;
++
+   input clk, clk_ungated_i, rst_n, fetch_enable_i, is_fetch_failed_i,
+        illegal_insn_i, ecall_insn_i, mret_insn_i, uret_insn_i,
+        dret_insn_i, mret_dec_i, uret_dec_i, dret_dec_i, wfi_i,
+@@ -20374,7 +20377,7 @@
    AND4_X1 g9934(.A1 (n_174), .A2 (n_183), .A3 (reg_d_wb_is_reg_b_i),
         .A4 (regfile_we_wb_i), .ZN (operand_b_fw_mux_sel_o[1]));
    NOR2_X1 g9935(.A1 (operand_a_fw_mux_sel_o[0]), .A2 (n_188), .ZN
@@ -9,13 +19,12 @@
    AOI21_X1 g9936(.A (trigger_match_i), .B1 (n_284), .B2
         (debug_req_entry_q), .ZN (n_218));
    OR3_X1 g9937(.A1 (n_299), .A2 (trigger_match_i), .A3
-@@ -20726,6 +20726,10 @@
+@@ -20726,6 +20729,9 @@
         (n_0), .ZN (n_412));
    AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
         .ZN (n_413));
 +
-+  // Fault2Assertion Stage-5 fault TF000406_SA0 run-local driver split
-+  wire f2a_pre_tf000406_sa0;
++  // Fault2Assertion Stage-5 fault TF000406_SA0: run-local stuck-at assignment
 +  assign operand_a_fw_mux_sel_o[1] = 1'b0;
  endmodule
  

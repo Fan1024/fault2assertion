@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:24:46.884203+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:20:37.713170+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000341_SA0",
   "selection_id": "TS000341",
@@ -217,9 +217,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000341_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000341_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign data_addr_int[1] = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_load_store_unit_PULP_OBI0",
@@ -231,6 +235,16 @@
       "connection_start": 1951211,
       "connection_end": 1951227
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_load_store_unit_PULP_OBI0",
+      "temporary_net": "f2a_pre_tf000341_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 666,
+      "driver_use_offset_in_module": 57773,
+      "assignment_offset_in_module": 75216,
+      "assignment": "assign data_addr_int[1] = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -239,5 +253,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "e868809415ea1a6400316b3f98f25a37a100d4ab9903aad940a3f1afa6a5abcd"
+  "fault_spec_digest_sha256": "ffcab108512b301a6b4fed5a39b2d7e8ffad10e5307d7b493090d67073d7a375"
 }

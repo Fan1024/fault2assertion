@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000331_SA0/fault_netlist.v
-@@ -21386,7 +21386,7 @@
+@@ -21258,6 +21258,9 @@
+      irq_sec_i, irq_req_ctrl_o, irq_sec_ctrl_o, irq_id_ctrl_o,
+      irq_wu_ctrl_o, mie_bypass_i, mip_o, m_ie_i, u_ie_i,
+      current_priv_lvl_i);
++  // Fault2Assertion Stage-5 fault TF000331_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000331_sa0;
++
+   input clk, rst_n, irq_sec_i, m_ie_i, u_ie_i;
+   input [31:0] irq_i, mie_bypass_i;
+   input [1:0] current_priv_lvl_i;
+@@ -21386,7 +21389,7 @@
    NAND2_X1 g1435(.A1 (n_157), .A2 (n_154), .ZN (n_163));
    NAND2_X1 g1454(.A1 (mie_bypass_i[11]), .A2 (mip_o[11]), .ZN (n_164));
    OAI21_X1 g1420(.A (n_160), .B1 (n_167), .B2 (n_168), .ZN
@@ -9,13 +19,12 @@
    AOI21_X1 g1424(.A (n_165), .B1 (n_144), .B2 (n_166), .ZN (n_167));
    INV_X1 g1432(.A (n_148), .ZN (n_165));
    AOI22_X1 g1442(.A1 (mie_bypass_i[11]), .A2 (mip_o[11]), .B1
-@@ -21415,6 +21415,10 @@
+@@ -21415,6 +21418,9 @@
         (irq_i[30]), .B2 (mie_bypass_i[30]), .ZN (n_181));
    AOI22_X1 g162(.A1 (irq_i[29]), .A2 (mie_bypass_i[29]), .B1
         (irq_i[28]), .B2 (mie_bypass_i[28]), .ZN (n_182));
 +
-+  // Fault2Assertion Stage-5 fault TF000331_SA0 run-local driver split
-+  wire f2a_pre_tf000331_sa0;
++  // Fault2Assertion Stage-5 fault TF000331_SA0: run-local stuck-at assignment
 +  assign irq_id_ctrl_o[2] = 1'b0;
  endmodule
  

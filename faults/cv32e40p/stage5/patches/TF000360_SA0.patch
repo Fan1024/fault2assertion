@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000360_SA0/fault_netlist.v
-@@ -29773,7 +29773,7 @@
+@@ -29214,6 +29214,9 @@
+      mhpmevent_branch_taken_o, mhpmevent_compressed_o,
+      mhpmevent_jr_stall_o, mhpmevent_imiss_o, mhpmevent_ld_stall_o,
+      mhpmevent_pipe_stall_o, perf_imiss_i, mcounteren_i);
++  // Fault2Assertion Stage-5 fault TF000360_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000360_sa0;
++
+   input clk, clk_ungated_i, rst_n, scan_cg_en_i, fetch_enable_i,
+        instr_valid_i, is_compressed_i, illegal_c_insn_i,
+        branch_decision_i, is_fetch_failed_i, ex_ready_i, wb_ready_i,
+@@ -29773,7 +29776,7 @@
    cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0
         register_file_i(.clk (clk), .rst_n (rst_n), .raddr_a_i
         ({UNCONNECTED_HIER_Z441, instr_rdata_i[19:15]}), .rdata_a_o
@@ -9,13 +19,12 @@
         instr_rdata_i[24:20]}), .rdata_b_o (regfile_data_rb_id),
         .waddr_a_i ({UNCONNECTED_HIER_Z449, regfile_waddr_wb_i[4:0]}),
         .wdata_a_i (regfile_wdata_wb_i), .we_a_i
-@@ -32489,6 +32489,10 @@
+@@ -32489,6 +32492,9 @@
         (n_1168));
    XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
         (n_1169));
 +
-+  // Fault2Assertion Stage-5 fault TF000360_SA0 run-local driver split
-+  wire f2a_pre_tf000360_sa0;
++  // Fault2Assertion Stage-5 fault TF000360_SA0: run-local stuck-at assignment
 +  assign regfile_data_ra_id[1] = 1'b0;
  endmodule
  

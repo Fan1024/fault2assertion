@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000512_SA1/fault_netlist.v
-@@ -20353,7 +20353,7 @@
+@@ -20139,6 +20139,9 @@
+      halt_if_o, halt_id_o, misaligned_stall_o, jr_stall_o,
+      load_stall_o, id_ready_i, id_valid_i, ex_valid_i, wb_ready_i,
+      perf_pipeline_stall_o);
++  // Fault2Assertion Stage-5 fault TF000512_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000512_sa1;
++
+   input clk, clk_ungated_i, rst_n, fetch_enable_i, is_fetch_failed_i,
+        illegal_insn_i, ecall_insn_i, mret_insn_i, uret_insn_i,
+        dret_insn_i, mret_dec_i, uret_dec_i, dret_dec_i, wfi_i,
+@@ -20353,7 +20356,7 @@
    AOI211_X1 g9915(.A (illegal_insn_i), .B (n_274), .C1 (n_0), .C2
         (debug_single_step_i), .ZN (n_231));
    NAND2_X1 g9917(.A1 (ex_valid_i), .A2 (n_216), .ZN (n_235));
@@ -9,13 +19,12 @@
    INV_X1 g9920(.A (n_227), .ZN (n_228));
    INV_X1 g9921(.A (n_225), .ZN (n_285));
    NOR3_X1 g9922(.A1 (n_205), .A2 (csr_status_i), .A3 (n_304), .ZN
-@@ -20726,6 +20726,10 @@
+@@ -20726,6 +20729,9 @@
         (n_0), .ZN (n_412));
    AOI211_X1 g10676(.A (n_278), .B (n_279), .C1 (n_230), .C2 (n_182),
         .ZN (n_413));
 +
-+  // Fault2Assertion Stage-5 fault TF000512_SA1 run-local driver split
-+  wire f2a_pre_tf000512_sa1;
++  // Fault2Assertion Stage-5 fault TF000512_SA1: run-local stuck-at assignment
 +  assign n_279 = 1'b1;
  endmodule
  

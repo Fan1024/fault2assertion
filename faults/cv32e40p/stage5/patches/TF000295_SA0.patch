@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000295_SA0/fault_netlist.v
-@@ -7777,7 +7777,7 @@
+@@ -7475,6 +7475,9 @@
+      operand_b_i, operand_c_i, vector_mode_i, bmask_a_i, bmask_b_i,
+      imm_vec_ext_i, is_clpx_i, is_subrot_i, clpx_shift_i, result_o,
+      comparison_result_o, ready_o, ex_ready_i);
++  // Fault2Assertion Stage-5 fault TF000295_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000295_sa0;
++
+   input clk, rst_n, enable_i, is_clpx_i, is_subrot_i, ex_ready_i;
+   input [6:0] operator_i;
+   input [31:0] operand_a_i, operand_b_i, operand_c_i;
+@@ -7777,7 +7780,7 @@
         ({n_1087, n_1090, n_1088, n_1089, div_shift[1:0]}),
         .OpBIsZero_SI (n_990), .OpBSign_SI (div_op_a_signed), .OpCode_SI
         (operator_i[1:0]), .InVld_SI (div_valid), .OutRdy_SI
@@ -9,13 +19,12 @@
    cv32e40p_ff_one ff_one_i(.in_i (ff_input), .first_one_o (ff1_result),
         .no_ones_o (ff_no_one));
    cv32e40p_popcnt popcnt_i(.in_i (operand_a_i), .result_o (cnt_result));
-@@ -10275,6 +10275,10 @@
+@@ -10275,6 +10278,9 @@
    AOI21_X1 g220(.A (n_1079), .B1 (n_1076), .B2 (n_1078), .ZN (n_1088));
    XNOR2_X1 g224(.A (n_605), .B (n_1074), .ZN (n_1089));
    XNOR2_X1 g217(.A (n_1079), .B (n_1082), .ZN (n_1090));
 +
-+  // Fault2Assertion Stage-5 fault TF000295_SA0 run-local driver split
-+  wire f2a_pre_tf000295_sa0;
++  // Fault2Assertion Stage-5 fault TF000295_SA0: run-local stuck-at assignment
 +  assign ready_o = 1'b0;
  endmodule
  

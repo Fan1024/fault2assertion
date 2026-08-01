@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:22:31.681435+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:17:49.988149+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000098_SA1",
   "selection_id": "TS000098",
@@ -186,9 +186,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000098_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000098_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign rdata_q[31] = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_load_store_unit_PULP_OBI0",
@@ -200,6 +204,16 @@
       "connection_start": 1936530,
       "connection_end": 1936541
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_load_store_unit_PULP_OBI0",
+      "temporary_net": "f2a_pre_tf000098_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 666,
+      "driver_use_offset_in_module": 43092,
+      "assignment_offset_in_module": 75221,
+      "assignment": "assign rdata_q[31] = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -208,5 +222,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "75ea42913592138057212a3b920a07bedeef4e629784b798f09759be7b65c5e8"
+  "fault_spec_digest_sha256": "7335dd321c5ae5b73b04670a84c99b43949ee08f89f70b8443560c2d656115ea"
 }

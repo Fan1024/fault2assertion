@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:25:28.241620+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:21:28.499860+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000399_SA1",
   "selection_id": "TS000399",
@@ -522,9 +522,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000399_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000399_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign \\csa_tree_add_228_5_groupi/n_72 = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_mult",
@@ -536,6 +540,16 @@
       "connection_start": 1016284,
       "connection_end": 1016315
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_mult",
+      "temporary_net": "f2a_pre_tf000399_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 393,
+      "driver_use_offset_in_module": 456752,
+      "assignment_offset_in_module": 466341,
+      "assignment": "assign \\csa_tree_add_228_5_groupi/n_72  = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -544,5 +558,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "441b71ea60853ba1f4f39fa578bd98819f9d99d000efc974300eee5482a4a9bb"
+  "fault_spec_digest_sha256": "d5a98e9684fff7e304e2d223d95b487e830109f46982909dff9d8929b762de1c"
 }

@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000570_SA0/fault_netlist.v
-@@ -19781,7 +19781,7 @@
+@@ -10282,6 +10282,9 @@
+      dot_op_a_i, dot_op_b_i, dot_op_c_i, is_clpx_i, clpx_shift_i,
+      clpx_img_i, result_o, multicycle_o, mulh_active_o, ready_o,
+      ex_ready_i);
++  // Fault2Assertion Stage-5 fault TF000570_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000570_sa0;
++
+   input clk, rst_n, enable_i, short_subword_i, is_clpx_i, clpx_img_i,
+        ex_ready_i;
+   input [2:0] operator_i;
+@@ -19781,7 +19784,7 @@
    MUX2_X2 g109(.A (op_b_i[2]), .B (op_b_i[18]), .S (n_1331), .Z
         (n_1335));
    MUX2_X1 g110(.A (op_b_i[3]), .B (op_b_i[19]), .S (n_1331), .Z
@@ -9,13 +19,12 @@
    NAND2_X1 g104(.A1 (\csa_tree_add_111_42_groupi/n_71 ), .A2 (n_1337),
         .ZN (n_1339));
    OR2_X1 g25(.A1 (op_b_i[2]), .A2 (op_b_i[3]), .ZN (n_1340));
-@@ -19820,6 +19820,10 @@
+@@ -19820,6 +19823,9 @@
         .ZN (n_1366));
    XOR2_X1 g210(.A (n_1332), .B (n_1347), .Z (n_1365));
    NAND2_X1 g206(.A1 (n_1365), .A2 (n_1352), .ZN (n_1367));
 +
-+  // Fault2Assertion Stage-5 fault TF000570_SA0 run-local driver split
-+  wire f2a_pre_tf000570_sa0;
++  // Fault2Assertion Stage-5 fault TF000570_SA0: run-local stuck-at assignment
 +  assign n_1336 = 1'b0;
  endmodule
  

@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000455_SA0/fault_netlist.v
-@@ -34744,7 +34744,7 @@
+@@ -34216,6 +34216,9 @@
+      resp_valid_i, fetch_ready_i, fetch_valid_o, fifo_push_o,
+      fifo_pop_o, fifo_flush_o, fifo_flush_but_first_o, fifo_cnt_i,
+      fifo_empty_i);
++  // Fault2Assertion Stage-5 fault TF000455_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000455_sa0;
++
+   input clk, rst_n, req_i, branch_i, hwlp_jump_i, trans_ready_i,
+        resp_valid_i, fetch_ready_i, fifo_empty_i;
+   input [31:0] branch_addr_i, hwlp_target_i;
+@@ -34744,7 +34747,7 @@
    INV_X1 \inc_add_138_56/g517 (.A (trans_addr_q[18]), .ZN
         (\inc_add_138_56/n_0 ));
    OAI211_X1 g2563(.A (n_103), .B (n_142), .C1 (n_101), .C2
@@ -9,13 +19,12 @@
    INV_X1 g265(.A (n_248), .ZN (n_249));
    NOR2_X1 g266(.A1 (cnt_q[1]), .A2 (cnt_q[0]), .ZN (n_248));
    OAI211_X1 g251(.A (n_252), .B (n_253), .C1 (n_254), .C2 (n_255), .ZN
-@@ -34790,6 +34790,10 @@
+@@ -34790,6 +34793,9 @@
    NAND2_X1 g132(.A1 (req_i), .A2 (n_95), .ZN (n_276));
    OAI21_X1 g126(.A (n_270), .B1 (n_263), .B2 (n_276), .ZN
         (trans_valid_o));
 +
-+  // Fault2Assertion Stage-5 fault TF000455_SA0 run-local driver split
-+  wire f2a_pre_tf000455_sa0;
++  // Fault2Assertion Stage-5 fault TF000455_SA0: run-local stuck-at assignment
 +  assign trans_addr_o[2] = 1'b0;
  endmodule
  

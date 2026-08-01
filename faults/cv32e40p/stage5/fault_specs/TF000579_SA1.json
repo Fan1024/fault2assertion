@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:27:27.290850+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:23:52.691271+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000579_SA1",
   "selection_id": "TS000579",
@@ -128,9 +128,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000579_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000579_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign n_149 = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_obi_interface_TRANS_STABLE0",
@@ -142,6 +146,16 @@
       "connection_start": 1812053,
       "connection_end": 1812058
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_obi_interface_TRANS_STABLE0",
+      "temporary_net": "f2a_pre_tf000579_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 437,
+      "driver_use_offset_in_module": 11892,
+      "assignment_offset_in_module": 11998,
+      "assignment": "assign n_149 = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -150,5 +164,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "33839ee3d557704aeb765775d93e85dd579af7c91b6ea7aeee39a1c94ce7e0b8"
+  "fault_spec_digest_sha256": "dd687dcac44e03afe9614bc098251d87b16f8c5ce82f329f5b2913299c8527b7"
 }

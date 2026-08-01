@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:26:37.004095+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:22:52.019706+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000503_SA1",
   "selection_id": "TS000503",
@@ -981,9 +981,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000503_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000503_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign \\srl_300_44/n_0 = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_alu",
@@ -995,6 +999,16 @@
       "connection_start": 558061,
       "connection_end": 558076
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_alu",
+      "temporary_net": "f2a_pre_tf000503_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 357,
+      "driver_use_offset_in_module": 150397,
+      "assignment_offset_in_module": 152073,
+      "assignment": "assign \\srl_300_44/n_0  = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -1003,5 +1017,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "5da06739a01ad7725a56587e86f8acc2c25bb2a2a21dea298211183606293bf3"
+  "fault_spec_digest_sha256": "2a943e3ab6c0c022ce69d0fe80b1144b70bac44448db0faf4effc82d7bbb916b"
 }

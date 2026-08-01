@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:26:12.267136+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:22:22.829056+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000466_SA0",
   "selection_id": "TS000466",
@@ -124,9 +124,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000466_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000466_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign obi_addr_o[6] = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_obi_interface_TRANS_STABLE0",
@@ -138,6 +142,16 @@
       "connection_start": 1802460,
       "connection_end": 1802473
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_obi_interface_TRANS_STABLE0",
+      "temporary_net": "f2a_pre_tf000466_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 437,
+      "driver_use_offset_in_module": 2299,
+      "assignment_offset_in_module": 11990,
+      "assignment": "assign obi_addr_o[6] = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -146,5 +160,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "eb5d9a4ab45daca45eb74459f9037026f0b4855c2ba0b2256bdee72f7e91beb7"
+  "fault_spec_digest_sha256": "25e83982ee6a12d4e732fdc37bc06546696e6920e39f06bb5fde587866c0a762"
 }

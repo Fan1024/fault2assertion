@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000280_SA0/fault_netlist.v
-@@ -34993,7 +34993,7 @@
+@@ -34910,6 +34910,9 @@
+      m_exc_vec_pc_mux_i, u_exc_vec_pc_mux_i, csr_mtvec_init_o,
+      jump_target_id_i, jump_target_ex_i, hwlp_jump_i, hwlp_target_i,
+      halt_if_i, id_ready_i, if_busy_o, perf_imiss_o);
++  // Fault2Assertion Stage-5 fault TF000280_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000280_sa0;
++
+   input clk, rst_n, req_i, instr_gnt_i, instr_rvalid_i, instr_err_i,
+        instr_err_pmp_i, clear_instr_valid_i, pc_set_i, hwlp_jump_i,
+        halt_if_i, id_ready_i;
+@@ -34993,7 +34996,7 @@
    cv32e40p_aligner aligner_i(.clk (clk), .rst_n (rst_n), .fetch_valid_i
         (fetch_valid), .aligner_ready_o (aligner_ready), .if_valid_i
         (if_valid), .fetch_rdata_i (fetch_rdata), .instr_aligned_o
@@ -9,13 +19,12 @@
         ({branch_addr_n[31:1], UNCONNECTED_HIER_Z567}), .branch_i
         (pc_set_i), .pc_o ({pc_if_o[31:1], UNCONNECTED1448}));
    cv32e40p_compressed_decoder_FPU0_ZFINX0 compressed_decoder_i(.instr_i
-@@ -35711,6 +35711,10 @@
+@@ -35711,6 +35714,9 @@
         (n_184));
    XOR2_X1 \add_167_42/g787 (.A (\add_167_42/n_2 ), .B (pc_id_o[12]), .Z
         (n_176));
 +
-+  // Fault2Assertion Stage-5 fault TF000280_SA0 run-local driver split
-+  wire f2a_pre_tf000280_sa0;
++  // Fault2Assertion Stage-5 fault TF000280_SA0: run-local stuck-at assignment
 +  assign instr_valid = 1'b0;
  endmodule
  

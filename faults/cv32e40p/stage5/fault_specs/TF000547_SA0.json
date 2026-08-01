@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:27:07.484572+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:23:28.942003+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000547_SA0",
   "selection_id": "TS000547",
@@ -533,9 +533,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000547_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000547_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign n_27 = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_aligner",
@@ -547,6 +551,16 @@
       "connection_start": 1745493,
       "connection_end": 1745497
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_aligner",
+      "temporary_net": "f2a_pre_tf000547_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 306,
+      "driver_use_offset_in_module": 24085,
+      "assignment_offset_in_module": 41183,
+      "assignment": "assign n_27 = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -555,5 +569,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "295f76bcd6e4088cf9500a01138cdda8cd48d031f79cf5010ea6d53560448ea9"
+  "fault_spec_digest_sha256": "349d0d81d8849ece0e2cca55ab4663925f0e8f13ef6718798f7079325c81b0dd"
 }

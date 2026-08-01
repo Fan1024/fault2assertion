@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000432_SA1/fault_netlist.v
-@@ -19586,7 +19586,7 @@
+@@ -10282,6 +10282,9 @@
+      dot_op_a_i, dot_op_b_i, dot_op_c_i, is_clpx_i, clpx_shift_i,
+      clpx_img_i, result_o, multicycle_o, mulh_active_o, ready_o,
+      ex_ready_i);
++  // Fault2Assertion Stage-5 fault TF000432_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000432_sa1;
++
+   input clk, rst_n, enable_i, short_subword_i, is_clpx_i, clpx_img_i,
+        ex_ready_i;
+   input [2:0] operator_i;
+@@ -19586,7 +19589,7 @@
    XOR2_X1 \csa_tree_add_228_5_groupi/g12969 (.A (op_b_i[17]), .B
         (op_b_i[18]), .Z (\csa_tree_add_228_5_groupi/n_97 ));
    XOR2_X1 \csa_tree_add_228_5_groupi/g12970 (.A (n_1342), .B
@@ -9,13 +19,12 @@
    OAI22_X1 \csa_tree_add_228_5_groupi/g12971 (.A1
         (\csa_tree_add_228_5_groupi/n_51 ), .A2 (op_b_i[29]), .B1
         (\csa_tree_add_228_5_groupi/n_39 ), .B2 (op_b_i[30]), .ZN
-@@ -19820,6 +19820,10 @@
+@@ -19820,6 +19823,9 @@
         .ZN (n_1366));
    XOR2_X1 g210(.A (n_1332), .B (n_1347), .Z (n_1365));
    NAND2_X1 g206(.A1 (n_1365), .A2 (n_1352), .ZN (n_1367));
 +
-+  // Fault2Assertion Stage-5 fault TF000432_SA1 run-local driver split
-+  wire f2a_pre_tf000432_sa1;
++  // Fault2Assertion Stage-5 fault TF000432_SA1: run-local stuck-at assignment
 +  assign \csa_tree_add_228_5_groupi/n_96  = 1'b1;
  endmodule
  

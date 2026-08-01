@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:25:20.096585+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:21:18.573396+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000388_SA0",
   "selection_id": "TS000388",
@@ -145,9 +145,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000388_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000388_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign \\WALLACE_CSA_DUMMY_OP_groupi/n_33 = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_popcnt",
@@ -159,6 +163,16 @@
       "connection_start": 403954,
       "connection_end": 403987
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_popcnt",
+      "temporary_net": "f2a_pre_tf000388_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 146,
+      "driver_use_offset_in_module": 7429,
+      "assignment_offset_in_module": 11326,
+      "assignment": "assign \\WALLACE_CSA_DUMMY_OP_groupi/n_33  = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -167,5 +181,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "d7d3bee63acb8cf46862a14160aa425c1f916ec4d8e63868a69e03b465643fbf"
+  "fault_spec_digest_sha256": "0192b016e6c8741abb4cce585b56353aa3eba162b96ecd7bed9b9714e99989b1"
 }

@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000409_SA0/fault_netlist.v
-@@ -33798,7 +33798,7 @@
+@@ -33720,6 +33720,9 @@
+ module cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2(clk_i, rst_ni,
+      flush_i, flush_but_first_i, testmode_i, full_o, empty_o, cnt_o,
+      data_i, push_i, data_o, pop_i);
++  // Fault2Assertion Stage-5 fault TF000409_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000409_sa0;
++
+   input clk_i, rst_ni, flush_i, flush_but_first_i, testmode_i, push_i,
+        pop_i;
+   input [31:0] data_i;
+@@ -33798,7 +33801,7 @@
    MUX2_X1 g2485(.A (\mem_q[0] [30]), .B (\mem_q[1] [30]), .S
         (read_pointer_q), .Z (data_o[30]));
    MUX2_X1 g2486(.A (\mem_q[0] [1]), .B (\mem_q[1] [1]), .S
@@ -9,13 +19,12 @@
    MUX2_X1 g2487(.A (\mem_q[0] [0]), .B (\mem_q[1] [0]), .S
         (read_pointer_q), .Z (data_o[0]));
    MUX2_X1 g2488(.A (\mem_q[0] [17]), .B (\mem_q[1] [17]), .S
-@@ -34023,6 +34023,10 @@
+@@ -34023,6 +34026,9 @@
    INV_X1 g3733(.A (pop_i), .ZN (n_4));
    INV_X1 g3734(.A (push_i), .ZN (n_3));
    INV_X1 g3735(.A (flush_i), .ZN (n_2));
 +
-+  // Fault2Assertion Stage-5 fault TF000409_SA0 run-local driver split
-+  wire f2a_pre_tf000409_sa0;
++  // Fault2Assertion Stage-5 fault TF000409_SA0: run-local stuck-at assignment
 +  assign data_o[1] = 1'b0;
  endmodule
  

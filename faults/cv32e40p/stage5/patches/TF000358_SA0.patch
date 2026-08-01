@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000358_SA0/fault_netlist.v
-@@ -31642,7 +31642,7 @@
+@@ -29214,6 +29214,9 @@
+      mhpmevent_branch_taken_o, mhpmevent_compressed_o,
+      mhpmevent_jr_stall_o, mhpmevent_imiss_o, mhpmevent_ld_stall_o,
+      mhpmevent_pipe_stall_o, perf_imiss_i, mcounteren_i);
++  // Fault2Assertion Stage-5 fault TF000358_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000358_sa0;
++
+   input clk, clk_ungated_i, rst_n, scan_cg_en_i, fetch_enable_i,
+        instr_valid_i, is_compressed_i, illegal_c_insn_i,
+        branch_decision_i, is_fetch_failed_i, ex_ready_i, wb_ready_i,
+@@ -31642,7 +31645,7 @@
    INV_X1 g28231(.A (n_749), .ZN (alu_operand_a_ex_o[18]));
    INV_X1 g28232(.A (n_734), .ZN (alu_operand_a_ex_o[3]));
    INV_X1 g28234(.A (n_754), .ZN (alu_operand_a_ex_o[23]));
@@ -9,13 +19,12 @@
    INV_X1 g28237(.A (n_697), .ZN (alu_operator_ex_o[4]));
    INV_X1 g28240(.A (n_755), .ZN (alu_operand_a_ex_o[24]));
    INV_X1 g28243(.A (n_738), .ZN (alu_operand_a_ex_o[7]));
-@@ -32489,6 +32489,10 @@
+@@ -32489,6 +32492,9 @@
         (n_1168));
    XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
         (n_1169));
 +
-+  // Fault2Assertion Stage-5 fault TF000358_SA0 run-local driver split
-+  wire f2a_pre_tf000358_sa0;
++  // Fault2Assertion Stage-5 fault TF000358_SA0: run-local stuck-at assignment
 +  assign alu_operator_ex_o[3] = 1'b0;
  endmodule
  

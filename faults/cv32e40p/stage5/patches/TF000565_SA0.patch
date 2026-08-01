@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000565_SA0/fault_netlist.v
-@@ -7177,7 +7177,7 @@
+@@ -7137,6 +7137,9 @@
+ endmodule
+ 
+ module cv32e40p_ff_one(in_i, first_one_o, no_ones_o);
++  // Fault2Assertion Stage-5 fault TF000565_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000565_sa0;
++
+   input [31:0] in_i;
+   output [4:0] first_one_o;
+   output no_ones_o;
+@@ -7177,7 +7180,7 @@
    NOR2_X1 g1238(.A1 (n_25), .A2 (n_20), .ZN (n_67));
    OAI221_X1 g1240(.A (n_50), .B1 (n_56), .B2 (in_i[9]), .C1 (n_22), .C2
         (n_29), .ZN (n_64));
@@ -9,13 +19,12 @@
    OR4_X1 g1242(.A1 (n_17), .A2 (n_51), .A3 (n_48), .A4 (n_43), .ZN
         (n_63));
    OAI211_X1 g1243(.A (n_57), .B (n_49), .C1 (n_28), .C2 (in_i[0]), .ZN
-@@ -7233,6 +7233,10 @@
+@@ -7233,6 +7236,9 @@
    NOR2_X1 g1310(.A1 (in_i[7]), .A2 (in_i[6]), .ZN (n_16));
    INV_X1 g1312(.A (n_39), .ZN (n_13));
    INV_X1 fopt2(.A (n_9), .ZN (n_10));
 +
-+  // Fault2Assertion Stage-5 fault TF000565_SA0 run-local driver split
-+  wire f2a_pre_tf000565_sa0;
++  // Fault2Assertion Stage-5 fault TF000565_SA0: run-local stuck-at assignment
 +  assign first_one_o[4] = 1'b0;
  endmodule
  

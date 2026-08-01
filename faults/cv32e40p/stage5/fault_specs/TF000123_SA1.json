@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:22:46.841308+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:18:09.172050+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000123_SA1",
   "selection_id": "TS000123",
@@ -217,9 +217,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000123_sa1",
+    "temporary_net_declaration": "wire f2a_pre_tf000123_sa1;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign AReg_DP[22] = 1'b1;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_alu_div",
@@ -231,6 +235,16 @@
       "connection_start": 318223,
       "connection_end": 318234
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_alu_div",
+      "temporary_net": "f2a_pre_tf000123_sa1",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 264,
+      "driver_use_offset_in_module": 30703,
+      "assignment_offset_in_module": 104238,
+      "assignment": "assign AReg_DP[22] = 1'b1;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -239,5 +253,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "68d083fc058f70310fb682dcad606071b8f704ba2723fe418bc75fec2ab560ce"
+  "fault_spec_digest_sha256": "2e99ab68766d53437f734d0fc12878e7edf7601fbedfda71f87669fa78fdd46b"
 }

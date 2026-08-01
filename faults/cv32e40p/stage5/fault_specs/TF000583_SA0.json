@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "program_version": "1.0.7",
-  "generated_at_utc": "2026-07-31T00:27:29.416929+00:00",
+  "program_version": "1.0.8",
+  "generated_at_utc": "2026-08-01T09:23:55.240482+00:00",
   "stage": "stage_05_fault_materialization",
   "fault_id": "TF000583_SA0",
   "selection_id": "TS000583",
@@ -132,9 +132,13 @@
     }
   ],
   "modification": {
-    "method": "split_unique_driver_output_then_assign_original_site_net_constant",
+    "method": "declare_temporary_net_before_first_use_then_split_unique_driver_output_and_assign_original_site_constant",
+    "materialization_layout_version": "declaration_before_first_use_v1",
     "temporary_pre_fault_net": "f2a_pre_tf000583_sa0",
+    "temporary_net_declaration": "wire f2a_pre_tf000583_sa0;",
+    "temporary_net_declaration_location": "module_body_start",
     "stuck_at_assignment": "assign n_218 = 1'b0;",
+    "stuck_at_assignment_location": "module_body_end",
     "driver_connection": {
       "kind": "standard_cell_output",
       "module": "cv32e40p_alu_div",
@@ -146,6 +150,16 @@
       "connection_start": 304214,
       "connection_end": 304219
     },
+    "layout_validation": {
+      "materialization_layout_version": "declaration_before_first_use_v1",
+      "module": "cv32e40p_alu_div",
+      "temporary_net": "f2a_pre_tf000583_sa0",
+      "temporary_net_occurrence_count": 2,
+      "declaration_offset_in_module": 264,
+      "driver_use_offset_in_module": 16694,
+      "assignment_offset_in_module": 104244,
+      "assignment": "assign n_218 = 1'b0;"
+    },
     "definition_level_semantics": "the selected module-definition site is modified; every elaborated instance of that module observes the same injected site fault"
   },
   "artifacts": {
@@ -154,5 +168,5 @@
     "faulty_netlist": "temporary_only",
     "vcd": "not_generated_by_default"
   },
-  "fault_spec_digest_sha256": "fc188681740519e36abe8abfd0487c7609272c36469c73409296c70b459ae6e9"
+  "fault_spec_digest_sha256": "f7bc026b38ef2259d1ea789832fc7daf826b6d2104c797f4a5cc0e2cb7650d69"
 }

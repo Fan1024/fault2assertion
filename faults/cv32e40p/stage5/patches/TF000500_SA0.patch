@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000500_SA0/fault_netlist.v
-@@ -29726,7 +29726,7 @@
+@@ -29214,6 +29214,9 @@
+      mhpmevent_branch_taken_o, mhpmevent_compressed_o,
+      mhpmevent_jr_stall_o, mhpmevent_imiss_o, mhpmevent_ld_stall_o,
+      mhpmevent_pipe_stall_o, perf_imiss_i, mcounteren_i);
++  // Fault2Assertion Stage-5 fault TF000500_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000500_sa0;
++
+   input clk, clk_ungated_i, rst_n, scan_cg_en_i, fetch_enable_i,
+        instr_valid_i, is_compressed_i, illegal_c_insn_i,
+        branch_decision_i, is_fetch_failed_i, ex_ready_i, wb_ready_i,
+@@ -29726,7 +29729,7 @@
         (mret_insn_dec), .dret_insn_o (dret_insn_dec), .uret_dec_o
         (uret_dec), .dret_dec_o (dret_dec), .ecall_insn_o
         (ecall_insn_dec), .wfi_o (wfi_insn_dec), .fencei_insn_o
@@ -9,13 +19,12 @@
         (regb_used_dec), .instr_rdata_i ({instr_rdata_i[31:2],
         UNCONNECTED_HIER_Z371, instr_rdata_i[0]}), .illegal_c_insn_i
         (illegal_c_insn_i), .alu_en_o (alu_en), .alu_operator_o
-@@ -32489,6 +32489,10 @@
+@@ -32489,6 +32492,9 @@
         (n_1168));
    XOR2_X1 g297(.A (instr_rdata_i[18]), .B (regfile_waddr_ex_o[3]), .Z
         (n_1169));
 +
-+  // Fault2Assertion Stage-5 fault TF000500_SA0 run-local driver split
-+  wire f2a_pre_tf000500_sa0;
++  // Fault2Assertion Stage-5 fault TF000500_SA0: run-local stuck-at assignment
 +  assign rega_used_dec = 1'b0;
  endmodule
  

@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000469_SA0/fault_netlist.v
-@@ -33328,7 +33328,7 @@
+@@ -33277,6 +33277,9 @@
+ 
+ module cv32e40p_compressed_decoder_FPU0_ZFINX0(instr_i, instr_o,
+      is_compressed_o, illegal_instr_o);
++  // Fault2Assertion Stage-5 fault TF000469_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000469_sa0;
++
+   input [31:0] instr_i;
+   output [31:0] instr_o;
+   output is_compressed_o, illegal_instr_o;
+@@ -33328,7 +33331,7 @@
    NAND4_X1 g9479(.A1 (n_270), .A2 (n_242), .A3 (n_214), .A4 (n_232),
         .ZN (instr_o[27]));
    NAND4_X1 g9480(.A1 (n_279), .A2 (n_209), .A3 (n_199), .A4 (n_191),
@@ -9,13 +19,12 @@
    OR4_X1 g9481(.A1 (n_244), .A2 (n_271), .A3 (n_235), .A4 (n_147), .ZN
         (instr_o[16]));
    OAI211_X1 g9482(.A (n_245), .B (n_250), .C1 (n_208), .C2 (n_81), .ZN
-@@ -33715,6 +33715,10 @@
+@@ -33715,6 +33718,9 @@
    INV_X1 g9778(.A (instr_i[14]), .ZN (n_0));
    AOI21_X1 g2(.A (n_1), .B1 (n_336), .B2 (n_150), .ZN (n_337));
    NAND2_X1 g3(.A1 (n_29), .A2 (n_2), .ZN (n_336));
 +
-+  // Fault2Assertion Stage-5 fault TF000469_SA0 run-local driver split
-+  wire f2a_pre_tf000469_sa0;
++  // Fault2Assertion Stage-5 fault TF000469_SA0: run-local stuck-at assignment
 +  assign instr_o[18] = 1'b0;
  endmodule
  

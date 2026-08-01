@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000355_SA0/fault_netlist.v
-@@ -37489,7 +37489,7 @@
+@@ -37178,6 +37178,9 @@
+      apu_result_i, apu_flags_i, irq_i, irq_ack_o, irq_id_o,
+      debug_req_i, debug_havereset_o, debug_running_o, debug_halted_o,
+      fetch_enable_i, core_sleep_o);
++  // Fault2Assertion Stage-5 fault TF000355_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000355_sa0;
++
+   input clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i, instr_gnt_i,
+        instr_rvalid_i, data_gnt_i, data_rvalid_i, apu_gnt_i,
+        apu_rvalid_i, debug_req_i, fetch_enable_i;
+@@ -37489,7 +37492,7 @@
         UNCONNECTED1898, UNCONNECTED1897}), .instr_gnt_i (instr_gnt_i),
         .instr_rvalid_i (instr_rvalid_i), .instr_rdata_i
         (instr_rdata_i), .instr_valid_id_o (instr_valid_id),
@@ -9,13 +19,12 @@
         .is_compressed_id_o (is_compressed_id), .illegal_c_insn_id_o
         (illegal_c_insn_id), .pc_if_o ({pc_if[31:1], UNCONNECTED1900}),
         .pc_id_o ({pc_id[31:1], UNCONNECTED1901}), .clear_instr_valid_i
-@@ -37557,6 +37557,10 @@
+@@ -37557,6 +37560,9 @@
         (csr_addr[8]));
    AND2_X1 g162(.A1 (alu_operand_b_ex[6]), .A2 (csr_access_ex), .ZN
         (csr_addr[6]));
 +
-+  // Fault2Assertion Stage-5 fault TF000355_SA0 run-local driver split
-+  wire f2a_pre_tf000355_sa0;
++  // Fault2Assertion Stage-5 fault TF000355_SA0: run-local stuck-at assignment
 +  assign instr_rdata_id[24] = 1'b0;
  endmodule
  

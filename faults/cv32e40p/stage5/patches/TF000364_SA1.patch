@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000364_SA1/fault_netlist.v
-@@ -8516,7 +8516,7 @@
+@@ -7475,6 +7475,9 @@
+      operand_b_i, operand_c_i, vector_mode_i, bmask_a_i, bmask_b_i,
+      imm_vec_ext_i, is_clpx_i, is_subrot_i, clpx_shift_i, result_o,
+      comparison_result_o, ready_o, ex_ready_i);
++  // Fault2Assertion Stage-5 fault TF000364_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000364_sa1;
++
+   input clk, rst_n, enable_i, is_clpx_i, is_subrot_i, ex_ready_i;
+   input [6:0] operator_i;
+   input [31:0] operand_a_i, operand_b_i, operand_c_i;
+@@ -8516,7 +8519,7 @@
    NAND2_X1 g27714(.A1 (comparison_result_o), .A2 (n_216), .ZN (n_435));
    NAND2_X1 g27715(.A1 (n_413), .A2 (n_430), .ZN (n_434));
    OAI21_X1 g27716(.A (n_432), .B1 (n_406), .B2 (n_0), .ZN
@@ -9,13 +19,12 @@
    AND2_X2 g27717(.A1 (n_431), .A2 (n_67), .ZN (n_433));
    AOI221_X1 g27718(.A (n_400), .B1 (n_388), .B2 (n_217), .C1 (n_0), .C2
         (n_191), .ZN (n_432));
-@@ -10275,6 +10275,10 @@
+@@ -10275,6 +10278,9 @@
    AOI21_X1 g220(.A (n_1079), .B1 (n_1076), .B2 (n_1078), .ZN (n_1088));
    XNOR2_X1 g224(.A (n_605), .B (n_1074), .ZN (n_1089));
    XNOR2_X1 g217(.A (n_1079), .B (n_1082), .ZN (n_1090));
 +
-+  // Fault2Assertion Stage-5 fault TF000364_SA1 run-local driver split
-+  wire f2a_pre_tf000364_sa1;
++  // Fault2Assertion Stage-5 fault TF000364_SA1: run-local stuck-at assignment
 +  assign comparison_result_o = 1'b1;
  endmodule
  

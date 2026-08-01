@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000119_SA0/fault_netlist.v
-@@ -32707,7 +32707,7 @@
+@@ -32494,6 +32494,9 @@
+ module cv32e40p_aligner(clk, rst_n, fetch_valid_i, aligner_ready_o,
+      if_valid_i, fetch_rdata_i, instr_aligned_o, instr_valid_o,
+      branch_addr_i, branch_i, hwlp_addr_i, hwlp_update_pc_i, pc_o);
++  // Fault2Assertion Stage-5 fault TF000119_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000119_sa0;
++
+   input clk, rst_n, fetch_valid_i, if_valid_i, branch_i,
+        hwlp_update_pc_i;
+   input [31:0] fetch_rdata_i, branch_addr_i, hwlp_addr_i;
+@@ -32707,7 +32710,7 @@
    DFFR_X1 \pc_q_reg[2] (.RN (rst_n), .CK (clk), .D (n_118), .Q
         (pc_o[2]));
    DFFR_X1 \pc_q_reg[3] (.RN (rst_n), .CK (clk), .D (n_94), .Q
@@ -9,13 +19,12 @@
    DFFR_X1 \pc_q_reg[4] (.RN (rst_n), .CK (clk), .D (n_109), .Q
         (pc_o[4]));
    DFFR_X1 \pc_q_reg[5] (.RN (rst_n), .CK (clk), .D (n_92), .Q
-@@ -33273,6 +33273,10 @@
+@@ -33273,6 +33276,9 @@
         (\add_64_26/n_14 ));
    OR2_X1 \add_64_26/g410 (.A1 (pc_o[2]), .A2 (pc_o[3]), .ZN
         (\add_64_26/n_13 ));
 +
-+  // Fault2Assertion Stage-5 fault TF000119_SA0 run-local driver split
-+  wire f2a_pre_tf000119_sa0;
++  // Fault2Assertion Stage-5 fault TF000119_SA0: run-local stuck-at assignment
 +  assign pc_o[3] = 1'b0;
  endmodule
  

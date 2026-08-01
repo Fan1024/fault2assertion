@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000462_SA0/fault_netlist.v
-@@ -34059,7 +34059,7 @@
+@@ -34030,6 +34030,9 @@
+      trans_wdata_i, trans_atop_i, resp_valid_o, resp_rdata_o,
+      resp_err_o, obi_req_o, obi_gnt_i, obi_addr_o, obi_we_o, obi_be_o,
+      obi_wdata_o, obi_atop_o, obi_rdata_i, obi_rvalid_i, obi_err_i);
++  // Fault2Assertion Stage-5 fault TF000462_SA0: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000462_sa0;
++
+   input clk, rst_n, trans_valid_i, trans_we_i, obi_gnt_i, obi_rvalid_i,
+        obi_err_i;
+   input [31:0] trans_addr_i, trans_wdata_i, obi_rdata_i;
+@@ -34059,7 +34062,7 @@
    MUX2_X1 g1233(.A (\gen_no_trans_stable.obi_addr_q [3]), .B
         (trans_addr_i[3]), .S (trans_ready_o), .Z (obi_addr_o[3]));
    MUX2_X1 g1234(.A (\gen_no_trans_stable.obi_addr_q [2]), .B
@@ -9,13 +19,12 @@
    MUX2_X1 g1235(.A (\gen_no_trans_stable.obi_addr_q [31]), .B
         (trans_addr_i[31]), .S (trans_ready_o), .Z (obi_addr_o[31]));
    MUX2_X1 g1236(.A (\gen_no_trans_stable.obi_addr_q [28]), .B
-@@ -34208,6 +34208,10 @@
+@@ -34208,6 +34211,9 @@
    INV_X1 g1264(.A (obi_gnt_i), .ZN (n_0));
    NAND2_X1 g4(.A1 (n_149), .A2 (trans_ready_o), .ZN (obi_req_o));
    INV_X1 g5(.A (trans_valid_i), .ZN (n_149));
 +
-+  // Fault2Assertion Stage-5 fault TF000462_SA0 run-local driver split
-+  wire f2a_pre_tf000462_sa0;
++  // Fault2Assertion Stage-5 fault TF000462_SA0: run-local stuck-at assignment
 +  assign obi_addr_o[2] = 1'b0;
  endmodule
  

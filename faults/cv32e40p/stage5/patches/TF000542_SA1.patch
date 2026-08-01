@@ -1,6 +1,16 @@
 --- a/cv32e40p.mapped.v
 +++ b/run-local/TF000542_SA1/fault_netlist.v
-@@ -37469,7 +37469,7 @@
+@@ -37178,6 +37178,9 @@
+      apu_result_i, apu_flags_i, irq_i, irq_ack_o, irq_id_o,
+      debug_req_i, debug_havereset_o, debug_running_o, debug_halted_o,
+      fetch_enable_i, core_sleep_o);
++  // Fault2Assertion Stage-5 fault TF000542_SA1: temporary pre-fault net declared before first use
++  wire f2a_pre_tf000542_sa1;
++
+   input clk_i, rst_ni, pulp_clock_en_i, scan_cg_en_i, instr_gnt_i,
+        instr_rvalid_i, data_gnt_i, data_rvalid_i, apu_gnt_i,
+        apu_rvalid_i, debug_req_i, fetch_enable_i;
+@@ -37469,7 +37472,7 @@
         .regfile_we_wb_power_i (regfile_we_wb), .regfile_wdata_wb_i
         (lsu_rdata), .regfile_alu_wdata_fw_i (regfile_alu_wdata_fw),
         .mult_multicycle_i (mult_multicycle), .mhpmevent_minstret_o
@@ -9,13 +19,12 @@
         .mhpmevent_store_o (mhpmevent_store), .mhpmevent_jump_o
         (mhpmevent_jump), .mhpmevent_branch_o (mhpmevent_branch),
         .mhpmevent_branch_taken_o (mhpmevent_branch_taken),
-@@ -37557,6 +37557,10 @@
+@@ -37557,6 +37560,9 @@
         (csr_addr[8]));
    AND2_X1 g162(.A1 (alu_operand_b_ex[6]), .A2 (csr_access_ex), .ZN
         (csr_addr[6]));
 +
-+  // Fault2Assertion Stage-5 fault TF000542_SA1 run-local driver split
-+  wire f2a_pre_tf000542_sa1;
++  // Fault2Assertion Stage-5 fault TF000542_SA1: run-local stuck-at assignment
 +  assign mhpmevent_minstret = 1'b1;
  endmodule
  
