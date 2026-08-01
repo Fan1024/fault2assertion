@@ -1,0 +1,127 @@
+{
+  "schema_version": "1.0",
+  "kind": "stage5_phase2_single_fault_smoke_checkpoint",
+  "generated_at_utc": "2026-08-01T06:30:19.616683+00:00",
+  "repository": {
+    "root": "/raid/spring2026/fwu44/research/fault2assertion",
+    "branch": "main",
+    "head_before_checkpoint_commit": "a4b4d2b22a31763784e0d853b6cd833892947479",
+    "origin": "git@github.com:Fan1024/fault2assertion.git"
+  },
+  "fault_id": "TF000002_SA0",
+  "gate_status": {
+    "G1": "PASS",
+    "G2": "PASS",
+    "G3": "PASS",
+    "G4": "PASS",
+    "G5": "PASS"
+  },
+  "frozen_results": {
+    "natural_architectural_outcome": "CENSORED",
+    "observe_runner_status": "DIAGNOSTIC_TIMEOUT",
+    "diagnostic_quarantine_runner_status": "DIAGNOSTIC_TIMEOUT",
+    "validated_capability": "NON_CONTINUABLE",
+    "capability_scope": "CURRENT_REGISTERED_QUARANTINE_POLICY",
+    "exact_injection_module": "cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1",
+    "exact_injection_signal": "branch_decision",
+    "first_observable_detector_cycle": 58,
+    "first_observable_detector_time": "780ns",
+    "earliest_local_divergence_status": "NOT_COMPUTED_IN_MINIMAL_G5",
+    "sva_generated": false
+  },
+  "source_hashes": {
+    "scripts/fault_characterization/run_stage5_phase2_g2.sh": {
+      "sha256": "6a2f0ccf231c117e95c42999f7dc2ca371e0a6ca3201cba806645e7970077c17",
+      "bytes": 9881
+    },
+    "scripts/fault_characterization/stage5_phase2_g2_validate.py": {
+      "sha256": "d9bb8fbba5c46af615377b1607db0e37e0cbbd83456f34f3e7fad1a15e03ae26",
+      "bytes": 15912
+    },
+    "scripts/fault_characterization/run_stage5_phase2_g3.sh": {
+      "sha256": "39465dac856e58a3098d16710fd533ea689b4f5dcdc3ffd00268b8a87aa5c327",
+      "bytes": 7910
+    },
+    "scripts/fault_characterization/stage5_phase2_g3_validate.py": {
+      "sha256": "3e857f358a5e7eeda2fd0d00b33c01e4c14bb57f6f169c0faf0edc78265d331d",
+      "bytes": 16001
+    },
+    "scripts/fault_characterization/run_stage5_phase2_g4.sh": {
+      "sha256": "d875a5a452fb1280b8c98118a774c1098e84cb8309a500beaea31ffc955f7f6e",
+      "bytes": 8596
+    },
+    "scripts/fault_characterization/stage5_phase2_g4_validate.py": {
+      "sha256": "15deceb5296247df56d6f45a3a1de618416252eba631693b877ee8d9a7328c37",
+      "bytes": 16899
+    },
+    "scripts/fault_characterization/run_stage5_phase2_g5.sh": {
+      "sha256": "e715ea585d3d30ed3c46dc688a41efda080549f8fe32c1ff10e6ebcc97a1c704",
+      "bytes": 5878
+    },
+    "scripts/fault_characterization/stage5_phase2_g5_build.py": {
+      "sha256": "3700abc5a9fa21d826f9f7f65ce0ae4105fd835f4616a71cb5d87a977074774c",
+      "bytes": 21407
+    },
+    "scripts/fault_characterization/stage5_phase2_g5_validate.py": {
+      "sha256": "35656d7d6b6bc2085d7bd0129d2c9f1d7c5a5550e5e31dd83320319f7f3d16c0",
+      "bytes": 13248
+    },
+    "scripts/fault_characterization/stage5_phase2_modes.py": {
+      "sha256": "ad58222abd9252fc7c08d3db19f3e4dd3ee141613fc246ddc92ab4c5bbe6467b",
+      "bytes": 47862
+    },
+    "scripts/fault_characterization/stage5_verdict.py": {
+      "sha256": "52b3b367cbba63e05ce022b0ce2a88e2aeef7a15ddac7a295c25e8152bcde892",
+      "bytes": 22782
+    },
+    "scripts/lib/xrun_stage5_common.sh": {
+      "sha256": "23fbf3ff7b12bf28f44d66d753a1a5a6c90dd7aa600edd3699068f0b8d3c8eed",
+      "bytes": 30526
+    },
+    "platform/cv32e40p/stage5_phase2_execution_policy_v1.json": {
+      "sha256": "4f5b36a5ba3056e3e9db912494b148de47d938c4be83a9071624f0caf97eb479",
+      "bytes": 5562
+    },
+    "platform/cv32e40p/stage5_assertion_policy_v1.json": {
+      "sha256": "825f9bbf2aa6be8dd272ac1dc76110fe2a96fafcc181124cacd33ca5b21ebb37",
+      "bytes": 1815
+    }
+  },
+  "evidence_hashes": {
+    "g1_report": {
+      "path": "runs/stage5_dev/phase2_v1/g1_mode_infrastructure/phase2_g1_validation.json",
+      "sha256": "51e6fb9e3ec6dafbabfccd8d16918df01f620b2d20a151ed4f33b32e1bf5c901",
+      "bytes": 17363
+    },
+    "g2_report": {
+      "path": "runs/stage5_dev/phase2_v1/g2_native_equivalence/phase2_g2_validation.json",
+      "sha256": "23ae9d197cea673edbd203b443ad216d29e37bae5fda4c1e6938c545ecc7f78b",
+      "bytes": 2332
+    },
+    "g3_report": {
+      "path": "runs/stage5_dev/phase2_v1/g3_observe/phase2_g3_validation.json",
+      "sha256": "3320e718ee569b2c9b0dc657830325465ac63158f7043f63f5a410577b19e42c",
+      "bytes": 3192
+    },
+    "g4_report": {
+      "path": "runs/stage5_dev/phase2_v1/g4_diagnostic_quarantine/phase2_g4_validation.json",
+      "sha256": "ae43670762dd6d00022ae19da2c55c23ac038523230f8205f62334738f4371d2",
+      "bytes": 3350
+    },
+    "oracle": {
+      "path": "runs/stage5_dev/phase2_v1/g5_oracle/oracles/TF000002_SA0.json",
+      "sha256": "b22db80431c6564d2a96bda979148e5b9cb85d3e7c155d0d2cc5904949bca7ab",
+      "bytes": 22376
+    },
+    "prompt_context": {
+      "path": "runs/stage5_dev/phase2_v1/g5_oracle/prompt_context/TF000002_SA0.json",
+      "sha256": "e0f213971be228fe3ff4241b0b9f6a00a356a70e6cff697d48f321d53e9db844",
+      "bytes": 1668
+    },
+    "g5_validation": {
+      "path": "runs/stage5_dev/phase2_v1/g5_oracle/reports/TF000002_SA0_validation.json",
+      "sha256": "c4db728818b8839695c5c675cc456893308b4654d8716dc631dcefcf9112e56f",
+      "bytes": 1059
+    }
+  }
+}

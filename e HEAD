@@ -1,0 +1,29 @@
+[33mtag stage5-phase2-g1-pass[m
+Tagger:     Fan Wu <fwu44@umber.ece.jhu.edu>
+TaggerDate: Fri Jul 31 19:03:25 2026 -0400
+
+Stage5 Phase2-G1 PASS
+
+TF000002_SA0 completed all four compile/elaboration cases.
+
+NATIVE preserves the original mm_ram.sv assertion and fatal behavior.
+
+OBSERVE and QUARANTINE use a run-local overlay with the original out_of_bounds_write assertion removed and an equivalent procedural first-event detector.
+
+Diagnostic runtime, cross-mode event equivalence, continuation behavior, and final fault-effect classification remain for G2-G5.
+
+[33mcommit a4b4d2b22a31763784e0d853b6cd833892947479[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;33mtag: [m[1;33mstage5-phase2-g1-pass[m[33m)[m
+Author:     Fan Wu <fwu44@umber.ece.jhu.edu>
+AuthorDate: Fri Jul 31 19:03:06 2026 -0400
+Commit:     Fan Wu <fwu44@umber.ece.jhu.edu>
+CommitDate: Fri Jul 31 19:03:06 2026 -0400
+
+    Freeze Stage5 Phase2 G1 diagnostic infrastructure
+    
+    Complete the Phase2-G1 compile/elaboration gate for TF000002_SA0.
+    
+    Native runs retain the original mm_ram.sv and its pre-existing out_of_bounds_write assertion unchanged.
+    
+    Diagnostic runs use a run-local overlay that removes the original fatal assertion block and records the equivalent first violation through a procedural detector. No replacement SVA or AI-generated assertion is introduced.
+    
+    The G1 driver now collects all four golden/fault Native, Observe, and Quarantine compile cases before validation. All four cases pass, no diagnostic runtime is executed, no VCD is generated, and the external CV32E40P source remains unmodified.
