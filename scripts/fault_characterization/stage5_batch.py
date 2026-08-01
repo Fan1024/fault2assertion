@@ -576,22 +576,45 @@ def collect_strings(value: Any) -> Iterable[str]:
 def match_registered_detector(
     registry: Mapping[str, Any], native_run: Path
 ) -> tuple[str, dict[str, Any] | None]:
+    """Resolve routing only from the verdict-selected detector identity.
+
+    Searching an entire compile/runtime log for detector names is unsound: a
+    detector name can appear in source listings even when a different detector
+    caused termination. The verdict engine already performs fail-closed
+    signature resolution, so batch routing must consume that exact result.
+    """
+
     detectors = registry.get("detectors")
     if not isinstance(detectors, list):
         raise BatchError("assertion registry has no detectors array")
+
     result = load_json(native_run / "result.json", "Native result")
-    text_parts = list(collect_strings(result.get("raw_facts", {})))
-    log_path = native_run / "xrun.log"
-    if log_path.is_file():
-        text_parts.append(log_path.read_text(encoding="utf-8", errors="replace"))
-    haystack = "\n".join(text_parts)
+    raw = result.get("raw_facts")
+    if not isinstance(raw, dict):
+        return "BLOCKED_UNREGISTERED_DETECTOR", None
+
+    resolution = raw.get("signature_resolution")
+    if not isinstance(resolution, dict):
+        return "BLOCKED_UNREGISTERED_DETECTOR", None
+
+    selected = resolution.get("selected_terminal")
+    if not isinstance(selected, dict):
+        return "BLOCKED_UNREGISTERED_DETECTOR", None
+    if selected.get("kind") != "REGISTERED_DETECTOR_TERMINATION":
+        return "BLOCKED_UNREGISTERED_DETECTOR", None
+
+    evidence = selected.get("evidence")
+    if not isinstance(evidence, dict):
+        return "BLOCKED_UNREGISTERED_DETECTOR", None
+
+    detector_id = evidence.get("detector_id")
+    if not isinstance(detector_id, str) or not detector_id:
+        return "BLOCKED_UNREGISTERED_DETECTOR", None
 
     matches = [
         dict(item)
         for item in detectors
-        if isinstance(item, dict)
-        and isinstance(item.get("assertion_leaf_name"), str)
-        and item["assertion_leaf_name"] in haystack
+        if isinstance(item, dict) and item.get("detector_id") == detector_id
     ]
     if not matches:
         return "BLOCKED_UNREGISTERED_DETECTOR", None
@@ -599,16 +622,20 @@ def match_registered_detector(
         return "BLOCKED_AMBIGUOUS_DETECTOR", None
 
     detector = matches[0]
-    source_suffix = str(detector.get("source_suffix", ""))
-    quarantine_action = detector.get("quarantine_action")
     supported = (
-        source_suffix.endswith("/verification/shared/tb/mm_ram.sv")
-        and quarantine_action == "ACKNOWLEDGE_AND_DROP_WRITE"
+        detector.get("diagnostic_adapter") == "MM_RAM_STAGE5_OVERLAY_V2"
+        and detector.get("diagnostic_modes_supported")
+        == ["observe", "diagnostic_quarantine"]
+        and detector.get("quarantine_action")
+        in {
+            "ACKNOWLEDGE_AND_DROP_WRITE",
+            "RETURN_ZERO_AND_CONTINUE",
+        }
     )
     if not supported:
         return "BLOCKED_UNSUPPORTED_REGISTERED_DETECTOR", detector
-    return "DIAGNOSTIC_THREE_MODE", detector
 
+    return "DIAGNOSTIC_THREE_MODE", detector
 
 def create_routing(
     *,

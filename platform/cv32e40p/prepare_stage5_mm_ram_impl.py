@@ -1,24 +1,18 @@
 #!/usr/bin/env python3
 """Generate one run-local Stage-5 diagnostic mm_ram overlay.
 
-The immutable CV32E40P ``mm_ram.sv`` source is never modified.
+Native execution compiles the immutable original ``mm_ram.sv``. Diagnostic
+OBSERVE and QUARANTINE executions compile a generated overlay that:
 
-Native execution does not use this file.  It compiles the original
-``mm_ram.sv`` and therefore preserves the original ``out_of_bounds_write``
-concurrent assertion and its ``$fatal`` action exactly.
+* preserves the registered out-of-bounds write detector as a procedural,
+  first-event recorder;
+* suppresses the procedural out-of-bounds read ``$fatal`` and records the same
+  read boundary;
+* keeps the data path deterministic: an illegal read returns the existing
+  ``data_rdata_mux`` default value of zero;
+* applies the existing write quarantine action only in QUARANTINE mode.
 
-For diagnostic OBSERVE and QUARANTINE execution, this generator creates one
-run-local overlay by performing three exact, fail-closed substitutions:
-
-1. insert one mode/configuration subsystem, one first-event state owner, and
-   one structured event writer;
-2. add quarantine behavior only to the existing out-of-bounds write branch;
-3. remove the original ``out_of_bounds_write`` assertion block and replace it
-   with a same-clock procedural first-event detector using the same address
-   legality boundary.
-
-The diagnostic overlay contains no replacement SVA for this detector.  It is
-not an AI-generated assertion and is never used as the native baseline.
+The external CV32E40P source is never modified.
 """
 
 from __future__ import annotations
@@ -30,7 +24,7 @@ import sys
 from pathlib import Path
 from typing import Any, Sequence
 
-PROGRAM_VERSION = "3.0.0"
+PROGRAM_VERSION = "4.1.0"
 MARKER = "Fault2Assertion Stage-5 diagnostic detector adapter"
 FIRST_EVENT_POLICY = "FIRST_VIOLATION_ONLY"
 
@@ -43,8 +37,8 @@ WRITE_BRANCH_OLD = """        end else begin
 
 WRITE_BRANCH_NEW = """        end else begin
           // out of bounds write
-          // Diagnostic quarantine acknowledges and drops only this unsafe
-          // transaction.  Observe preserves the original no-grant behavior.
+          // OBSERVE preserves the existing no-grant behavior. QUARANTINE
+          // acknowledges and drops only this unsafe write transaction.
           if (f2a_assert_mode_q == F2A_ASSERT_DIAGNOSTIC_QUARANTINE) begin
             perip_gnt   = 1'b1;
             transaction = T_PER;
@@ -71,6 +65,18 @@ ASSERTION_OLD = """`ifndef VERILATOR
 `endif
 """
 
+READ_FATAL_OLD = """    end else if (transaction_q == T_ERR) begin
+      $display("out of bounds read from %08x", data_addr_i);
+      $fatal(2);
+    end
+"""
+
+READ_FATAL_NEW = """    end else if (transaction_q == T_ERR) begin
+      // The original read_mux $fatal is intentionally suppressed only in the
+      // diagnostic overlay. data_rdata_mux retains its default value of zero.
+    end
+"""
+
 DECLARATIONS = r'''
 
   // Fault2Assertion Stage-5 diagnostic detector adapter.
@@ -93,11 +99,11 @@ DECLARATIONS = r'''
   logic f2a_write_address_allowed;
   logic f2a_oob_write_violation;
   logic f2a_oob_write_first_event;
+  logic f2a_oob_read_violation;
+  logic f2a_oob_read_first_event;
 
   always_comb begin : f2a_assertion_predicates
-    // This is the same address-allow list used by the removed pre-existing
-    // out_of_bounds_write assertion.  Unknown addresses are treated as not
-    // demonstrably allowed and therefore remain fail-closed for diagnostics.
+    // Same address allow-list used by the removed out_of_bounds_write SVA.
     f2a_write_address_allowed =
          !$isunknown(data_addr_i)
       && (data_addr_i < 2 ** RAM_ADDR_WIDTH
@@ -114,8 +120,20 @@ DECLARATIONS = r'''
     f2a_oob_write_violation =
       data_req_i && data_we_i && !f2a_write_address_allowed;
 
+    // transaction == T_ERR is the decode boundary that will be registered
+    // into transaction_q and enter read_mux's original fatal branch one cycle
+    // later. Sampling here preserves the offending request address.
+    f2a_oob_read_violation =
+      data_req_i && !data_we_i && (transaction == T_ERR);
+
+    // One global first-event policy. Write receives priority only if both
+    // predicates are simultaneously true.
     f2a_oob_write_first_event =
       f2a_oob_write_violation && !f2a_detector_seen_q;
+    f2a_oob_read_first_event =
+      f2a_oob_read_violation
+      && !f2a_oob_write_violation
+      && !f2a_detector_seen_q;
   end
 
   initial begin : f2a_assertion_mode_init
@@ -182,7 +200,7 @@ DECLARATIONS = r'''
     end else begin
       f2a_cycle_q <= f2a_cycle_q + 1;
 
-      if (f2a_oob_write_first_event) begin
+      if (f2a_oob_write_first_event || f2a_oob_read_first_event) begin
         f2a_assert_event_count_q <= f2a_assert_event_count_q + 1;
         f2a_detector_seen_q <= 1'b1;
       end
@@ -192,17 +210,20 @@ DECLARATIONS = r'''
   task automatic f2a_emit_out_of_bounds_write_event(
     input string action_name
   );
-    $fdisplay(
+    // Keep the final field separator in a separate write. Some Xcelium
+    // versions concatenate the string argument directly after %x when the
+    // final tab and %s share the same formatted output call.
+    $fwrite(
       f2a_assert_event_fd,
-      "A\t%0d\t%0d\t%0t\tPREEXISTING_TB_ASSERTION\tout_of_bounds_write\tILLEGAL_MEMORY_WRITE\t%08x\t%08x\t%01x\t%s",
+      "A\t%0d\t%0d\t%0t\tPREEXISTING_TB_ASSERTION\tout_of_bounds_write\tILLEGAL_MEMORY_WRITE\t%08x\t%08x\t%01x",
       f2a_assert_event_count_q,
       f2a_cycle_q,
       $time,
       data_addr_i,
       data_wdata_i,
-      data_be_i,
-      action_name
+      data_be_i
     );
+    $fdisplay(f2a_assert_event_fd, "\t%s", action_name);
     $fflush(f2a_assert_event_fd);
 
     $display(
@@ -215,15 +236,39 @@ DECLARATIONS = r'''
       data_be_i
     );
   endtask
+
+  task automatic f2a_emit_out_of_bounds_read_event(
+    input string action_name
+  );
+    // Write the action field separately so the TSV delimiter is explicit
+    // and cannot be absorbed into the preceding hexadecimal conversion.
+    $fwrite(
+      f2a_assert_event_fd,
+      "A\t%0d\t%0d\t%0t\tPREEXISTING_TB_FATAL\tout_of_bounds_read\tILLEGAL_MEMORY_READ\t%08x\t%08x\t%01x",
+      f2a_assert_event_count_q,
+      f2a_cycle_q,
+      $time,
+      data_addr_i,
+      data_wdata_i,
+      data_be_i
+    );
+    $fdisplay(f2a_assert_event_fd, "\t%s", action_name);
+    $fflush(f2a_assert_event_fd);
+
+    $display(
+      "F2A_ASSERT_EVENT\t%s\tout_of_bounds_read\tcycle=%0d\ttime=%0t\taddr=%08x",
+      action_name,
+      f2a_cycle_q,
+      $time,
+      data_addr_i
+    );
+  endtask
 '''
 
 DIAGNOSTIC_DETECTOR_BLOCK = r'''`ifndef VERILATOR
-  // The original out_of_bounds_write concurrent assertion is intentionally
-  // absent from this diagnostic overlay.  Native runs compile the immutable
-  // original mm_ram.sv and preserve that assertion and its $fatal action.
-  //
-  // This procedural surrogate samples the same request/address boundary at
-  // posedge clk_i, honors reset, and emits only the first violation event.
+  // Native runs retain the original out_of_bounds_write SVA and read_mux
+  // fatal. The diagnostic overlay records the first registered detector event
+  // and suppresses only its terminating action.
   always @(posedge clk_i) begin : f2a_diagnostic_out_of_bounds_write
     if (rst_ni && f2a_oob_write_first_event) begin
       if (f2a_assert_mode_q == F2A_ASSERT_OBSERVE) begin
@@ -232,6 +277,20 @@ DIAGNOSTIC_DETECTOR_BLOCK = r'''`ifndef VERILATOR
         f2a_assert_mode_q == F2A_ASSERT_DIAGNOSTIC_QUARANTINE
       ) begin
         f2a_emit_out_of_bounds_write_event("RECORD_AND_QUARANTINE");
+      end else begin
+        $fatal(2, "invalid diagnostic assertion mode %0d", f2a_assert_mode_q);
+      end
+    end
+  end
+
+  always @(posedge clk_i) begin : f2a_diagnostic_out_of_bounds_read
+    if (rst_ni && f2a_oob_read_first_event) begin
+      if (f2a_assert_mode_q == F2A_ASSERT_OBSERVE) begin
+        f2a_emit_out_of_bounds_read_event("RECORD_ONLY");
+      end else if (
+        f2a_assert_mode_q == F2A_ASSERT_DIAGNOSTIC_QUARANTINE
+      ) begin
+        f2a_emit_out_of_bounds_read_event("RECORD_AND_RETURN_ZERO");
       end else begin
         $fatal(2, "invalid diagnostic assertion mode %0d", f2a_assert_mode_q);
       end
@@ -264,42 +323,50 @@ def validate_policy(policy: dict[str, Any]) -> None:
     if policy.get("schema_version") != "1.0":
         raise PreparationError("unsupported assertion policy schema")
 
-    expected_modes = [
-        "native",
-        "observe",
-        "diagnostic_quarantine",
-    ]
+    expected_modes = ["native", "observe", "diagnostic_quarantine"]
     if policy.get("supported_modes") != expected_modes:
         raise PreparationError(
             f"assertion policy modes must be exactly {expected_modes}"
         )
 
     mode_contracts = policy.get("mode_contracts")
-    if (
-        not isinstance(mode_contracts, dict)
-        or set(mode_contracts) != set(expected_modes)
+    if not isinstance(mode_contracts, dict) or set(mode_contracts) != set(
+        expected_modes
     ):
         raise PreparationError("assertion policy mode contracts are incomplete")
 
     registry = policy.get("detectors")
-    if not isinstance(registry, list) or len(registry) != 1:
+    if not isinstance(registry, list):
+        raise PreparationError("assertion policy detectors must be an array")
+
+    by_id = {
+        item.get("detector_id"): item
+        for item in registry
+        if isinstance(item, dict)
+    }
+    expected = {
+        "cv32e40p.mm_ram.out_of_bounds_write": (
+            "ILLEGAL_MEMORY_WRITE",
+            "ACKNOWLEDGE_AND_DROP_WRITE",
+        ),
+        "cv32e40p.mm_ram.out_of_bounds_read": (
+            "ILLEGAL_MEMORY_READ",
+            "RETURN_ZERO_AND_CONTINUE",
+        ),
+    }
+    if set(by_id) != set(expected):
         raise PreparationError(
-            "Phase-2 policy must register exactly one detector"
+            "Phase-2 policy must register exactly the mm_ram read and write detectors"
         )
 
-    detector = registry[0]
-    if (
-        detector.get("detector_id")
-        != "cv32e40p.mm_ram.out_of_bounds_write"
-    ):
-        raise PreparationError("unexpected detector registry entry")
-    if detector.get("effect_hint") != "ILLEGAL_MEMORY_WRITE":
-        raise PreparationError("detector effect hint mismatch")
-    if (
-        detector.get("quarantine_action")
-        != "ACKNOWLEDGE_AND_DROP_WRITE"
-    ):
-        raise PreparationError("detector quarantine action mismatch")
+    for detector_id, (effect, action) in expected.items():
+        detector = by_id[detector_id]
+        if detector.get("effect_hint") != effect:
+            raise PreparationError(f"{detector_id} effect hint mismatch")
+        if detector.get("quarantine_action") != action:
+            raise PreparationError(f"{detector_id} quarantine action mismatch")
+        if detector.get("diagnostic_adapter") != "MM_RAM_STAGE5_OVERLAY_V2":
+            raise PreparationError(f"{detector_id} diagnostic adapter mismatch")
 
 
 def validate_output(text: str) -> dict[str, Any]:
@@ -310,119 +377,79 @@ def validate_output(text: str) -> dict[str, Any]:
         "mode owner": "begin : f2a_assertion_mode_init",
         "state owner": "begin : f2a_assertion_state",
         "predicate owner": "begin : f2a_assertion_predicates",
-        "procedural detector":
-            "begin : f2a_diagnostic_out_of_bounds_write",
-        "first-event predicate": "f2a_oob_write_first_event",
+        "write detector": "begin : f2a_diagnostic_out_of_bounds_write",
+        "read detector": "begin : f2a_diagnostic_out_of_bounds_read",
+        "write first-event predicate": "f2a_oob_write_first_event",
+        "read first-event predicate": "f2a_oob_read_first_event",
         "first-event state": "f2a_detector_seen_q",
         "structured header": "H\\tF2A_ASSERT_EVENTS",
-        "structured event": "A\\t%0d\\t%0d",
-        "effect hint": "ILLEGAL_MEMORY_WRITE",
-        "quarantine grant": "perip_gnt   = 1'b1;",
-        "quarantine transaction": "transaction = T_PER;",
-        "observe action": "RECORD_ONLY",
-        "quarantine action": "RECORD_AND_QUARANTINE",
-        "surrogate marker":
-            "F2A_DETECTOR_IMPLEMENTATION\\tPROCEDURAL_FIRST_EVENT",
+        "explicit TSV action separator":
+            '$fdisplay(f2a_assert_event_fd, "\\t%s", action_name);',
+        "write effect": "ILLEGAL_MEMORY_WRITE",
+        "read effect": "ILLEGAL_MEMORY_READ",
+        "write quarantine grant": "perip_gnt   = 1'b1;",
+        "write quarantine transaction": "transaction = T_PER;",
+        "read quarantine action": "RECORD_AND_RETURN_ZERO",
+        "surrogate marker": "F2A_DETECTOR_IMPLEMENTATION\\tPROCEDURAL_FIRST_EVENT",
     }
-
-    missing = [
-        label
-        for label, token in required.items()
-        if token not in text
-    ]
+    missing = [label for label, token in required.items() if token not in text]
     if missing:
-        raise PreparationError(
-            "prepared source missing: " + ", ".join(missing)
-        )
+        raise PreparationError("prepared source missing: " + ", ".join(missing))
 
-    if ASSERTION_OLD in text:
-        raise PreparationError("original assertion block remains verbatim")
-    if "out_of_bounds_write :" in text:
-        raise PreparationError(
-            "diagnostic overlay must not contain the original named assertion"
-        )
-    if "assert property" in DIAGNOSTIC_DETECTOR_BLOCK:
-        raise PreparationError(
-            "diagnostic detector block unexpectedly contains SVA"
-        )
+    if ASSERTION_OLD in text or "out_of_bounds_write :" in text:
+        raise PreparationError("original out_of_bounds_write assertion remains")
+    if READ_FATAL_OLD in text:
+        raise PreparationError("original out-of-bounds read fatal remains")
     if text.count(MARKER) != 1:
-        raise PreparationError(
-            "prepared source must contain one diagnostic adapter marker"
-        )
+        raise PreparationError("prepared source must contain one adapter marker")
     if text.count('"f2a_assert_mode=%s"') != 1:
-        raise PreparationError(
-            "prepared source must contain one mode reader"
-        )
+        raise PreparationError("prepared source must contain one mode reader")
     if text.count("begin : f2a_assertion_state") != 1:
-        raise PreparationError(
-            "prepared source must contain one state owner"
-        )
+        raise PreparationError("prepared source must contain one state owner")
     if text.count("begin : f2a_diagnostic_out_of_bounds_write") != 1:
-        raise PreparationError(
-            "prepared source must contain one procedural detector"
-        )
-    if (
-        text.count(
-            "task automatic f2a_emit_out_of_bounds_write_event"
-        )
-        != 1
-    ):
-        raise PreparationError(
-            "prepared source must contain one event task"
-        )
+        raise PreparationError("prepared source must contain one write detector")
+    if text.count("begin : f2a_diagnostic_out_of_bounds_read") != 1:
+        raise PreparationError("prepared source must contain one read detector")
+    if text.count("task automatic f2a_emit_out_of_bounds_write_event") != 1:
+        raise PreparationError("prepared source must contain one write event task")
+    if text.count("task automatic f2a_emit_out_of_bounds_read_event") != 1:
+        raise PreparationError("prepared source must contain one read event task")
 
     return {
         "adapter_marker_count": 1,
-        "supported_modes": [
-            "native",
-            "observe",
-            "diagnostic_quarantine",
-        ],
-        "detector": "out_of_bounds_write",
-        "original_assertion_block_removed": True,
-        "diagnostic_detector_implementation":
-            "PROCEDURAL_FIRST_EVENT",
+        "supported_modes": ["native", "observe", "diagnostic_quarantine"],
+        "detectors": ["out_of_bounds_write", "out_of_bounds_read"],
+        "original_write_assertion_removed": True,
+        "original_read_fatal_removed": True,
+        "diagnostic_detector_implementation": "PROCEDURAL_FIRST_EVENT",
         "first_event_policy": FIRST_EVENT_POLICY,
         "mode_reader_count": 1,
         "state_owner_count": 1,
-        "procedural_detector_count": 1,
-        "event_task_count": 1,
-        "quarantine_action": "ACKNOWLEDGE_AND_DROP_WRITE",
+        "procedural_detector_count": 2,
+        "event_task_count": 2,
+        "write_quarantine_action": "ACKNOWLEDGE_AND_DROP_WRITE",
+        "read_quarantine_action": "RETURN_ZERO_AND_CONTINUE",
         "source_profile": "diagnostic",
     }
 
 
-def build_overlay(
-    source: Path,
-    policy_path: Path,
-) -> tuple[str, dict[str, Any]]:
+def build_overlay(source: Path, policy_path: Path) -> tuple[str, dict[str, Any]]:
     if not source.is_file() or source.stat().st_size == 0:
         raise PreparationError(f"source not found or empty: {source}")
-    if (
-        not policy_path.is_file()
-        or policy_path.stat().st_size == 0
-    ):
-        raise PreparationError(
-            f"assertion policy not found or empty: {policy_path}"
-        )
+    if not policy_path.is_file() or policy_path.stat().st_size == 0:
+        raise PreparationError(f"assertion policy not found or empty: {policy_path}")
 
     try:
         policy = json.loads(policy_path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
-        raise PreparationError(
-            f"invalid assertion policy: {exc}"
-        ) from exc
+        raise PreparationError(f"invalid assertion policy: {exc}") from exc
     if not isinstance(policy, dict):
-        raise PreparationError(
-            "assertion policy must contain one JSON object"
-        )
+        raise PreparationError("assertion policy must contain one JSON object")
     validate_policy(policy)
 
     text = source.read_text(encoding="utf-8", errors="strict")
     if MARKER in text:
-        raise PreparationError(
-            "source already contains the Stage-5 diagnostic adapter"
-        )
+        raise PreparationError("source already contains the diagnostic adapter")
 
     text = replace_exact(
         text,
@@ -430,21 +457,21 @@ def build_overlay(
         DECLARATION_ANCHOR + DECLARATIONS,
         "declaration anchor",
     )
-    text = replace_exact(
-        text,
-        WRITE_BRANCH_OLD,
-        WRITE_BRANCH_NEW,
-        "write branch",
-    )
+    text = replace_exact(text, WRITE_BRANCH_OLD, WRITE_BRANCH_NEW, "write branch")
     text = replace_exact(
         text,
         ASSERTION_OLD,
         DIAGNOSTIC_DETECTOR_BLOCK,
         "original out_of_bounds_write assertion block",
     )
+    text = replace_exact(
+        text,
+        READ_FATAL_OLD,
+        READ_FATAL_NEW,
+        "out-of-bounds read fatal branch",
+    )
 
-    validation = validate_output(text)
-    return text, validation
+    return text, validate_output(text)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -454,9 +481,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--policy", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument(
-        "--version",
-        action="version",
-        version=f"%(prog)s {PROGRAM_VERSION}",
+        "--version", action="version", version=f"%(prog)s {PROGRAM_VERSION}"
     )
     args = parser.parse_args(argv)
 
@@ -466,20 +491,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     policy_path = args.policy.expanduser().resolve()
 
     if output == source:
-        raise PreparationError(
-            "run-local output must not overwrite source"
-        )
+        raise PreparationError("run-local output must not overwrite source")
     if output.exists():
-        raise PreparationError(
-            f"refusing to overwrite existing output: {output}"
-        )
+        raise PreparationError(f"refusing to overwrite existing output: {output}")
     if report.exists():
-        raise PreparationError(
-            f"refusing to overwrite existing report: {report}"
-        )
+        raise PreparationError(f"refusing to overwrite existing report: {report}")
 
     text, validation = build_overlay(source, policy_path)
-
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(text, encoding="utf-8")
 
@@ -496,31 +514,29 @@ def main(argv: Sequence[str] | None = None) -> int:
         "output_sha256": sha256_file(output),
         "transformation_count": 1,
         "transformations": [
-            "insert_mode_state_and_event_writer",
+            "insert_mode_state_and_event_writers",
             "insert_quarantine_write_branch",
-            "remove_original_out_of_bounds_assertion_block",
-            "insert_procedural_first_event_detector",
+            "remove_original_out_of_bounds_write_assertion",
+            "remove_original_out_of_bounds_read_fatal",
+            "insert_write_and_read_first_event_detectors",
         ],
-        "original_assertion_block_removed": True,
-        "diagnostic_detector_implementation":
-            "PROCEDURAL_FIRST_EVENT",
+        "original_write_assertion_removed": True,
+        "original_read_fatal_removed": True,
+        "diagnostic_detector_implementation": "PROCEDURAL_FIRST_EVENT",
         "first_event_policy": FIRST_EVENT_POLICY,
         "validation": validation,
         "external_source_modified": False,
     }
 
     report.parent.mkdir(parents=True, exist_ok=True)
-    report.write_text(
-        json.dumps(payload, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    report.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
     print(f"Source mm_ram       : {source}")
     print(f"Diagnostic overlay : {output}")
     print(f"Overlay SHA-256     : {payload['output_sha256']}")
-    print("Original assertion  : REMOVED FROM DIAGNOSTIC OVERLAY")
-    print("Diagnostic detector : PROCEDURAL_FIRST_EVENT")
-    print("Transformations     : 1 generation pass")
+    print("Write assertion     : REMOVED FROM DIAGNOSTIC OVERLAY")
+    print("Read fatal          : REMOVED FROM DIAGNOSTIC OVERLAY")
+    print("Diagnostic detectors: WRITE + READ PROCEDURAL_FIRST_EVENT")
     print("Preparation result  : PASS")
     return 0
 

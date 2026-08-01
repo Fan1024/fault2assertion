@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "policy_version": "stage5_assertion_modes_v1",
+  "policy_version": "stage5_assertion_modes_v3",
   "supported_modes": [
     "native",
     "observe",
@@ -23,19 +23,21 @@
       "termination_suppressed": true,
       "transaction_quarantine": false,
       "counterfactual_after_detector_event": true,
-      "purpose": "Suppress only the detector fatal action and observe the unchanged transaction model."
+      "purpose": "Suppress only registered detector termination and observe continuation under the existing data-path behavior."
     },
     "diagnostic_quarantine": {
       "termination_suppressed": true,
       "transaction_quarantine": true,
       "counterfactual_after_detector_event": true,
-      "purpose": "Record the detector event, acknowledge and drop the unsafe transaction, and continue diagnostic tracing."
+      "purpose": "Apply the registered detector-specific quarantine action and continue diagnostic tracing."
     }
   },
   "signature_policy": {
-    "policy_version": "stage5_limited_signature_enumeration_v1",
+    "policy_version": "stage5_limited_signature_enumeration_v3",
     "unknown_runtime_behavior": "FAIL_CLOSED",
     "ambiguous_signature_behavior": "FAIL_CLOSED",
+    "terminal_selection": "EARLIEST_RECOGNIZED_OR_FAIL_CLOSED_EVENT",
+    "trailing_tool_diagnostics_after_terminal": "RECORD_BUT_DO_NOT_OVERRIDE",
     "deduplication_key": [
       "semantic_class",
       "tool",
@@ -58,30 +60,75 @@
       "detector_id": "cv32e40p.mm_ram.out_of_bounds_write",
       "origin": "PREEXISTING_TB_ASSERTION",
       "source_suffix": "/verification/shared/tb/mm_ram.sv",
+      "diagnostic_source_suffix": "/mm_ram.stage5.sv",
       "assertion_leaf_name": "out_of_bounds_write",
       "effect_hint": "ILLEGAL_MEMORY_WRITE",
       "quarantine_action": "ACKNOWLEDGE_AND_DROP_WRITE",
+      "diagnostic_adapter": "MM_RAM_STAGE5_OVERLAY_V2",
+      "diagnostic_modes_supported": [
+        "observe",
+        "diagnostic_quarantine"
+      ],
       "termination_signatures": [
         {
-          "signature_id": "xcelium_asrtst_registered_leaf_v1",
+          "signature_id": "xcelium_asrtst_out_of_bounds_write_v1",
           "phase": "run",
           "tool": "xmsim",
+          "severities": [
+            "E",
+            "F"
+          ],
           "mnemonic": "ASRTST",
           "terminal_kind": "ASSERTION_FAILURE",
           "require_source_suffix": true,
           "require_assertion_leaf_name": true
         },
         {
-          "signature_id": "xcelium_fatsev_registered_source_v1",
+          "signature_id": "xcelium_fatsev_out_of_bounds_write_v3",
           "phase": "run",
           "tool": "xmsim",
+          "severities": [
+            "F"
+          ],
           "mnemonic": "FATSEV",
           "terminal_kind": "USER_FATAL",
           "require_source_suffix": true,
-          "require_assertion_leaf_name": false
+          "require_assertion_leaf_name": false,
+          "normalized_preceding_line_regex": "^out of bounds write to <HEX> with <HEX>$"
         }
       ],
-      "guardrail": "Only explicitly listed termination signatures may resolve this detector. Unknown or ambiguous runtime termination remains fail-closed."
+      "guardrail": "Only explicitly listed termination signatures may resolve this detector."
+    },
+    {
+      "detector_id": "cv32e40p.mm_ram.out_of_bounds_read",
+      "origin": "PREEXISTING_TB_FATAL",
+      "source_suffix": "/verification/shared/tb/mm_ram.sv",
+      "diagnostic_source_suffix": "/mm_ram.stage5.sv",
+      "assertion_leaf_name": "out_of_bounds_read",
+      "effect_hint": "ILLEGAL_MEMORY_READ",
+      "quarantine_action": "RETURN_ZERO_AND_CONTINUE",
+      "diagnostic_adapter": "MM_RAM_STAGE5_OVERLAY_V2",
+      "diagnostic_modes_supported": [
+        "observe",
+        "diagnostic_quarantine"
+      ],
+      "termination_signatures": [
+        {
+          "signature_id": "xcelium_fatsev_out_of_bounds_read_v1",
+          "phase": "run",
+          "tool": "xmsim",
+          "severities": [
+            "F"
+          ],
+          "mnemonic": "FATSEV",
+          "terminal_kind": "USER_FATAL",
+          "require_source_suffix": true,
+          "require_assertion_leaf_name": false,
+          "normalized_preceding_line_regex": "^out of bounds read from <HEX>$",
+          "normalized_following_line_regex": "^.*\\.read_mux$"
+        }
+      ],
+      "guardrail": "The read detector requires the mm_ram source, the read_mux instance, and the immediately preceding normalized read-fatal message."
     }
   ],
   "unsupported_detector_behavior": {

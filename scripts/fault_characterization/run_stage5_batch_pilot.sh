@@ -12,6 +12,8 @@ STORAGE_INTERVAL="${STORAGE_INTERVAL:-5}"
 TOOL="$F2A_ROOT/scripts/fault_characterization/stage5_batch.py"
 ORACLE_TOOL="$F2A_ROOT/scripts/fault_characterization/stage5_batch_oracle.py"
 VALIDATOR="$F2A_ROOT/scripts/fault_characterization/stage5_batch_oracle_validate.py"
+VERDICT_TOOL="$F2A_ROOT/scripts/fault_characterization/stage5_verdict.py"
+ASSERTION_POLICY="$F2A_ROOT/platform/cv32e40p/stage5_assertion_policy_v1.json"
 CHECKPOINT="${CHECKPOINT:-$F2A_ROOT/runs/stage5_dev/phase2_v1/g5_oracle/reports/TF000002_SA0_validation.json}"
 SELECTED_DIR="${SELECTED_DIR:-$F2A_ROOT/faults/cv32e40p/stage5/fault_specs}"
 PILOT_ROOT="$F2A_ROOT/runs/stage5_campaign_v1/cv32e40p/crc32/pilot_${PILOT_COUNT}"
@@ -29,12 +31,29 @@ require_file() {
     fi
 }
 
+static_validation() {
+    log "Static validation"
+    bash -n "$F2A_ROOT/scripts/run_xrun_stage5_fault.sh"
+    bash -n "$F2A_ROOT/scripts/lib/xrun_stage5_common.sh"
+    bash -n "$0"
+    python3 -m py_compile \
+        "$TOOL" \
+        "$ORACLE_TOOL" \
+        "$VALIDATOR" \
+        "$VERDICT_TOOL"
+    python3 -m json.tool "$CHECKPOINT" >/dev/null
+    python3 -m json.tool "$ASSERTION_POLICY" >/dev/null
+    python3 "$VERDICT_TOOL" --version
+}
+
 main() {
     cd "$F2A_ROOT"
 
     require_file "$TOOL" "batch orchestrator"
     require_file "$ORACLE_TOOL" "generic oracle builder"
     require_file "$VALIDATOR" "generic oracle validator"
+    require_file "$VERDICT_TOOL" "Stage-5 verdict engine"
+    require_file "$ASSERTION_POLICY" "Stage-5 assertion policy"
     require_file "$CHECKPOINT" "Phase2-G5 validation report"
 
     if [[ ! -d "$SELECTED_DIR" ]]; then
@@ -42,10 +61,7 @@ main() {
         return 1
     fi
 
-    log "Static validation"
-    bash -n "$F2A_ROOT/scripts/run_xrun_stage5_fault.sh"
-    python3 -m py_compile "$TOOL" "$ORACLE_TOOL" "$VALIDATOR"
-    python3 -m json.tool "$CHECKPOINT" >/dev/null
+    static_validation
 
     case "$ACTION" in
         prepare)
