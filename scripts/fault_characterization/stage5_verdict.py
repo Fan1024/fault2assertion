@@ -18,7 +18,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Sequence
 
-PROGRAM_VERSION = "5.2.0"
+PROGRAM_VERSION = "5.3.0"
 SCHEMA_VERSION = "3.0"
 
 RUN_PURPOSE_TO_MODE = {
@@ -794,6 +794,9 @@ def compute_verdict(
         unknown_line = event_line(unknown_events)
         exact_line = first_line(EXACT_SIGNATURE_RE, lines)
         exit_line = first_line(EXIT_SUCCESS_RE, lines)
+        wrong_crc_line = (
+            first_line(ANY_CRC_PASS_RE, lines) if exact_line is None else None
+        )
         success_line = (
             exit_line
             if exact_line is not None
@@ -801,8 +804,13 @@ def compute_verdict(
             and xrun_exit_status == 0
             else None
         )
-        wrong_crc_line = (
-            first_line(ANY_CRC_PASS_RE, lines) if exact_line is None else None
+        missing_signature_line = (
+            exit_line
+            if exit_line is not None
+            and xrun_exit_status == 0
+            and exact_line is None
+            and wrong_crc_line is None
+            else None
         )
 
         selected_terminal = choose_terminal(
@@ -840,9 +848,19 @@ def compute_verdict(
                 candidate(success_line, "WORKLOAD_SUCCESS", 6),
                 candidate(wrong_crc_line, "WRONG_SIGNATURE", 7),
                 candidate(
+                    missing_signature_line,
+                    "MISSING_REQUIRED_SIGNATURE",
+                    8,
+                    {
+                        "exit_success_observed": True,
+                        "exact_crc32_signature_observed": False,
+                        "required_output": "CRC32 golden signature",
+                    },
+                ),
+                candidate(
                     unknown_line,
                     "UNKNOWN_RUNTIME_TERMINATION",
-                    8,
+                    9,
                     evidence_at(unknown_events, unknown_line),
                 ),
             ]
@@ -963,6 +981,40 @@ def compute_verdict(
                 else "exact_crc32_signature_and_exit_success"
             )
             exit_code = 0
+        elif terminal_kind == "MISSING_REQUIRED_SIGNATURE":
+            completion = "COMPLETED"
+            workload_outcome = "FAIL"
+            architectural_outcome = (
+                "COUNTERFACTUAL_FAIL" if counterfactual else "OBSERVED_FAIL"
+            )
+            if run_kind == "golden":
+                status, reason, exit_code = (
+                    "GOLDEN_INVALID",
+                    (
+                        "golden_required_crc32_signature_"
+                        "missing_on_successful_exit"
+                    ),
+                    4,
+                )
+                valid_execution = False
+            elif mode == "native":
+                status, reason, exit_code = (
+                    "OUTPUT_MISMATCH",
+                    (
+                        "required_crc32_signature_"
+                        "missing_on_successful_exit"
+                    ),
+                    2,
+                )
+            else:
+                status, reason, exit_code = (
+                    "DIAGNOSTIC_OUTPUT_MISMATCH",
+                    (
+                        "diagnostic_required_crc32_signature_"
+                        "missing_on_successful_exit"
+                    ),
+                    2,
+                )
         elif terminal_kind == "UNKNOWN_RUNTIME_TERMINATION":
             status, reason, exit_code = (
                 "ERROR",
