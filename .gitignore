@@ -92,3 +92,12 @@ fault_netlist.v
 **/xrun.history
 **/env.d/
 **/env.history.*
+# ============================================================
+# Stage-6 local secrets and environments
+# ============================================================
+
+# Defense in depth: a real key should normally live outside the repository.
+.env.stage6
+
+# Optional local Python virtual environment.
+.venv-stage6/
