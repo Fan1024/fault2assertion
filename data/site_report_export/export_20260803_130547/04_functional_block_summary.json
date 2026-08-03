@@ -1,0 +1,204 @@
+{
+  "mapping_is_reporting_only": true,
+  "mapping_rules": [
+    {
+      "block": "IF_PREFETCH",
+      "regexes": [
+        "cv32e40p_if_stage",
+        "cv32e40p_prefetch_buffer",
+        "cv32e40p_prefetch_controller",
+        "cv32e40p_aligner",
+        "cv32e40p_fifo"
+      ]
+    },
+    {
+      "block": "ID_CONTROL",
+      "regexes": [
+        "cv32e40p_id_stage",
+        "cv32e40p_controller",
+        "cv32e40p_decoder",
+        "cv32e40p_compressed_decoder"
+      ]
+    },
+    {
+      "block": "EXECUTE",
+      "regexes": [
+        "cv32e40p_ex_stage",
+        "cv32e40p_alu(?:_|$)",
+        "cv32e40p_alu_div",
+        "cv32e40p_mult",
+        "cv32e40p_popcnt",
+        "cv32e40p_ff_one"
+      ]
+    },
+    {
+      "block": "LSU_MEMORY_INTERFACE",
+      "regexes": [
+        "cv32e40p_load_store_unit",
+        "cv32e40p_obi_interface"
+      ]
+    },
+    {
+      "block": "REGISTER_FILE",
+      "regexes": [
+        "cv32e40p_register_file"
+      ]
+    },
+    {
+      "block": "CSR_DEBUG",
+      "regexes": [
+        "cv32e40p_cs_registers"
+      ]
+    },
+    {
+      "block": "IRQ_SLEEP",
+      "regexes": [
+        "cv32e40p_int_controller",
+        "cv32e40p_sleep_unit"
+      ]
+    },
+    {
+      "block": "CLOCKING",
+      "regexes": [
+        "cv32e40p_clock_gate"
+      ]
+    },
+    {
+      "block": "CORE_INTEGRATION",
+      "regexes": [
+        "cv32e40p_core",
+        "cv32e40p_top"
+      ]
+    }
+  ],
+  "summary": {
+    "CORE_INTEGRATION": {
+      "stage2_eligible": 780,
+      "stage3_activity_eligible": 780,
+      "stage4_classified": 780,
+      "selected": 63,
+      "selected_by_class": {
+        "architectural_data": 14,
+        "control_path": 43,
+        "generic_observable": 6
+      },
+      "selected_by_polarity_pattern": {
+        "SA0_and_SA1": 53,
+        "SA1_only": 10
+      }
+    },
+    "CSR_DEBUG": {
+      "stage2_eligible": 2317,
+      "stage3_activity_eligible": 2317,
+      "stage4_classified": 2317,
+      "selected": 29,
+      "selected_by_class": {
+        "architectural_data": 7,
+        "control_path": 1,
+        "generic_observable": 6,
+        "sequential_state": 15
+      },
+      "selected_by_polarity_pattern": {
+        "SA0_and_SA1": 7,
+        "SA1_only": 22
+      }
+    },
+    "EXECUTE": {
+      "stage2_eligible": 4471,
+      "stage3_activity_eligible": 4471,
+      "stage4_classified": 4471,
+      "selected": 89,
+      "selected_by_class": {
+        "architectural_data": 35,
+        "control_path": 5,
+        "generic_observable": 30,
+        "sequential_state": 19
+      },
+      "selected_by_polarity_pattern": {
+        "SA0_and_SA1": 53,
+        "SA0_only": 12,
+        "SA1_only": 24
+      }
+    },
+    "ID_CONTROL": {
+      "stage2_eligible": 2286,
+      "stage3_activity_eligible": 2286,
+      "stage4_classified": 2286,
+      "selected": 141,
+      "selected_by_class": {
+        "architectural_data": 28,
+        "control_path": 61,
+        "generic_observable": 24,
+        "sequential_state": 28
+      },
+      "selected_by_polarity_pattern": {
+        "SA0_and_SA1": 107,
+        "SA0_only": 8,
+        "SA1_only": 26
+      }
+    },
+    "IF_PREFETCH": {
+      "stage2_eligible": 1399,
+      "stage3_activity_eligible": 1399,
+      "stage4_classified": 1399,
+      "selected": 166,
+      "selected_by_class": {
+        "architectural_data": 35,
+        "control_path": 41,
+        "generic_observable": 30,
+        "sequential_state": 60
+      },
+      "selected_by_polarity_pattern": {
+        "SA0_and_SA1": 165,
+        "SA1_only": 1
+      }
+    },
+    "IRQ_SLEEP": {
+      "stage2_eligible": 88,
+      "stage3_activity_eligible": 88,
+      "stage4_classified": 88,
+      "selected": 28,
+      "selected_by_class": {
+        "control_path": 6,
+        "generic_observable": 8,
+        "sequential_state": 14
+      },
+      "selected_by_polarity_pattern": {
+        "SA0_and_SA1": 1,
+        "SA0_only": 9,
+        "SA1_only": 18
+      }
+    },
+    "LSU_MEMORY_INTERFACE": {
+      "stage2_eligible": 758,
+      "stage3_activity_eligible": 758,
+      "stage4_classified": 758,
+      "selected": 56,
+      "selected_by_class": {
+        "architectural_data": 14,
+        "control_path": 3,
+        "generic_observable": 10,
+        "sequential_state": 29
+      },
+      "selected_by_polarity_pattern": {
+        "SA0_and_SA1": 42,
+        "SA0_only": 1,
+        "SA1_only": 13
+      }
+    },
+    "REGISTER_FILE": {
+      "stage2_eligible": 4658,
+      "stage3_activity_eligible": 4658,
+      "stage4_classified": 4658,
+      "selected": 28,
+      "selected_by_class": {
+        "architectural_data": 7,
+        "generic_observable": 6,
+        "sequential_state": 15
+      },
+      "selected_by_polarity_pattern": {
+        "SA0_and_SA1": 28
+      }
+    }
+  }
+}

@@ -1,0 +1,388 @@
+{
+  "stage1": {
+    "path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_01_raw_sites.json",
+    "sha256": "9ef0132c8fb3bccedfa5edb486ee337143c2fc5c63c3b54388c4b7423707385f",
+    "summary": {}
+  },
+  "stage2": {
+    "path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_02_static_safe.json",
+    "sha256": "f87e26e76f738dbdd701df63dba3a18eb20ac4d63ef45aa1f1022fc28ee1b2b2",
+    "summary": {
+      "top_module": "cv32e40p_top",
+      "raw_site_count": 19903,
+      "eligible_for_activity_profile_count": 16757,
+      "excluded_by_static_filter_count": 3146,
+      "eligible_state_site_count": 2800,
+      "scan_touch_site_count": 407,
+      "by_status": {
+        "eligible_for_activity_profile": 16757,
+        "excluded_by_static_filter": 3146
+      },
+      "exclusion_reason_counts": {
+        "excluded_source_kind:clock_buffer_output": 4,
+        "excluded_source_kind:clock_gate_output": 1,
+        "excluded_source_kind:continuous_assign_constant": 2,
+        "excluded_source_kind:module_input": 2417,
+        "no_functional_checkpoint_reachable": 675,
+        "protected_async_reset_set_cone": 19,
+        "protected_clock_control_cone": 234,
+        "protected_clock_signal_cone": 259,
+        "test_only_consumers": 169
+      },
+      "protected_domain_site_counts": {
+        "async_reset_set": 19,
+        "clock_control": 234,
+        "clock_signal": 259
+      },
+      "eligible_by_source_kind": {
+        "arithmetic_output": 701,
+        "buffer_or_inverter_output": 1585,
+        "combinational_output": 10404,
+        "hierarchical_module_output": 1267,
+        "sequential_output": 2800
+      },
+      "eligible_by_fanout_bucket": {
+        "0": 925,
+        "1": 10336,
+        "2": 2932,
+        "3_4": 1473,
+        "5_8": 475,
+        "gt_8": 616
+      },
+      "eligible_by_module": {
+        "cv32e40p_aligner": 397,
+        "cv32e40p_alu": 1423,
+        "cv32e40p_alu_div": 592,
+        "cv32e40p_compressed_decoder_FPU0_ZFINX0": 259,
+        "cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0": 320,
+        "cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1": 669,
+        "cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1": 2317,
+        "cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1": 285,
+        "cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5": 155,
+        "cv32e40p_ff_one": 66,
+        "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2": 126,
+        "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1": 1422,
+        "cv32e40p_if_stage_COREV_PULP0_PULP_OBI0_PULP_SECURE0_FPU0_ZFINX0": 436,
+        "cv32e40p_int_controller_PULP_SECURE0": 85,
+        "cv32e40p_load_store_unit_PULP_OBI0": 695,
+        "cv32e40p_mult": 2170,
+        "cv32e40p_obi_interface_TRANS_STABLE0": 63,
+        "cv32e40p_popcnt": 65,
+        "cv32e40p_prefetch_buffer_PULP_OBI0_COREV_PULP0": 130,
+        "cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2": 310,
+        "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0": 4658,
+        "cv32e40p_sleep_unit_COREV_CLUSTER0": 3,
+        "cv32e40p_top": 111
+      },
+      "observation_checkpoint_counts": {
+        "sequential_data_seed_count": 2124,
+        "top_level_output_seed_count": 113,
+        "sites_reaching_sequential_data": 18363,
+        "sites_reaching_top_level_output": 5421
+      }
+    }
+  },
+  "stage3": {
+    "path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_03_activity.json",
+    "sha256": "dbb7c237ce86594cd026afc14528726951d32ffa841ad5170af934f19e9141eb",
+    "summary": {
+      "workload": "crc32",
+      "raw_site_count": 19903,
+      "stage2_profile_requested_count": 16757,
+      "site_with_monitor_row_count": 16757,
+      "activity_eligible_site_count": 16757,
+      "activity_excluded_site_count": 0,
+      "stage2_excluded_not_profiled_count": 3146,
+      "activity_eligible_with_unknown_seen_count": 603,
+      "eligible_fault_instance_count": 24657,
+      "by_stage3_status": {
+        "eligible_for_fault_classification": 16757,
+        "not_profiled_stage2_excluded": 3146
+      },
+      "activity_exclusion_reason_counts": {},
+      "eligible_polarity_counts": {
+        "SA0": 11431,
+        "SA1": 13226
+      },
+      "eligible_by_source_kind": {
+        "arithmetic_output": 701,
+        "buffer_or_inverter_output": 1585,
+        "combinational_output": 10404,
+        "hierarchical_module_output": 1267,
+        "sequential_output": 2800
+      },
+      "eligible_by_module": {
+        "cv32e40p_aligner": 397,
+        "cv32e40p_alu": 1423,
+        "cv32e40p_alu_div": 592,
+        "cv32e40p_compressed_decoder_FPU0_ZFINX0": 259,
+        "cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0": 320,
+        "cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1": 669,
+        "cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1": 2317,
+        "cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1": 285,
+        "cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5": 155,
+        "cv32e40p_ff_one": 66,
+        "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2": 126,
+        "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1": 1422,
+        "cv32e40p_if_stage_COREV_PULP0_PULP_OBI0_PULP_SECURE0_FPU0_ZFINX0": 436,
+        "cv32e40p_int_controller_PULP_SECURE0": 85,
+        "cv32e40p_load_store_unit_PULP_OBI0": 695,
+        "cv32e40p_mult": 2170,
+        "cv32e40p_obi_interface_TRANS_STABLE0": 63,
+        "cv32e40p_popcnt": 65,
+        "cv32e40p_prefetch_buffer_PULP_OBI0_COREV_PULP0": 130,
+        "cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2": 310,
+        "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0": 4658,
+        "cv32e40p_sleep_unit_COREV_CLUSTER0": 3,
+        "cv32e40p_top": 111
+      },
+      "raw_data_row_count": 16757,
+      "bound_instance_path_count": 80
+    }
+  },
+  "stage4_candidates": {
+    "path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_candidates.json",
+    "sha256": "e15abab45ff12b46a766fe3e5004fac7ef632a7a31581b3d8a341be682fb1578",
+    "summary": {
+      "raw_site_count": 19903,
+      "stage3_activity_eligible_site_count": 16757,
+      "classified_site_count": 16757,
+      "classified_fault_instance_population_count": 24657,
+      "by_primary_class_site_count": {
+        "sequential_state": 2800,
+        "control_path": 213,
+        "architectural_data": 3694,
+        "generic_observable": 10050
+      },
+      "by_primary_class_fault_instance_population_count": {
+        "sequential_state": 4039,
+        "control_path": 365,
+        "architectural_data": 4939,
+        "generic_observable": 15314
+      },
+      "by_injection_kind_site_count": {
+        "net_stuck_at": 13957,
+        "state_output_stuck_at": 2800
+      },
+      "scan_touch_by_class_site_count": {
+        "sequential_state": 73,
+        "control_path": 0,
+        "architectural_data": 0,
+        "generic_observable": 100
+      },
+      "bounded_tfo_truncated_site_count": 6097,
+      "semantic_low_confidence_site_count": 0,
+      "primary_selection_eligible_site_count": 16584,
+      "class_by_module_site_count": {
+        "architectural_data": {
+          "cv32e40p_aligner": 28,
+          "cv32e40p_alu": 113,
+          "cv32e40p_alu_div": 116,
+          "cv32e40p_compressed_decoder_FPU0_ZFINX0": 25,
+          "cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0": 12,
+          "cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1": 552,
+          "cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1": 32,
+          "cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1": 20,
+          "cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5": 99,
+          "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2": 32,
+          "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1": 181,
+          "cv32e40p_if_stage_COREV_PULP0_PULP_OBI0_PULP_SECURE0_FPU0_ZFINX0": 152,
+          "cv32e40p_load_store_unit_PULP_OBI0": 105,
+          "cv32e40p_mult": 1856,
+          "cv32e40p_obi_interface_TRANS_STABLE0": 28,
+          "cv32e40p_popcnt": 65,
+          "cv32e40p_prefetch_buffer_PULP_OBI0_COREV_PULP0": 88,
+          "cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2": 28,
+          "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0": 64,
+          "cv32e40p_top": 98
+        },
+        "control_path": {
+          "cv32e40p_aligner": 2,
+          "cv32e40p_alu": 1,
+          "cv32e40p_compressed_decoder_FPU0_ZFINX0": 1,
+          "cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0": 20,
+          "cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1": 76,
+          "cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1": 1,
+          "cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1": 14,
+          "cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5": 3,
+          "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1": 26,
+          "cv32e40p_if_stage_COREV_PULP0_PULP_OBI0_PULP_SECURE0_FPU0_ZFINX0": 6,
+          "cv32e40p_int_controller_PULP_SECURE0": 5,
+          "cv32e40p_load_store_unit_PULP_OBI0": 2,
+          "cv32e40p_mult": 1,
+          "cv32e40p_obi_interface_TRANS_STABLE0": 1,
+          "cv32e40p_prefetch_buffer_PULP_OBI0_COREV_PULP0": 37,
+          "cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2": 3,
+          "cv32e40p_sleep_unit_COREV_CLUSTER0": 1,
+          "cv32e40p_top": 13
+        },
+        "generic_observable": {
+          "cv32e40p_aligner": 316,
+          "cv32e40p_alu": 1309,
+          "cv32e40p_alu_div": 369,
+          "cv32e40p_compressed_decoder_FPU0_ZFINX0": 233,
+          "cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0": 275,
+          "cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1": 41,
+          "cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1": 1796,
+          "cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1": 251,
+          "cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5": 51,
+          "cv32e40p_ff_one": 66,
+          "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2": 24,
+          "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1": 994,
+          "cv32e40p_if_stage_COREV_PULP0_PULP_OBI0_PULP_SECURE0_FPU0_ZFINX0": 231,
+          "cv32e40p_int_controller_PULP_SECURE0": 61,
+          "cv32e40p_load_store_unit_PULP_OBI0": 548,
+          "cv32e40p_mult": 309,
+          "cv32e40p_obi_interface_TRANS_STABLE0": 3,
+          "cv32e40p_prefetch_buffer_PULP_OBI0_COREV_PULP0": 5,
+          "cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2": 243,
+          "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0": 2923,
+          "cv32e40p_sleep_unit_COREV_CLUSTER0": 2
+        },
+        "sequential_state": {
+          "cv32e40p_aligner": 51,
+          "cv32e40p_alu_div": 107,
+          "cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0": 13,
+          "cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1": 488,
+          "cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5": 2,
+          "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2": 70,
+          "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1": 221,
+          "cv32e40p_if_stage_COREV_PULP0_PULP_OBI0_PULP_SECURE0_FPU0_ZFINX0": 47,
+          "cv32e40p_int_controller_PULP_SECURE0": 19,
+          "cv32e40p_load_store_unit_PULP_OBI0": 40,
+          "cv32e40p_mult": 4,
+          "cv32e40p_obi_interface_TRANS_STABLE0": 31,
+          "cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2": 36,
+          "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0": 1671
+        }
+      },
+      "class_by_source_kind_site_count": {
+        "architectural_data": {
+          "arithmetic_output": 637,
+          "buffer_or_inverter_output": 330,
+          "combinational_output": 1649,
+          "hierarchical_module_output": 1078
+        },
+        "control_path": {
+          "buffer_or_inverter_output": 7,
+          "combinational_output": 83,
+          "hierarchical_module_output": 123
+        },
+        "generic_observable": {
+          "arithmetic_output": 64,
+          "buffer_or_inverter_output": 1248,
+          "combinational_output": 8672,
+          "hierarchical_module_output": 66
+        },
+        "sequential_state": {
+          "sequential_output": 2800
+        }
+      }
+    },
+    "site_records": 19903
+  },
+  "stage4_selection": {
+    "path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_selection.json",
+    "sha256": "9a85dca7226b16cc5eaf37a72b37ca45cb247b0883127e2721a833f871269c28",
+    "summary": {
+      "target_unique_site_count": 600,
+      "selected_unique_site_count": 600,
+      "selected_single_polarity_site_count": 144,
+      "selected_dual_polarity_site_count": 456,
+      "selected_fault_instance_count": 1056,
+      "candidate_unique_site_population_by_class": {
+        "sequential_state": 2727,
+        "control_path": 213,
+        "architectural_data": 3694,
+        "generic_observable": 9950
+      },
+      "candidate_fault_instance_population_by_class": {
+        "sequential_state": 3900,
+        "control_path": 365,
+        "architectural_data": 4939,
+        "generic_observable": 15118
+      },
+      "unique_site_quota_by_class": {
+        "sequential_state": 180,
+        "control_path": 160,
+        "architectural_data": 140,
+        "generic_observable": 120
+      },
+      "selected_unique_sites_by_class": {
+        "sequential_state": 180,
+        "control_path": 160,
+        "architectural_data": 140,
+        "generic_observable": 120
+      },
+      "selected_fault_instances_by_class": {
+        "sequential_state": 292,
+        "control_path": 277,
+        "architectural_data": 266,
+        "generic_observable": 221
+      },
+      "selected_fault_instances_by_polarity": {
+        "SA0": 486,
+        "SA1": 570
+      },
+      "selected_sites_by_eligible_polarity_pattern": {
+        "SA0_only": 30,
+        "SA1_only": 114,
+        "SA0_and_SA1": 456
+      },
+      "selected_unique_sites_by_module": {
+        "cv32e40p_aligner": 30,
+        "cv32e40p_alu": 14,
+        "cv32e40p_alu_div": 27,
+        "cv32e40p_compressed_decoder_FPU0_ZFINX0": 14,
+        "cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0": 46,
+        "cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1": 43,
+        "cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1": 29,
+        "cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1": 27,
+        "cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5": 18,
+        "cv32e40p_ff_one": 6,
+        "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2": 28,
+        "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1": 54,
+        "cv32e40p_if_stage_COREV_PULP0_PULP_OBI0_PULP_SECURE0_FPU0_ZFINX0": 34,
+        "cv32e40p_int_controller_PULP_SECURE0": 25,
+        "cv32e40p_load_store_unit_PULP_OBI0": 31,
+        "cv32e40p_mult": 17,
+        "cv32e40p_obi_interface_TRANS_STABLE0": 25,
+        "cv32e40p_popcnt": 7,
+        "cv32e40p_prefetch_buffer_PULP_OBI0_COREV_PULP0": 42,
+        "cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2": 32,
+        "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0": 28,
+        "cv32e40p_sleep_unit_COREV_CLUSTER0": 3,
+        "cv32e40p_top": 20
+      },
+      "selected_fault_instances_by_module": {
+        "cv32e40p_aligner": 60,
+        "cv32e40p_alu": 27,
+        "cv32e40p_alu_div": 30,
+        "cv32e40p_compressed_decoder_FPU0_ZFINX0": 28,
+        "cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0": 72,
+        "cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1": 84,
+        "cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1": 36,
+        "cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1": 54,
+        "cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5": 36,
+        "cv32e40p_ff_one": 6,
+        "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2": 56,
+        "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1": 94,
+        "cv32e40p_if_stage_COREV_PULP0_PULP_OBI0_PULP_SECURE0_FPU0_ZFINX0": 68,
+        "cv32e40p_int_controller_PULP_SECURE0": 25,
+        "cv32e40p_load_store_unit_PULP_OBI0": 62,
+        "cv32e40p_mult": 29,
+        "cv32e40p_obi_interface_TRANS_STABLE0": 36,
+        "cv32e40p_popcnt": 14,
+        "cv32e40p_prefetch_buffer_PULP_OBI0_COREV_PULP0": 84,
+        "cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2": 63,
+        "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0": 56,
+        "cv32e40p_sleep_unit_COREV_CLUSTER0": 4,
+        "cv32e40p_top": 32
+      },
+      "scan_touch_selected_site_count": 0,
+      "fault_count_policy": "unbounded_by_quota; exactly all workload-eligible polarities for each of the 600 selected unique sites"
+    },
+    "selected_site_records_resolved": 600,
+    "fault_records_resolved": 1056
+  }
+}

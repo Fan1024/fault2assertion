@@ -1,0 +1,346 @@
+{
+  "cv32e40p_aligner": {
+    "stage2_eligible": 397,
+    "stage3_activity_eligible": 397,
+    "stage4_classified": 397,
+    "selected": 30,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 2,
+      "generic_observable": 6,
+      "sequential_state": 15
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 30
+    }
+  },
+  "cv32e40p_alu": {
+    "stage2_eligible": 1423,
+    "stage3_activity_eligible": 1423,
+    "stage4_classified": 1423,
+    "selected": 14,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 1,
+      "generic_observable": 6
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 13,
+      "SA0_only": 1
+    }
+  },
+  "cv32e40p_alu_div": {
+    "stage2_eligible": 592,
+    "stage3_activity_eligible": 592,
+    "stage4_classified": 592,
+    "selected": 27,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "generic_observable": 6,
+      "sequential_state": 14
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 3,
+      "SA0_only": 3,
+      "SA1_only": 21
+    }
+  },
+  "cv32e40p_compressed_decoder_FPU0_ZFINX0": {
+    "stage2_eligible": 259,
+    "stage3_activity_eligible": 259,
+    "stage4_classified": 259,
+    "selected": 14,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 1,
+      "generic_observable": 6
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 14
+    }
+  },
+  "cv32e40p_controller_COREV_CLUSTER0_COREV_PULP0_FPU0": {
+    "stage2_eligible": 320,
+    "stage3_activity_eligible": 320,
+    "stage4_classified": 320,
+    "selected": 46,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 20,
+      "generic_observable": 6,
+      "sequential_state": 13
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 26,
+      "SA0_only": 3,
+      "SA1_only": 17
+    }
+  },
+  "cv32e40p_core_COREV_PULP0_COREV_CLUSTER0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_NUM_MHPMCOUNTERS1": {
+    "stage2_eligible": 669,
+    "stage3_activity_eligible": 669,
+    "stage4_classified": 669,
+    "selected": 43,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 30,
+      "generic_observable": 6
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 41,
+      "SA1_only": 2
+    }
+  },
+  "cv32e40p_cs_registers_N_HWLP2_APU0_A_EXTENSION0_FPU0_ZFINX0_PULP_SECURE0_USE_PMP0_N_PMP_ENTRIES16_NUM_MHPMCOUNTERS1_COREV_PULP0_COREV_CLUSTER0_DEBUG_TRIGGER_EN1": {
+    "stage2_eligible": 2317,
+    "stage3_activity_eligible": 2317,
+    "stage4_classified": 2317,
+    "selected": 29,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 1,
+      "generic_observable": 6,
+      "sequential_state": 15
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 7,
+      "SA1_only": 22
+    }
+  },
+  "cv32e40p_decoder_COREV_PULP0_COREV_CLUSTER0_A_EXTENSION0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_PULP_SECURE0_USE_PMP0_APU_WOP_CPU6_DEBUG_TRIGGER_EN1": {
+    "stage2_eligible": 285,
+    "stage3_activity_eligible": 285,
+    "stage4_classified": 285,
+    "selected": 27,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 14,
+      "generic_observable": 6
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 27
+    }
+  },
+  "cv32e40p_ex_stage_COREV_PULP0_FPU0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5": {
+    "stage2_eligible": 155,
+    "stage3_activity_eligible": 155,
+    "stage4_classified": 155,
+    "selected": 18,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 3,
+      "generic_observable": 6,
+      "sequential_state": 2
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 18
+    }
+  },
+  "cv32e40p_ff_one": {
+    "stage2_eligible": 66,
+    "stage3_activity_eligible": 66,
+    "stage4_classified": 66,
+    "selected": 6,
+    "selected_by_class": {
+      "generic_observable": 6
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_only": 6
+    }
+  },
+  "cv32e40p_fifo_FALL_THROUGH0_DATA_WIDTH32_DEPTH2": {
+    "stage2_eligible": 126,
+    "stage3_activity_eligible": 126,
+    "stage4_classified": 126,
+    "selected": 28,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "generic_observable": 6,
+      "sequential_state": 15
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 28
+    }
+  },
+  "cv32e40p_id_stage_COREV_PULP0_COREV_CLUSTER0_N_HWLP2_PULP_SECURE0_USE_PMP0_A_EXTENSION0_APU0_FPU0_FPU_ADDMUL_LAT0_FPU_OTHERS_LAT0_ZFINX0_APU_NARGS_CPU3_APU_WOP_CPU6_APU_NDSFLAGS_CPU15_APU_NUSFLAGS_CPU5_DEBUG_TRIGGER_EN1": {
+    "stage2_eligible": 1422,
+    "stage3_activity_eligible": 1422,
+    "stage4_classified": 1422,
+    "selected": 54,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 26,
+      "generic_observable": 6,
+      "sequential_state": 15
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 40,
+      "SA0_only": 5,
+      "SA1_only": 9
+    }
+  },
+  "cv32e40p_if_stage_COREV_PULP0_PULP_OBI0_PULP_SECURE0_FPU0_ZFINX0": {
+    "stage2_eligible": 436,
+    "stage3_activity_eligible": 436,
+    "stage4_classified": 436,
+    "selected": 34,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 6,
+      "generic_observable": 6,
+      "sequential_state": 15
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 34
+    }
+  },
+  "cv32e40p_int_controller_PULP_SECURE0": {
+    "stage2_eligible": 85,
+    "stage3_activity_eligible": 85,
+    "stage4_classified": 85,
+    "selected": 25,
+    "selected_by_class": {
+      "control_path": 5,
+      "generic_observable": 6,
+      "sequential_state": 14
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_only": 8,
+      "SA1_only": 17
+    }
+  },
+  "cv32e40p_load_store_unit_PULP_OBI0": {
+    "stage2_eligible": 695,
+    "stage3_activity_eligible": 695,
+    "stage4_classified": 695,
+    "selected": 31,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 2,
+      "generic_observable": 7,
+      "sequential_state": 15
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 31
+    }
+  },
+  "cv32e40p_mult": {
+    "stage2_eligible": 2170,
+    "stage3_activity_eligible": 2170,
+    "stage4_classified": 2170,
+    "selected": 17,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 1,
+      "generic_observable": 6,
+      "sequential_state": 3
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 12,
+      "SA0_only": 2,
+      "SA1_only": 3
+    }
+  },
+  "cv32e40p_obi_interface_TRANS_STABLE0": {
+    "stage2_eligible": 63,
+    "stage3_activity_eligible": 63,
+    "stage4_classified": 63,
+    "selected": 25,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 1,
+      "generic_observable": 3,
+      "sequential_state": 14
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 11,
+      "SA0_only": 1,
+      "SA1_only": 13
+    }
+  },
+  "cv32e40p_popcnt": {
+    "stage2_eligible": 65,
+    "stage3_activity_eligible": 65,
+    "stage4_classified": 65,
+    "selected": 7,
+    "selected_by_class": {
+      "architectural_data": 7
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 7
+    }
+  },
+  "cv32e40p_prefetch_buffer_PULP_OBI0_COREV_PULP0": {
+    "stage2_eligible": 130,
+    "stage3_activity_eligible": 130,
+    "stage4_classified": 130,
+    "selected": 42,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 30,
+      "generic_observable": 5
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 42
+    }
+  },
+  "cv32e40p_prefetch_controller_PULP_OBI0_COREV_PULP0_DEPTH2": {
+    "stage2_eligible": 310,
+    "stage3_activity_eligible": 310,
+    "stage4_classified": 310,
+    "selected": 32,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 3,
+      "generic_observable": 7,
+      "sequential_state": 15
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 31,
+      "SA1_only": 1
+    }
+  },
+  "cv32e40p_register_file_ADDR_WIDTH6_DATA_WIDTH32_FPU0_ZFINX0": {
+    "stage2_eligible": 4658,
+    "stage3_activity_eligible": 4658,
+    "stage4_classified": 4658,
+    "selected": 28,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "generic_observable": 6,
+      "sequential_state": 15
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 28
+    }
+  },
+  "cv32e40p_sleep_unit_COREV_CLUSTER0": {
+    "stage2_eligible": 3,
+    "stage3_activity_eligible": 3,
+    "stage4_classified": 3,
+    "selected": 3,
+    "selected_by_class": {
+      "control_path": 1,
+      "generic_observable": 2
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 1,
+      "SA0_only": 1,
+      "SA1_only": 1
+    }
+  },
+  "cv32e40p_top": {
+    "stage2_eligible": 111,
+    "stage3_activity_eligible": 111,
+    "stage4_classified": 111,
+    "selected": 20,
+    "selected_by_class": {
+      "architectural_data": 7,
+      "control_path": 13
+    },
+    "selected_by_polarity_pattern": {
+      "SA0_and_SA1": 12,
+      "SA1_only": 8
+    }
+  }
+}

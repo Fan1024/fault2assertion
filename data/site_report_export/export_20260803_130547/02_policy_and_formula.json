@@ -1,0 +1,143 @@
+{
+  "policy_path": "/raid/spring2026/fwu44/research/fault2assertion/platform/cv32e40p/fault_classification_policy.json",
+  "policy_sha256": "b9cc518c17cedb502df84e0049243a4122e6dca479324a56bcc4505afda4e359",
+  "policy": {
+    "schema_version": "1.1",
+    "policy_name": "cv32e40p_crc32_stage4_unique_site_classification",
+    "description": "Stage-4 semantic classification, detailed bounded structural analysis, deterministic selection of exactly 600 unique sites, and expansion of all workload-eligible stuck-at polarities. This stage does not modify a netlist or create per-fault directories.",
+    "expected_design": "cv32e40p",
+    "expected_stage2_digest": "272abe2269bef1f7f5c92c1aa290abac262f1cf8548334c8cefa367ad2032dde",
+    "classification_classes": [
+      "sequential_state",
+      "control_path",
+      "architectural_data",
+      "generic_observable"
+    ],
+    "selection_rules": {
+      "exclude_scan_touch_from_primary_selection": true,
+      "exclude_unknown_seen_only": false,
+      "expand_all_workload_eligible_polarities": true,
+      "initial_max_fraction_per_module_per_class": 0.2,
+      "relaxed_max_fraction_per_module_per_class": 0.35,
+      "minimum_semantic_confidence": 0.2,
+      "selection_score_weights": {
+        "assertion_relevance": 0.55,
+        "failure_impact": 0.45
+      }
+    },
+    "structural_analysis": {
+      "bounded_tfo_max_depth": 16,
+      "bounded_tfo_max_nodes": 4096,
+      "control_role_distance_cap": 64,
+      "generated_name_regexes": [
+        "^n_[0-9]+$",
+        "^\\\\(?:add|sub|mul|div|rem|logic|result|tmp|net)_[^/]+/n_[0-9]+$",
+        "^(?:tmp|net|wire)_[0-9]+$"
+      ]
+    },
+    "semantic_rules": {
+      "control_name_regexes": [
+        "(?:^|_)(?:valid|ready|req|request|gnt|grant|stall|flush|kill|enable|en|we|write_enable|state|busy|pending|fetch|sleep|halt|debug|irq|interrupt|exception|trap|branch|jump|redirect|illegal|decode|ctrl|control)(?:_|$|\\[)",
+        "(?:^|_)(?:is_|do_|use_|take_|accept_|start_|finish_|commit_|issue_)",
+        "(?:^|_)(?:fsm|arb|grant|handshake)(?:_|$|\\[)"
+      ],
+      "data_name_regexes": [
+        "(?:^|_)(?:pc|addr|address|instr|instruction|data|mem|memory|rdata|wdata|operand|result|alu|mult|mul|div|rem|quotient|remainder|target|writeback|wb|regfile|rf|csr|mepc|mtvec|mcause|mstatus|load|store|byte|word|halfword)(?:_|$|\\[)",
+        "(?:^|_)(?:rs1|rs2|rd|imm|immediate)(?:_|$|\\[)",
+        "(?:^|_)(?:sum|carry|shift|compare|cmp)(?:_|$|\\[)"
+      ],
+      "control_module_regexes": [
+        "controller",
+        "decoder",
+        "prefetch_controller",
+        "int_controller",
+        "obi_interface",
+        "fifo",
+        "sleep_unit"
+      ],
+      "data_module_regexes": [
+        "register_file",
+        "alu",
+        "alu_div",
+        "mult",
+        "popcnt",
+        "ff_one",
+        "load_store_unit",
+        "aligner",
+        "compressed_decoder",
+        "ex_stage",
+        "id_stage",
+        "if_stage",
+        "cs_registers"
+      ]
+    },
+    "score_weights": {
+      "semantic": {
+        "control_name_match": 4.0,
+        "data_name_match": 4.0,
+        "control_module_match": 1.5,
+        "data_module_match": 1.5,
+        "direct_mux_select_consumer": 3.0,
+        "near_mux_select_consumer": 1.5,
+        "arithmetic_driver_or_consumer": 2.0,
+        "state_site": 2.0,
+        "generated_name_penalty": 1.5
+      },
+      "assertion_relevance": {
+        "control_path_base": 4.0,
+        "architectural_data_base": 3.0,
+        "generic_observable_base": 1.0,
+        "state_site_bonus": 1.5,
+        "semantic_name_bonus": 1.0,
+        "both_polarities_bonus": 0.5,
+        "toggle_bonus_cap": 1.5,
+        "near_checkpoint_bonus": 1.0,
+        "unknown_seen_penalty": 0.25,
+        "scan_touch_penalty": 2.0,
+        "sequential_state_base": 5.0
+      },
+      "failure_impact": {
+        "top_output_reachable_bonus": 1.5,
+        "sequential_checkpoint_reachable_bonus": 1.0,
+        "fanout_log_bonus_cap": 1.5,
+        "tfo_log_bonus_cap": 2.0,
+        "reachable_checkpoint_log_bonus_cap": 2.0,
+        "reconvergence_log_bonus_cap": 1.0,
+        "near_checkpoint_bonus": 1.0,
+        "both_polarities_bonus": 0.5,
+        "unknown_seen_penalty": 0.25
+      }
+    },
+    "selection_quotas_unique_sites": {
+      "sequential_state": 180,
+      "control_path": 160,
+      "architectural_data": 140,
+      "generic_observable": 120
+    }
+  },
+  "implemented_formula": {
+    "normalization": "N(raw) = clamp(raw / 10, 0, 1)",
+    "selection": "S_selection = w_assertion * S_assertion + w_impact * S_impact",
+    "assertion_relevance_terms": [
+      "class_base",
+      "state_site_bonus",
+      "semantic_name_bonus",
+      "both_polarities_bonus",
+      "toggle_bonus=min(cap, log2(1+binary_toggle_count)/4)",
+      "near_checkpoint_bonus=weight/(1+nearest_checkpoint_distance)",
+      "unknown_seen_penalty",
+      "scan_touch_penalty"
+    ],
+    "failure_impact_terms": [
+      "top_output_reachable_bonus",
+      "sequential_checkpoint_reachable_bonus",
+      "fanout_log_bonus=min(cap, log2(1+logic_fanout)/3)",
+      "tfo_log_bonus=min(cap, log2(1+tfo_node_count_bounded)/5)",
+      "reachable_checkpoint_log_bonus=min(cap, log2(1+checkpoint_count)/3)",
+      "reconvergence_log_bonus=min(cap, log2(1+reconvergent_nodes)/4)",
+      "near_checkpoint_bonus=weight/(1+nearest_checkpoint_distance)",
+      "both_polarities_bonus",
+      "unknown_seen_penalty"
+    ]
+  }
+}

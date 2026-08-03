@@ -1,0 +1,267 @@
+{
+  "schema_version": "1.0",
+  "program_version": "1.0.0",
+  "generated_at_utc": "2026-08-03T17:05:56.820045+00:00",
+  "repo_root": "/raid/spring2026/fwu44/research/fault2assertion",
+  "git": {
+    "commit": "6206ffb4617a5e6d32999e0559e18067b6f37808",
+    "branch": "main",
+    "status_porcelain": "?? data/\n?? scripts/reporting/"
+  },
+  "catalog_dir": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog",
+  "output_dir": "/raid/spring2026/fwu44/research/fault2assertion/data/site_report_export/export_20260803_130547",
+  "source_files": {
+    "stage1": {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_01_raw_sites.json",
+      "sha256": "9ef0132c8fb3bccedfa5edb486ee337143c2fc5c63c3b54388c4b7423707385f",
+      "bytes": 49077173
+    },
+    "stage2": {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_02_static_safe.json",
+      "sha256": "f87e26e76f738dbdd701df63dba3a18eb20ac4d63ef45aa1f1022fc28ee1b2b2",
+      "bytes": 36155951
+    },
+    "stage3": {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_03_activity.json",
+      "sha256": "dbb7c237ce86594cd026afc14528726951d32ffa841ad5170af934f19e9141eb",
+      "bytes": 46920016
+    },
+    "stage4_candidates": {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_candidates.json",
+      "sha256": "e15abab45ff12b46a766fe3e5004fac7ef632a7a31581b3d8a341be682fb1578",
+      "bytes": 79942937
+    },
+    "stage4_selection": {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog/stage_04_selection.json",
+      "sha256": "9a85dca7226b16cc5eaf37a72b37ca45cb247b0883127e2721a833f871269c28",
+      "bytes": 1224039
+    }
+  },
+  "policy": {
+    "path": "/raid/spring2026/fwu44/research/fault2assertion/platform/cv32e40p/fault_classification_policy.json",
+    "sha256": "b9cc518c17cedb502df84e0049243a4122e6dca479324a56bcc4505afda4e359"
+  },
+  "campaign_auto_discovery": {
+    "selected": "/raid/spring2026/fwu44/research/fault2assertion/runs/stage5_campaign_v3/cv32e40p/crc32/sites_all",
+    "all_discovered_newest_first": [
+      "/raid/spring2026/fwu44/research/fault2assertion/runs/stage5_campaign_v3/cv32e40p/crc32/sites_all"
+    ]
+  },
+  "record_counts": {
+    "stage1_sites": 0,
+    "stage2_sites": 19903,
+    "stage3_sites": 19903,
+    "stage4_candidate_sites": 19903,
+    "selected_sites": 600,
+    "selected_site_details_written": 600,
+    "selected_fault_instances": 1056,
+    "score_breakdowns": 600
+  },
+  "score_reconstruction": {
+    "status_counts": {
+      "COMPLETE": 600
+    },
+    "mismatch_counts": {}
+  },
+  "all_candidate_parts": [
+    {
+      "path": "11_all_candidates_compact.part001.jsonl",
+      "record_count": 5000,
+      "sha256": "dbfe49db8ea5813dd63b083da36d5c3be4327e494fc14b7f3f35836d95f440a2",
+      "bytes": 6322826
+    },
+    {
+      "path": "11_all_candidates_compact.part002.jsonl",
+      "record_count": 5000,
+      "sha256": "83c991384ab692d24e4a9a9166946f151f766bda70aad267a46dc34b97f0b4a5",
+      "bytes": 7550305
+    },
+    {
+      "path": "11_all_candidates_compact.part003.jsonl",
+      "record_count": 5000,
+      "sha256": "53366f5dfa9be5ce215d509e132de56769ac3bac71855d4fa4cd05a5a3532027",
+      "bytes": 6343184
+    },
+    {
+      "path": "11_all_candidates_compact.part004.jsonl",
+      "record_count": 4903,
+      "sha256": "1cc3e22fcd2206a55f3821ad868d8e833a213b7fc155b123c76c56e56c63f9bc",
+      "bytes": 6352042
+    }
+  ],
+  "copied_source_reports": [
+    "source_reports/stage_01_report.txt",
+    "source_reports/stage_02_report.txt",
+    "source_reports/stage_03_report.txt",
+    "source_reports/stage_04_report.txt"
+  ],
+  "campaign": {
+    "campaign_root": "/raid/spring2026/fwu44/research/fault2assertion/runs/stage5_campaign_v3/cv32e40p/crc32/sites_all",
+    "manifest": {
+      "path": "/raid/spring2026/fwu44/research/fault2assertion/runs/stage5_campaign_v3/cv32e40p/crc32/sites_all/campaign_manifest.json",
+      "sha256": "0ca05ca3de3edee5435034b6e889297489186900cc06dde921b1da20cf44f847",
+      "kind": "stage5_full_site_campaign_manifest",
+      "schema_version": "2.0",
+      "program_version": "2.0.0",
+      "universe": {
+        "site_count": 600,
+        "fault_count": 1056,
+        "single_polarity_site_count": 144,
+        "dual_polarity_site_count": 456,
+        "sites_by_fault_class": {
+          "sequential_state": 180,
+          "control_path": 160,
+          "architectural_data": 140,
+          "generic_observable": 120
+        },
+        "faults_by_fault_class": {
+          "sequential_state": 292,
+          "control_path": 277,
+          "architectural_data": 266,
+          "generic_observable": 221
+        },
+        "faults_by_polarity": {
+          "SA0": 486,
+          "SA1": 570
+        },
+        "sites_by_eligible_polarity_pattern": {
+          "SA0_and_SA1": 456,
+          "SA1_only": 114,
+          "SA0_only": 30
+        }
+      }
+    },
+    "state": {
+      "schema_version": "2.0",
+      "program_version": "2.0.0",
+      "kind": "stage5_campaign_state",
+      "campaign_root": "/raid/spring2026/fwu44/research/fault2assertion/runs/stage5_campaign_v3/cv32e40p/crc32/sites_all",
+      "manifest": {
+        "path": "/raid/spring2026/fwu44/research/fault2assertion/runs/stage5_campaign_v3/cv32e40p/crc32/sites_all/campaign_manifest.json",
+        "digest_sha256": "88b36f2944cc512fb08ccd0b2b2d39644ced3ce844361c8662bbf83d5e9dda9f"
+      },
+      "control": {
+        "through_site": 200,
+        "error_policy": "fail_fast"
+      },
+      "run": {
+        "state": "BOUNDARY_COMPLETE",
+        "last_started_at_utc": "2026-08-02T19:42:05.438029+00:00",
+        "last_finished_at_utc": "2026-08-02T23:07:11.286169+00:00",
+        "last_error": null
+      },
+      "milestones": [
+        {
+          "manifest_digest_sha256": "88b36f2944cc512fb08ccd0b2b2d39644ced3ce844361c8662bbf83d5e9dda9f",
+          "through_site_resolved": 100,
+          "through_site": 100,
+          "site_count": 100,
+          "fault_count": 185,
+          "passed_sites": 100,
+          "passed_faults": 185,
+          "completed_at_utc": "2026-08-02T07:35:13.203820+00:00"
+        },
+        {
+          "manifest_digest_sha256": "88b36f2944cc512fb08ccd0b2b2d39644ced3ce844361c8662bbf83d5e9dda9f",
+          "through_site_resolved": 200,
+          "through_site": 200,
+          "site_count": 200,
+          "fault_count": 358,
+          "passed_sites": 200,
+          "passed_faults": 358,
+          "completed_at_utc": "2026-08-02T23:07:11.258279+00:00"
+        }
+      ],
+      "generated_at_utc": "2026-08-01T22:50:45.647978+00:00",
+      "updated_at_utc": "2026-08-03T04:04:31.772343+00:00",
+      "universe": {
+        "site_count": 600,
+        "fault_count": 1056
+      },
+      "target": {
+        "through_site": 200,
+        "through_site_resolved": 200,
+        "site_count": 200,
+        "fault_count": 358
+      },
+      "progress": {
+        "target": {
+          "passed_sites": 200,
+          "site_count": 200,
+          "passed_faults": 358,
+          "fault_count": 358,
+          "contiguous_passed_sites": 200,
+          "last_contiguous_passed_selection_id": "TS000495",
+          "site_state_counts": {
+            "PASSED": 200
+          },
+          "fault_state_counts": {
+            "ORACLE_VALIDATED_CLEANED": 358
+          }
+        },
+        "global": {
+          "passed_sites": 200,
+          "site_count": 600,
+          "passed_faults": 358,
+          "fault_count": 1056,
+          "site_state_counts": {
+            "PASSED": 200,
+            "INCOMPLETE": 400
+          },
+          "fault_state_counts": {
+            "ORACLE_VALIDATED_CLEANED": 358,
+            "PREPARED": 698
+          }
+        },
+        "outside_target": {
+          "site_count": 400,
+          "fault_count": 698
+        }
+      },
+      "storage": {
+        "generated_at_utc": "2026-08-01T23:00:46.303912+00:00",
+        "total_bytes": 1737934,
+        "work_bytes": 0,
+        "durable_estimate_bytes": 1737934,
+        "filesystem_free_bytes": 189554753536,
+        "human_total": "1.66 MiB",
+        "human_work": "0.00 B",
+        "human_durable_estimate": "1.66 MiB",
+        "human_filesystem_free": "176.54 GiB"
+      }
+    },
+    "counts": {
+      "sites": 600,
+      "faults": 1056,
+      "fault_state_counts": {
+        "MISSING": 698,
+        "ORACLE_VALIDATED_CLEANED": 358
+      },
+      "site_state_counts": {
+        "INCOMPLETE": 400,
+        "PASSED": 200
+      },
+      "native_status_counts": {
+        "EXISTING_ASSERTION_DETECTED": 80,
+        "NOT_RUN": 698,
+        "OUTPUT_MATCH": 94,
+        "OUTPUT_MISMATCH": 10,
+        "TIMEOUT": 174
+      },
+      "route_counts": {
+        "DIAGNOSTIC_THREE_MODE": 80,
+        "NATIVE_ONLY": 278,
+        "NOT_ROUTED": 698
+      },
+      "observe_status_counts": {
+        "DIAGNOSTIC_TIMEOUT": 80,
+        "NOT_RUN": 976
+      },
+      "diagnostic_quarantine_status_counts": {
+        "DIAGNOSTIC_TIMEOUT": 80,
+        "NOT_RUN": 976
+      }
+    }
+  },
+  "warnings": []
+}

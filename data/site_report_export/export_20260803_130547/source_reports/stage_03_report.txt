@@ -1,0 +1,48 @@
+Fault2Assertion Stage 3 - Golden Activity Filtering
+================================================================================
+Generated UTC         : 2026-07-30T09:35:58.922492+00:00
+Design                : cv32e40p
+Workload              : crc32
+Stage-2 digest        : 272abe2269bef1f7f5c92c1aa290abac262f1cf8548334c8cefa367ad2032dde
+Monitor mapping digest: 67a8175fb829f09352fc66ac429534fd5ef4f1759e81d68b19ac4309313031e5
+Raw activity SHA256   : 87e2f0d8df46ce4e87138142c4874954bd40c3a0445800edc57cc779e1084168
+Stage-3 digest        : 421164eeb34dd85e6b1f9d36517c2e42bf3aa1db2c0e160dda30cec3c2dbf533
+
+Stage-3 summary
+--------------------------------------------------------------------------------
+Raw Stage-1 sites             : 19903
+Stage-2 profile requests      : 16757
+Sites with monitor rows       : 16757
+Activity-eligible sites       : 16757
+Activity-excluded sites       : 0
+Stage-2 excluded/not profiled : 3146
+Eligible fault instances      : 24657
+Eligible sites with X/Z flag  : 603
+Raw TSV rows                  : 16757
+Bound monitor instance paths  : 80
+
+Eligible polarity counts
+--------------------------------------------------------------------------------
+SA0     : 11431
+SA1     : 13226
+
+Activity exclusion reasons
+--------------------------------------------------------------------------------
+None
+
+Eligible sites by source kind
+--------------------------------------------------------------------------------
+arithmetic_output                  : 701
+buffer_or_inverter_output          : 1585
+combinational_output               : 10404
+hierarchical_module_output         : 1267
+sequential_output                  : 2800
+
+Stage-3 interpretation
+--------------------------------------------------------------------------------
+No fault type has been assigned yet.
+No fault instance or faulty netlist has been generated.
+Only sites marked eligible_for_fault_classification enter Stage 4.
+SA0 is eligible only when golden value 1 was observed.
+SA1 is eligible only when golden value 0 was observed.
+VCD was not generated; activity came from the compact bound monitor.

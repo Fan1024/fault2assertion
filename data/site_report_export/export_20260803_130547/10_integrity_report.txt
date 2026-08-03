@@ -1,0 +1,47 @@
+Fault2Assertion Site Report Export
+================================================================================
+Generated UTC       : 2026-08-03T17:05:56.820045+00:00
+Repository          : /raid/spring2026/fwu44/research/fault2assertion
+Git commit          : 6206ffb4617a5e6d32999e0559e18067b6f37808
+Catalog directory   : /raid/spring2026/fwu44/research/fault2assertion/faults/cv32e40p/site_catalog
+Output directory    : /raid/spring2026/fwu44/research/fault2assertion/data/site_report_export/export_20260803_130547
+
+Record counts
+--------------------------------------------------------------------------------
+stage1_sites                    : 0
+stage2_sites                    : 19903
+stage3_sites                    : 19903
+stage4_candidate_sites          : 19903
+selected_sites                  : 600
+selected_site_details_written   : 600
+selected_fault_instances        : 1056
+score_breakdowns                : 600
+
+Score reconstruction
+--------------------------------------------------------------------------------
+Status counts       : {'COMPLETE': 600}
+Mismatch counts     : {}
+
+Campaign
+--------------------------------------------------------------------------------
+Selected root       : /raid/spring2026/fwu44/research/fault2assertion/runs/stage5_campaign_v3/cv32e40p/crc32/sites_all
+Discovered roots    : 1
+sites                           : 600
+faults                          : 1056
+fault_state_counts              : {'MISSING': 698, 'ORACLE_VALIDATED_CLEANED': 358}
+site_state_counts               : {'INCOMPLETE': 400, 'PASSED': 200}
+native_status_counts            : {'EXISTING_ASSERTION_DETECTED': 80, 'NOT_RUN': 698, 'OUTPUT_MATCH': 94, 'OUTPUT_MISMATCH': 10, 'TIMEOUT': 174}
+route_counts                    : {'DIAGNOSTIC_THREE_MODE': 80, 'NATIVE_ONLY': 278, 'NOT_ROUTED': 698}
+observe_status_counts           : {'DIAGNOSTIC_TIMEOUT': 80, 'NOT_RUN': 976}
+diagnostic_quarantine_status_counts: {'DIAGNOSTIC_TIMEOUT': 80, 'NOT_RUN': 976}
+
+Warnings
+--------------------------------------------------------------------------------
+None
+
+Important interpretation
+--------------------------------------------------------------------------------
+Functional-block names are reporting-only mappings.
+They do not replace the Stage-4 scientific primary_class.
+The export is read-only and does not modify simulation artifacts.
+Large VCDs, netlists, simulator work directories, and logs are not copied.

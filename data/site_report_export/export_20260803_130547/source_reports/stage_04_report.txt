@@ -1,0 +1,61 @@
+Fault2Assertion Stage 4 Report
+================================================================================
+
+Design              : cv32e40p
+Workload            : crc32
+Stage-3 digest      : 421164eeb34dd85e6b1f9d36517c2e42bf3aa1db2c0e160dda30cec3c2dbf533
+Candidate digest    : 5c5ec529eb3cb9fffb69246e0e7beb433c871d20d2f0981bcd905b1e65739da2
+Selection digest    : 8f20e4f98ce4f549cccf90af317d337b4374e8d6d319d66edb74da7c329d58a9
+
+Classification population
+--------------------------------------------------------------------------------
+Stage-3 eligible sites              : 16757
+Classified fault-instance population: 24657
+sequential_state        : sites=  2800 fault_instances=  4039 scan_touch=   73
+control_path            : sites=   213 fault_instances=   365 scan_touch=    0
+architectural_data      : sites=  3694 fault_instances=  4939 scan_touch=    0
+generic_observable      : sites= 10050 fault_instances= 15314 scan_touch=  100
+
+Detailed structural analysis
+--------------------------------------------------------------------------------
+Bounded-TFO truncated sites : 6097
+Low-confidence sites        : 0
+Primary-selection sites     : 16584
+
+Primary unique-site plan
+--------------------------------------------------------------------------------
+Target unique sites         : 600
+Selected unique sites       : 600
+Generated fault instances   : 1056
+Single-polarity sites       : 144
+Dual-polarity sites         : 456
+sequential_state        : site_population=  2727 site_quota= 180 selected_sites= 180 generated_faults= 292
+control_path            : site_population=   213 site_quota= 160 selected_sites= 160 generated_faults= 277
+architectural_data      : site_population=  3694 site_quota= 140 selected_sites= 140 generated_faults= 266
+generic_observable      : site_population=  9950 site_quota= 120 selected_sites= 120 generated_faults= 221
+
+Selected-site activity polarity patterns
+--------------------------------------------------------------------------------
+SA0_only        : 30
+SA1_only        : 114
+SA0_and_SA1     : 456
+
+Generated fault-instance polarity counts
+--------------------------------------------------------------------------------
+SA0     : 486
+SA1     : 570
+
+Warnings
+--------------------------------------------------------------------------------
+- 6097 classified sites reached the bounded-TFO depth/node limit; truncated=true is retained as a feature
+- 173 Stage-3 eligible sites touch scan structure; they are classified but excluded from the primary 600-unique-site selection
+
+Stage-4 interpretation
+--------------------------------------------------------------------------------
+Exactly 600 unique workload-active sites were selected.
+Fault count was not capped or balanced by polarity.
+Every workload-eligible polarity of every selected site was expanded.
+No fault.json has been materialized yet.
+No mapped netlist has been modified.
+No faulty netlist or per-fault run directory has been generated.
+The selected TF IDs become the Stage-5 materialization input.
