@@ -1,0 +1,38 @@
+Generate one concise diagnostic SystemVerilog Assertion property body for the
+known structural fault below.
+
+Success criterion:
+- the assertion must remain silent on the fault-free Golden CRC32 execution;
+- the assertion should trigger on the target faulty execution.
+
+The supplied `golden_behavior` is compact observational evidence collected from
+the completed fault-free Golden workload execution.
+
+Interpret it as follows:
+- `signal_order` defines the bit order of every string in `observed_states`;
+- every listed state was observed during the Golden execution;
+- for `one_cycle_transitions.recv_N_i`, each two-bit state is ordered as
+  `[site_i, recv_N_i]`;
+- `"AB->CD"` means state `AB` was observed at one sampled clock edge and state
+  `CD` at the immediately following sampled clock edge;
+- every listed transition was observed during the Golden execution;
+- an unlisted state or transition was not observed in this workload execution,
+  but this is observational evidence rather than a formal proof of impossibility.
+
+The generated property must not contradict any listed Golden observed state or
+transition.
+
+Use only `site_i` and the supplied `recv_N_i` aliases.
+Prefer a meaningful relational or temporal property between the fault site and
+its direct receivers.
+
+{{SVA_KNOWLEDGE}}
+
+FAULT CONTEXT AND GOLDEN BEHAVIOR
+{{VISIBLE_CONTEXT_JSON}}
+
+Return exactly:
+
+BEGIN_SVA
+<one property expression body>
+END_SVA
