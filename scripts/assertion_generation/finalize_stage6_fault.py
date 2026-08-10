@@ -1,26 +1,18 @@
 #!/usr/bin/env python3
-"""Finalize one completed Stage-6 fault into the frozen durable data schema.
+"""Finalize one terminal Stage-6 fault into the compact durable v2 schema.
 
-Actions:
+Durable files:
+  fault_result.json
+  roundN_property.sva for every generated round
+  failure.log only for infrastructure/unexpected failures
 
-check
-    Validate that the source Stage-6 pilot/work directory is terminal and
-    print the compact scientific summary. Do not write or delete anything.
+A scientific fault is terminal when:
+  * TARGET_DETECTED occurs, or
+  * Round 2 simulation completed (3/3 API generations consumed), or
+  * an infrastructure execution verdict makes continuation invalid.
 
-finalize
-    Build the durable result atomically:
-        fault_result.json
-        roundN_property.sva
-        optional failure.log
-    The source work directory is retained.
-
-cleanup
-    Recompute the source result, verify that the durable result is identical,
-    then delete the entire source work directory.
-
-This script performs no assertion generation, no downstream selection, no
-fault simulation, and no scientific classification beyond summarizing the
-already-produced Stage-6 artifacts.
+A missing discriminative scope is NOT terminal before Round 2; it routes to
+SAME_CONTEXT_RETRY and may consume the remaining generation budget.
 """
 
 from __future__ import annotations
@@ -35,10 +27,12 @@ import sys
 import tempfile
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 
-SCHEMA_VERSION = "stage6_fault_result_v1"
+SCHEMA_VERSION = (
+    "stage6_fault_result_v2"
+)
 
 MAX_ROUND = 2
 
@@ -46,26 +40,68 @@ FAULT_RE = re.compile(
     r"^TF\d{6}_SA[01]$"
 )
 
-CONTINUE = {
+VALID_FEEDBACK = {
+    "NONE",
+    "GOLDEN_REPAIR",
+    "LOCALIZED_BASE",
+    "LOCALIZED_DOWNSTREAM",
+    "SAME_CONTEXT_RETRY",
+    "COUNTEREXAMPLE_BASE",
+    "COUNTEREXAMPLE_DOWNSTREAM",
+}
+
+CONTINUABLE_VERDICTS = {
     "GOLDEN_FALSE_POSITIVE",
     "TARGET_NOT_DETECTED",
 }
 
-INFRA = {
+INFRA_VERDICTS = {
     "COMPILE_FAILED",
     "GOLDEN_EXECUTION_FAILED",
     "FAULT_EXECUTION_FAILED",
 }
 
-NO_LOCALIZATION = {
-    "NO_DOWNSTREAM_CANDIDATES",
-    "NO_DISCRIMINATIVE_DOWNSTREAM_CANDIDATE",
+VERDICT_CODE = {
+    "GOLDEN_FALSE_POSITIVE":
+        "GFP",
+
+    "TARGET_NOT_DETECTED":
+        "TND",
+
+    "TARGET_DETECTED":
+        "TD",
+
+    "COMPILE_FAILED":
+        "CF",
+
+    "GOLDEN_EXECUTION_FAILED":
+        "GEF",
+
+    "FAULT_EXECUTION_FAILED":
+        "FEF",
 }
 
-VALID_FEEDBACK = {
-    "GOLDEN_REPAIR",
-    "LOCALIZED_FAULT",
-    "FAULT_COUNTEREXAMPLE",
+FEEDBACK_CODE = {
+    "NONE":
+        "NONE",
+
+    "GOLDEN_REPAIR":
+        "GR",
+
+    "LOCALIZED_BASE":
+        "LB",
+
+    "LOCALIZED_DOWNSTREAM":
+        "LD",
+
+    "SAME_CONTEXT_RETRY":
+        "SCR",
+
+    "COUNTEREXAMPLE_BASE":
+        "CEB",
+
+    "COUNTEREXAMPLE_DOWNSTREAM":
+        "CED",
 }
 
 
@@ -79,6 +115,7 @@ def load_json(
 ) -> dict[str, Any]:
 
     try:
+
         value = json.loads(
             path.read_text(
                 encoding="utf-8"
@@ -86,11 +123,14 @@ def load_json(
         )
 
     except FileNotFoundError as exc:
+
         raise FinalizeError(
-            f"{label} not found: {path}"
+            f"{label} not found: "
+            f"{path}"
         ) from exc
 
     except json.JSONDecodeError as exc:
+
         raise FinalizeError(
             f"invalid {label} JSON "
             f"{path}: {exc}"
@@ -100,6 +140,7 @@ def load_json(
         value,
         dict,
     ):
+
         raise FinalizeError(
             f"{label} must contain "
             f"one JSON object: {path}"
@@ -110,7 +151,7 @@ def load_json(
 
 def write_json(
     path: Path,
-    value: dict[str, Any],
+    payload: Mapping[str, Any],
 ) -> None:
 
     tmp = path.with_name(
@@ -119,7 +160,7 @@ def write_json(
 
     tmp.write_text(
         json.dumps(
-            value,
+            payload,
             indent=2,
             ensure_ascii=False,
         )
@@ -143,83 +184,18 @@ def sha256(
     ) as handle:
 
         for block in iter(
-            lambda: handle.read(
-                1024 * 1024
-            ),
+            lambda:
+                handle.read(
+                    1024 * 1024
+                ),
             b"",
         ):
+
             digest.update(
                 block
             )
 
     return digest.hexdigest()
-
-
-def api_summary(
-    pilot: Path,
-    round_index: int,
-) -> dict[str, Any] | None:
-
-    path = (
-        pilot
-        / f"round{round_index}_api_status.json"
-    )
-
-    if not path.is_file():
-        return None
-
-    payload = load_json(
-        path,
-        f"Round-{round_index} API status",
-    )
-
-    result: dict[
-        str,
-        Any,
-    ] = {}
-
-    if (
-        payload.get(
-            "response_id"
-        )
-        is not None
-    ):
-        result[
-            "response_id"
-        ] = payload[
-            "response_id"
-        ]
-
-    if (
-        payload.get(
-            "response_status"
-        )
-        is not None
-    ):
-        result[
-            "status"
-        ] = payload[
-            "response_status"
-        ]
-
-    usage = payload.get(
-        "usage"
-    )
-
-    if isinstance(
-        usage,
-        dict,
-    ):
-        result[
-            "usage"
-        ] = copy.deepcopy(
-            usage
-        )
-
-    return (
-        result
-        or None
-    )
 
 
 def feedback_type(
@@ -242,26 +218,275 @@ def feedback_type(
         ),
     )
 
-    value = meta.get(
-        "feedback_type"
+    value = str(
+        meta.get(
+            "feedback_type",
+            "",
+        )
     )
 
-    if value not in VALID_FEEDBACK:
+    if (
+        value
+        not in
+        VALID_FEEDBACK
+    ):
+
         raise FinalizeError(
             f"invalid Round-{round_index} "
             f"feedback_type: {value!r}"
         )
 
-    return str(
-        value
+    return value
+
+
+def generation_meta(
+    pilot: Path,
+    round_index: int,
+) -> dict[str, Any] | None:
+
+    if round_index == 0:
+        return None
+
+    path = (
+        pilot
+        / (
+            f"round{round_index}"
+            "_generation_meta.json"
+        )
+    )
+
+    if not path.is_file():
+        return None
+
+    return load_json(
+        path,
+        (
+            f"Round-{round_index} "
+            "generation metadata"
+        ),
+    )
+
+
+def api_summary(
+    pilot: Path,
+    round_index: int,
+) -> dict[str, Any] | None:
+
+    path = (
+        pilot
+        / (
+            f"round{round_index}"
+            "_api_status.json"
+        )
+    )
+
+    if not path.is_file():
+        return None
+
+    payload = load_json(
+        path,
+        (
+            f"Round-{round_index} "
+            "API status"
+        ),
+    )
+
+    result: dict[
+        str,
+        Any,
+    ] = {}
+
+    for (
+        source,
+        dest,
+    ) in (
+        (
+            "model_requested",
+            "model",
+        ),
+        (
+            "response_id",
+            "response_id",
+        ),
+        (
+            "response_status",
+            "status",
+        ),
+    ):
+
+        if (
+            payload.get(
+                source
+            )
+            is not None
+        ):
+
+            result[
+                dest
+            ] = payload[
+                source
+            ]
+
+    if isinstance(
+        payload.get(
+            "usage"
+        ),
+        dict,
+    ):
+
+        result[
+            "usage"
+        ] = copy.deepcopy(
+            payload[
+                "usage"
+            ]
+        )
+
+    return (
+        result
+        or None
+    )
+
+
+def usage_metrics(
+    usage: Mapping[str, Any],
+) -> dict[str, int]:
+
+    result: dict[
+        str,
+        int,
+    ] = {}
+
+    for key in (
+        "input_tokens",
+        "output_tokens",
+        "total_tokens",
+    ):
+
+        value = usage.get(
+            key
+        )
+
+        if isinstance(
+            value,
+            int,
+        ):
+
+            result[
+                key
+            ] = value
+
+    input_details = usage.get(
+        "input_tokens_details"
+    )
+
+    if isinstance(
+        input_details,
+        dict,
+    ):
+
+        cached = (
+            input_details.get(
+                "cached_tokens"
+            )
+        )
+
+        if isinstance(
+            cached,
+            int,
+        ):
+
+            result[
+                "cached_input_tokens"
+            ] = cached
+
+    output_details = usage.get(
+        "output_tokens_details"
+    )
+
+    if isinstance(
+        output_details,
+        dict,
+    ):
+
+        reasoning = (
+            output_details.get(
+                "reasoning_tokens"
+            )
+        )
+
+        if isinstance(
+            reasoning,
+            int,
+        ):
+
+            result[
+                "reasoning_tokens"
+            ] = reasoning
+
+    return result
+
+
+def total_usage(
+    rounds: list[dict[str, Any]],
+) -> dict[str, int] | None:
+
+    total: dict[
+        str,
+        int,
+    ] = {}
+
+    for item in rounds:
+
+        api = item.get(
+            "api"
+        )
+
+        usage = (
+            api.get(
+                "usage"
+            )
+            if isinstance(
+                api,
+                dict,
+            )
+            else None
+        )
+
+        if not isinstance(
+            usage,
+            dict,
+        ):
+            continue
+
+        for (
+            key,
+            value,
+        ) in usage_metrics(
+            usage
+        ).items():
+
+            total[
+                key
+            ] = (
+                total.get(
+                    key,
+                    0,
+                )
+                + value
+            )
+
+    return (
+        total
+        or None
     )
 
 
 def simulation_summary(
-    simulation: dict[str, Any],
+    simulation: Mapping[str, Any],
 ) -> dict[str, Any]:
 
-    def status(
+    def runner(
         name: str,
     ) -> Any:
 
@@ -269,15 +494,16 @@ def simulation_summary(
             name
         )
 
-        if isinstance(
-            value,
-            dict,
-        ):
-            return value.get(
+        return (
+            value.get(
                 "runner_status"
             )
-
-        return None
+            if isinstance(
+                value,
+                dict,
+            )
+            else None
+        )
 
     result: dict[
         str,
@@ -289,17 +515,17 @@ def simulation_summary(
             ),
 
         "compile_status":
-            status(
+            runner(
                 "compile"
             ),
 
         "golden_status":
-            status(
+            runner(
                 "golden"
             ),
 
         "faulty_status":
-            status(
+            runner(
                 "faulty"
             ),
     }
@@ -308,33 +534,30 @@ def simulation_summary(
         "verdict"
     )
 
-    if (
-        verdict
+    phase = (
+        "golden"
+        if verdict
         == "GOLDEN_FALSE_POSITIVE"
-    ):
-        phase = "golden"
 
-    elif (
-        verdict
+        else "faulty"
+        if verdict
         == "TARGET_DETECTED"
-    ):
-        phase = "faulty"
 
-    else:
-        phase = None
+        else None
+    )
 
-    if phase is not None:
+    if phase:
 
-        record = simulation.get(
+        raw = simulation.get(
             phase
         )
 
         event = (
-            record.get(
+            raw.get(
                 "generated_assertion"
             )
             if isinstance(
-                record,
+                raw,
                 dict,
             )
             else None
@@ -368,6 +591,7 @@ def simulation_summary(
                 ),
                 int,
             ):
+
                 trigger[
                     "cycle"
                 ] = event[
@@ -380,6 +604,7 @@ def simulation_summary(
                 ),
                 dict,
             ):
+
                 trigger[
                     "sampled_values"
                 ] = copy.deepcopy(
@@ -395,7 +620,7 @@ def simulation_summary(
     return result
 
 
-def round_input_delta(
+def model_input_delta(
     pilot: Path,
     round_index: int,
     feedback: str,
@@ -417,8 +642,9 @@ def round_input_delta(
             golden,
             dict,
         ):
+
             raise FinalizeError(
-                "visible_context.json "
+                "Round-0 visible context "
                 "has no golden_behavior"
             )
 
@@ -435,18 +661,19 @@ def round_input_delta(
                 ),
         }
 
-        training = visible.get(
-            "training_observation"
-        )
-
         if isinstance(
-            training,
+            visible.get(
+                "training_observation"
+            ),
             dict,
         ):
+
             result[
                 "training_observation"
             ] = copy.deepcopy(
-                training
+                visible[
+                    "training_observation"
+                ]
             )
 
         return result
@@ -471,6 +698,7 @@ def round_input_delta(
         previous,
         dict,
     ):
+
         raise FinalizeError(
             f"Round-{round_index} "
             "model context has "
@@ -508,8 +736,22 @@ def round_input_delta(
 
             "new_target_fault_information":
                 False,
+        }
 
-            "exact_golden_counterexample_provided":
+        return result
+
+    if (
+        feedback
+        == "SAME_CONTEXT_RETRY"
+    ):
+
+        result[
+            "new_information"
+        ] = {
+            "new_signal_information":
+                False,
+
+            "new_target_fault_information":
                 False,
         }
 
@@ -523,6 +765,7 @@ def round_input_delta(
         diagnostic,
         dict,
     ):
+
         raise FinalizeError(
             f"Round-{round_index} "
             f"{feedback} has no "
@@ -531,7 +774,29 @@ def round_input_delta(
 
     if (
         feedback
-        == "LOCALIZED_FAULT"
+        == "LOCALIZED_BASE"
+    ):
+
+        result[
+            "new_information"
+        ] = {
+            "scope":
+                "BASE",
+
+            "evidence_types":
+                copy.deepcopy(
+                    diagnostic.get(
+                        "evidence_types",
+                        [],
+                    )
+                ),
+        }
+
+        return result
+
+    if (
+        feedback
+        == "LOCALIZED_DOWNSTREAM"
     ):
 
         golden = model.get(
@@ -542,15 +807,19 @@ def round_input_delta(
             golden,
             dict,
         ):
+
             raise FinalizeError(
-                f"Round-{round_index} "
-                "LOCALIZED_FAULT "
-                "has no golden_behavior"
+                "LOCALIZED_DOWNSTREAM "
+                "has no expanded "
+                "golden_behavior"
             )
 
         result[
             "new_information"
         ] = {
+            "scope":
+                "DOWNSTREAM",
+
             "selected_observation_alias":
                 diagnostic.get(
                     "selected_observation_alias"
@@ -574,7 +843,10 @@ def round_input_delta(
 
     if (
         feedback
-        == "FAULT_COUNTEREXAMPLE"
+        in {
+            "COUNTEREXAMPLE_BASE",
+            "COUNTEREXAMPLE_DOWNSTREAM",
+        }
     ):
 
         result[
@@ -628,36 +900,38 @@ def collect_rounds(
             )
         )
 
-        property_exists = (
+        p_exists = (
             property_path.is_file()
         )
 
-        simulation_exists = (
+        s_exists = (
             simulation_path.is_file()
         )
 
         if (
-            not property_exists
-            and not simulation_exists
+            not p_exists
+            and not s_exists
         ):
+
             gap_seen = True
             continue
 
         if gap_seen:
+
             raise FinalizeError(
                 "non-contiguous artifacts "
                 f"at Round {round_index}"
             )
 
         if (
-            not property_exists
-            or not simulation_exists
+            not p_exists
+            or not s_exists
         ):
+
             raise FinalizeError(
                 f"Round-{round_index} "
-                "is incomplete: "
-                "property/simulation pair "
-                "required"
+                "incomplete: property/"
+                "simulation pair required"
             )
 
         if not (
@@ -667,6 +941,7 @@ def collect_rounds(
             )
             .strip()
         ):
+
             raise FinalizeError(
                 f"Round-{round_index} "
                 "property is empty"
@@ -681,6 +956,11 @@ def collect_rounds(
         )
 
         feedback = feedback_type(
+            pilot,
+            round_index,
+        )
+
+        meta = generation_meta(
             pilot,
             round_index,
         )
@@ -704,7 +984,7 @@ def collect_rounds(
                 ),
 
             "model_input_delta":
-                round_input_delta(
+                model_input_delta(
                     pilot,
                     round_index,
                     feedback,
@@ -716,12 +996,35 @@ def collect_rounds(
                 ),
         }
 
+        if meta:
+
+            scope = meta.get(
+                "observation_scope"
+            )
+
+            depth = meta.get(
+                "scope_depth"
+            )
+
+            if scope is not None:
+
+                record[
+                    "observation_scope"
+                ] = scope
+
+            if depth is not None:
+
+                record[
+                    "scope_depth"
+                ] = depth
+
         api = api_summary(
             pilot,
             round_index,
         )
 
-        if api is not None:
+        if api:
+
             record[
                 "api"
             ] = api
@@ -735,6 +1038,7 @@ def collect_rounds(
         )
 
     if not rounds:
+
         raise FinalizeError(
             "no completed rounds found"
         )
@@ -745,44 +1049,11 @@ def collect_rounds(
     )
 
 
-def downstream_block(
-    pilot: Path,
-    next_round: int,
-) -> str | None:
-
-    path = (
-        pilot
-        / (
-            f"round{next_round}"
-            "_downstream_feedback.json"
-        )
-    )
-
-    if not path.is_file():
-        return None
-
-    status = load_json(
-        path,
-        (
-            f"Round-{next_round} "
-            "downstream feedback"
-        ),
-    ).get(
-        "status"
-    )
-
-    if status in NO_LOCALIZATION:
-        return str(
-            status
-        )
-
-    return None
-
-
 def terminal_state(
-    pilot: Path,
-    rounds: list[dict[str, Any]],
-    simulations: list[dict[str, Any]],
+    rounds:
+        list[dict[str, Any]],
+    simulations:
+        list[dict[str, Any]],
 ) -> dict[str, Any]:
 
     for (
@@ -792,8 +1063,11 @@ def terminal_state(
         simulations
     ):
 
-        verdict = simulation.get(
-            "verdict"
+        verdict = str(
+            simulation.get(
+                "verdict",
+                "",
+            )
         )
 
         if (
@@ -808,6 +1082,7 @@ def terminal_state(
                 )
                 - 1
             ):
+
                 raise FinalizeError(
                     "artifacts exist after "
                     "TARGET_DETECTED"
@@ -834,7 +1109,10 @@ def terminal_state(
                     ],
             }
 
-        if verdict in INFRA:
+        if (
+            verdict
+            in INFRA_VERDICTS
+        ):
 
             if (
                 index
@@ -843,6 +1121,7 @@ def terminal_state(
                 )
                 - 1
             ):
+
                 raise FinalizeError(
                     "artifacts exist after "
                     f"terminal {verdict}"
@@ -865,7 +1144,11 @@ def terminal_state(
                     None,
             }
 
-        if verdict not in CONTINUE:
+        if (
+            verdict
+            not in
+            CONTINUABLE_VERDICTS
+        ):
 
             if (
                 index
@@ -874,10 +1157,10 @@ def terminal_state(
                 )
                 - 1
             ):
+
                 raise FinalizeError(
                     "artifacts exist after "
-                    "unsupported terminal "
-                    f"verdict {verdict!r}"
+                    f"terminal {verdict!r}"
                 )
 
             return {
@@ -898,19 +1181,26 @@ def terminal_state(
             }
 
     last_round = int(
-        rounds[-1][
+        rounds[
+            -1
+        ][
             "round"
         ]
     )
 
-    last_verdict = (
-        simulations[-1]
-        .get(
-            "verdict"
+    last_verdict = str(
+        simulations[
+            -1
+        ].get(
+            "verdict",
+            "",
         )
     )
 
-    if last_round == MAX_ROUND:
+    if (
+        last_round
+        == MAX_ROUND
+    ):
 
         return {
             "terminal":
@@ -928,35 +1218,6 @@ def terminal_state(
             "success_round":
                 None,
         }
-
-    if (
-        last_verdict
-        == "TARGET_NOT_DETECTED"
-    ):
-
-        blocked = downstream_block(
-            pilot,
-            last_round + 1,
-        )
-
-        if blocked is not None:
-
-            return {
-                "terminal":
-                    True,
-
-                "success":
-                    False,
-
-                "final_verdict":
-                    blocked,
-
-                "terminal_reason":
-                    "NO_LOCALIZATION_CANDIDATE",
-
-                "success_round":
-                    None,
-            }
 
     return {
         "terminal":
@@ -976,276 +1237,13 @@ def terminal_state(
     }
 
 
-def evidence_types(
-    selected: dict[str, Any],
-) -> list[str]:
-
-    result: list[
-        str
-    ] = []
-
-    states = selected.get(
-        "candidate_added_fault_only_states"
-    )
-
-    transitions = selected.get(
-        "fault_only_site_candidate_transitions"
-    )
-
-    if (
-        isinstance(
-            states,
-            list,
-        )
-        and states
-    ):
-        result.append(
-            "SAME_CYCLE_JOINT_STATE_NOVELTY"
-        )
-
-    if (
-        isinstance(
-            transitions,
-            list,
-        )
-        and transitions
-    ):
-        result.append(
-            "ONE_CYCLE_TRANSITION_NOVELTY"
-        )
-
-    return result
-
-
-def diagnostic_evidence(
-    pilot: Path,
-    rounds: list[dict[str, Any]],
-) -> dict[str, Any] | None:
-
-    teacher_paths: set[
-        str
-    ] = set()
-
-    for item in rounds:
-
-        if item[
-            "feedback_type"
-        ] not in {
-            "LOCALIZED_FAULT",
-            "FAULT_COUNTEREXAMPLE",
-        }:
-            continue
-
-        round_index = int(
-            item[
-                "round"
-            ]
-        )
-
-        meta = load_json(
-            pilot
-            / (
-                f"round{round_index}"
-                "_generation_meta.json"
-            ),
-            (
-                f"Round-{round_index} "
-                "generation metadata"
-            ),
-        )
-
-        value = meta.get(
-            "teacher_record"
-        )
-
-        if (
-            isinstance(
-                value,
-                str,
-            )
-            and value.strip()
-        ):
-
-            teacher_paths.add(
-                str(
-                    Path(
-                        value
-                    )
-                    .expanduser()
-                    .resolve()
-                )
-            )
-
-    if not teacher_paths:
-        return None
-
-    if len(
-        teacher_paths
-    ) != 1:
-
-        raise FinalizeError(
-            "multiple teacher records "
-            "referenced: "
-            f"{sorted(teacher_paths)}"
-        )
-
-    teacher_path = Path(
-        next(
-            iter(
-                teacher_paths
-            )
-        )
-    )
-
-    teacher = load_json(
-        teacher_path,
-        "downstream teacher record",
-    )
-
-    selected = teacher.get(
-        "selected"
-    )
-
-    if (
-        teacher.get(
-            "status"
-        )
-        != "DOWNSTREAM_CANDIDATE_FOUND"
-        or not isinstance(
-            selected,
-            dict,
-        )
-    ):
-        raise FinalizeError(
-            "referenced teacher record "
-            "has no selected candidate"
-        )
-
-    result: dict[
-        str,
-        Any,
-    ] = {
-        "selected_alias":
-            selected.get(
-                "alias"
-            ),
-
-        "selected_depth":
-            selected.get(
-                "depth"
-            ),
-
-        "selected_internal_signal":
-            selected.get(
-                "expression"
-            ),
-
-        "evidence_types":
-            evidence_types(
-                selected
-            ),
-
-        "fault_only_observed_states":
-            copy.deepcopy(
-                selected.get(
-                    "candidate_added_fault_only_states",
-                    [],
-                )
-            ),
-
-        "fault_only_site_downstream_transitions":
-            copy.deepcopy(
-                selected.get(
-                    "fault_only_site_candidate_transitions",
-                    [],
-                )
-            ),
-    }
-
-    earliest = selected.get(
-        "earliest_divergence"
-    )
-
-    if (
-        isinstance(
-            earliest,
-            dict,
-        )
-        and isinstance(
-            earliest.get(
-                "golden_values"
-            ),
-            dict,
-        )
-        and isinstance(
-            earliest.get(
-                "fault_values"
-            ),
-            dict,
-        )
-    ):
-
-        result[
-            "divergence_values"
-        ] = {
-            "golden_values":
-                copy.deepcopy(
-                    earliest[
-                        "golden_values"
-                    ]
-                ),
-
-            "fault_values":
-                copy.deepcopy(
-                    earliest[
-                        "fault_values"
-                    ]
-                ),
-        }
-
-    return result
-
-
 def trajectory(
-    rounds: list[dict[str, Any]],
+    rounds:
+        list[dict[str, Any]],
 ) -> tuple[
     list[dict[str, Any]],
     str,
 ]:
-
-    verdict_code = {
-        "GOLDEN_FALSE_POSITIVE":
-            "GFP",
-
-        "TARGET_NOT_DETECTED":
-            "TND",
-
-        "TARGET_DETECTED":
-            "TD",
-
-        "COMPILE_FAILED":
-            "CF",
-
-        "GOLDEN_EXECUTION_FAILED":
-            "GEF",
-
-        "FAULT_EXECUTION_FAILED":
-            "FEF",
-    }
-
-    feedback_code = {
-        "NONE":
-            "NONE",
-
-        "GOLDEN_REPAIR":
-            "GR",
-
-        "LOCALIZED_FAULT":
-            "LOC",
-
-        "FAULT_COUNTEREXAMPLE":
-            "CE",
-    }
 
     records: list[
         dict[str, Any]
@@ -1257,38 +1255,70 @@ def trajectory(
 
     for item in rounds:
 
-        verdict = (
+        verdict = str(
             item[
                 "simulation"
-            ]
-            .get(
+            ].get(
                 "verdict"
             )
         )
 
-        feedback = item[
-            "feedback_type"
-        ]
+        feedback = str(
+            item[
+                "feedback_type"
+            ]
+        )
+
+        record: dict[
+            str,
+            Any,
+        ] = {
+            "round":
+                item[
+                    "round"
+                ],
+
+            "feedback_type":
+                feedback,
+
+            "verdict":
+                verdict,
+        }
+
+        if (
+            item.get(
+                "observation_scope"
+            )
+            is not None
+        ):
+
+            record[
+                "observation_scope"
+            ] = item[
+                "observation_scope"
+            ]
+
+        if (
+            item.get(
+                "scope_depth"
+            )
+            is not None
+        ):
+
+            record[
+                "scope_depth"
+            ] = item[
+                "scope_depth"
+            ]
 
         records.append(
-            {
-                "round":
-                    item[
-                        "round"
-                    ],
-
-                "feedback_type":
-                    feedback,
-
-                "verdict":
-                    verdict,
-            }
+            record
         )
 
         codes.append(
             f"R{item['round']}:"
-            f"{feedback_code.get(feedback, feedback)}:"
-            f"{verdict_code.get(str(verdict), str(verdict))}"
+            f"{FEEDBACK_CODE.get(feedback, feedback)}:"
+            f"{VERDICT_CODE.get(verdict, verdict)}"
         )
 
     return (
@@ -1299,67 +1329,196 @@ def trajectory(
     )
 
 
-def total_usage(
-    rounds: list[dict[str, Any]],
-) -> dict[str, int] | None:
+def diagnostic_scope(
+    pilot: Path,
+    rounds:
+        list[dict[str, Any]],
+) -> dict[str, Any] | None:
 
-    result: dict[
-        str,
-        int,
-    ] = {}
+    referenced: list[
+        Path
+    ] = []
 
     for item in rounds:
 
-        api = item.get(
-            "api"
+        round_index = int(
+            item[
+                "round"
+            ]
         )
 
-        usage = (
-            api.get(
-                "usage"
+        if round_index == 0:
+            continue
+
+        meta = generation_meta(
+            pilot,
+            round_index,
+        )
+
+        if not meta:
+            continue
+
+        value = meta.get(
+            "scope_feedback"
+        )
+
+        if (
+            isinstance(
+                value,
+                str,
+            )
+            and value.strip()
+        ):
+
+            path = (
+                Path(
+                    value
+                )
+                .expanduser()
+                .resolve()
+            )
+
+            if (
+                path
+                not in referenced
+            ):
+
+                referenced.append(
+                    path
+                )
+
+    if not referenced:
+        return None
+
+    if (
+        len(
+            referenced
+        )
+        != 1
+    ):
+
+        raise FinalizeError(
+            "multiple frozen scope "
+            "records referenced: "
+            f"{referenced}"
+        )
+
+    scope = load_json(
+        referenced[
+            0
+        ],
+        "frozen scope record",
+    )
+
+    decision = scope.get(
+        "scope_decision"
+    )
+
+    result: dict[
+        str,
+        Any,
+    ] = {
+        "status":
+            scope.get(
+                "status"
+            ),
+
+        "decision":
+            decision,
+
+        "depth":
+            scope.get(
+                "scope_depth"
+            ),
+
+        "evidence_types":
+            copy.deepcopy(
+                scope.get(
+                    "evidence_types",
+                    [],
+                )
+            ),
+    }
+
+    if decision == "BASE":
+
+        base = scope.get(
+            "base_analysis"
+        )
+
+        exact = (
+            base.get(
+                "exact_evidence"
             )
             if isinstance(
-                api,
+                base,
                 dict,
             )
             else None
         )
 
-        if not isinstance(
-            usage,
+        if isinstance(
+            exact,
             dict,
         ):
-            continue
 
-        for key in (
-            "input_tokens",
-            "output_tokens",
-            "total_tokens",
-        ):
-
-            value = usage.get(
-                key
+            result[
+                "exact_evidence"
+            ] = copy.deepcopy(
+                exact
             )
 
-            if isinstance(
-                value,
-                int,
-            ):
+    elif (
+        decision
+        == "DOWNSTREAM"
+    ):
 
-                result[
-                    key
-                ] = (
-                    result.get(
-                        key,
-                        0,
-                    )
-                    + value
-                )
+        selected = scope.get(
+            "selected"
+        )
 
-    return (
-        result
-        or None
-    )
+        if isinstance(
+            selected,
+            dict,
+        ):
+
+            result[
+                "selected_alias"
+            ] = selected.get(
+                "alias"
+            )
+
+            result[
+                "selected_internal_signal"
+            ] = selected.get(
+                "internal_signal"
+            )
+
+        exact = scope.get(
+            "exact_evidence"
+        )
+
+        if isinstance(
+            exact,
+            dict,
+        ):
+
+            result[
+                "exact_evidence"
+            ] = copy.deepcopy(
+                exact
+            )
+
+    elif (
+        decision
+        == "NONE"
+    ):
+
+        result[
+            "exact_evidence"
+        ] = None
+
+    return result
 
 
 def build_result(
@@ -1378,7 +1537,6 @@ def build_result(
     )
 
     terminal = terminal_state(
-        pilot,
         rounds,
         simulations,
     )
@@ -1395,8 +1553,8 @@ def build_result(
         )
 
     (
-        trajectory_records,
-        trajectory_code,
+        traj,
+        traj_code,
     ) = trajectory(
         rounds
     )
@@ -1422,10 +1580,10 @@ def build_result(
         },
 
         "trajectory":
-            trajectory_records,
+            traj,
 
         "trajectory_code":
-            trajectory_code,
+            traj_code,
 
         "rounds":
             rounds,
@@ -1453,16 +1611,16 @@ def build_result(
         },
     }
 
-    diagnostic = diagnostic_evidence(
+    scope = diagnostic_scope(
         pilot,
         rounds,
     )
 
-    if diagnostic is not None:
+    if scope is not None:
 
         result[
-            "diagnostic_evidence"
-        ] = diagnostic
+            "diagnostic_scope"
+        ] = scope
 
     usage = total_usage(
         rounds
@@ -1504,6 +1662,7 @@ def verify_output(
         )
         != fault_id
     ):
+
         raise FinalizeError(
             "durable result "
             "schema/fault_id mismatch"
@@ -1520,18 +1679,14 @@ def verify_output(
         )
         or not rounds
     ):
+
         raise FinalizeError(
-            "durable result "
-            "has no rounds"
+            "durable result has no rounds"
         )
 
     for item in rounds:
 
-        round_index = item.get(
-            "round"
-        )
-
-        property_path = (
+        path = (
             output
             / str(
                 item.get(
@@ -1541,28 +1696,24 @@ def verify_output(
         )
 
         if (
-            not isinstance(
-                round_index,
-                int,
-            )
-            or not property_path.is_file()
+            not path.is_file()
             or sha256(
-                property_path
+                path
             )
             != item.get(
                 "property_sha256"
             )
         ):
+
             raise FinalizeError(
-                f"durable Round-"
-                f"{round_index} "
-                "property verification "
-                "failed"
+                "durable Round-"
+                f"{item.get('round')} "
+                "property verification failed"
             )
 
     if expected is not None:
 
-        actual_text = json.dumps(
+        actual = json.dumps(
             result,
             sort_keys=True,
             separators=(
@@ -1572,7 +1723,7 @@ def verify_output(
             ensure_ascii=False,
         )
 
-        expected_text = json.dumps(
+        wanted = json.dumps(
             expected,
             sort_keys=True,
             separators=(
@@ -1582,13 +1733,10 @@ def verify_output(
             ensure_ascii=False,
         )
 
-        if (
-            actual_text
-            != expected_text
-        ):
+        if actual != wanted:
+
             raise FinalizeError(
-                "durable "
-                "fault_result.json "
+                "durable fault_result.json "
                 "differs from "
                 "source-derived result"
             )
@@ -1599,7 +1747,7 @@ def verify_output(
 def copy_failure_log(
     pilot: Path,
     temp: Path,
-    result: dict[str, Any],
+    result: Mapping[str, Any],
 ) -> None:
 
     if (
@@ -1656,6 +1804,7 @@ def inside(
 ) -> bool:
 
     try:
+
         child.relative_to(
             parent
         )
@@ -1663,34 +1812,31 @@ def inside(
         return True
 
     except ValueError:
+
         return False
 
 
-def do_check(
-    fault_id: str,
-    pilot: Path,
-) -> int:
+def print_summary(
+    result: Mapping[str, Any],
+) -> None:
 
-    (
-        result,
-        _,
-    ) = build_result(
-        fault_id,
-        pilot,
+    usage = (
+        result.get(
+            "api_usage_total"
+        )
+        or {}
     )
 
-    print("=" * 80)
-
-    print(
-        "Stage-6 finalization "
-        "check: TERMINAL"
+    scope = (
+        result.get(
+            "diagnostic_scope"
+        )
+        or {}
     )
-
-    print("=" * 80)
 
     print(
         f"Fault ID        : "
-        f"{fault_id}"
+        f"{result['fault_id']}"
     )
 
     print(
@@ -1701,6 +1847,16 @@ def do_check(
     print(
         f"Trajectory      : "
         f"{result['trajectory_code']}"
+    )
+
+    print(
+        f"Scope decision  : "
+        f"{scope.get('decision')}"
+    )
+
+    print(
+        f"Scope depth     : "
+        f"{scope.get('depth')}"
     )
 
     print(
@@ -1718,6 +1874,42 @@ def do_check(
         f"{result['final']['terminal_reason']}"
     )
 
+    print(
+        "API tokens      : "
+        f"input={usage.get('input_tokens', 0)} "
+        f"output={usage.get('output_tokens', 0)} "
+        f"reasoning={usage.get('reasoning_tokens', 0)} "
+        f"cached={usage.get('cached_input_tokens', 0)} "
+        f"total={usage.get('total_tokens', 0)}"
+    )
+
+
+def do_check(
+    fault_id: str,
+    pilot: Path,
+) -> int:
+
+    (
+        result,
+        _,
+    ) = build_result(
+        fault_id,
+        pilot,
+    )
+
+    print("=" * 96)
+
+    print(
+        "Stage-6 finalization "
+        "check: TERMINAL"
+    )
+
+    print("=" * 96)
+
+    print_summary(
+        result
+    )
+
     return 0
 
 
@@ -1728,6 +1920,7 @@ def do_finalize(
 ) -> int:
 
     if output.exists():
+
         raise FinalizeError(
             "refusing to overwrite "
             "durable output: "
@@ -1738,10 +1931,10 @@ def do_finalize(
         pilot,
         output,
     ):
+
         raise FinalizeError(
             "durable output must "
-            "not be inside "
-            "source pilot"
+            "not be inside source pilot"
         )
 
     (
@@ -1777,24 +1970,16 @@ def do_finalize(
 
         for item in rounds:
 
-            round_index = int(
-                item[
-                    "round"
-                ]
+            name = (
+                f"round{item['round']}"
+                "_property.sva"
             )
 
             shutil.copy2(
                 pilot
-                / (
-                    f"round{round_index}"
-                    "_property.sva"
-                ),
-
+                / name,
                 temp
-                / (
-                    f"round{round_index}"
-                    "_property.sva"
-                ),
+                / name,
             )
 
         copy_failure_log(
@@ -1828,36 +2013,25 @@ def do_finalize(
         result,
     )
 
-    print("=" * 80)
+    print("=" * 96)
 
     print(
         "Stage-6 finalization: PASS"
     )
 
-    print("=" * 80)
+    print("=" * 96)
 
-    print(
-        f"Fault ID       : "
-        f"{fault_id}"
+    print_summary(
+        result
     )
 
     print(
-        f"Durable output : "
+        f"Durable output  : "
         f"{output}"
     )
 
     print(
-        f"Trajectory     : "
-        f"{result['trajectory_code']}"
-    )
-
-    print(
-        f"Final success  : "
-        f"{result['final']['success']}"
-    )
-
-    print(
-        "Source cleanup : "
+        "Source cleanup  : "
         "NOT PERFORMED"
     )
 
@@ -1874,6 +2048,7 @@ def do_cleanup(
         pilot,
         output,
     ):
+
         raise FinalizeError(
             "durable output must "
             "not be inside source pilot"
@@ -1906,23 +2081,23 @@ def do_cleanup(
             "stage6",
         }
     ):
+
         raise FinalizeError(
-            "refusing unsafe "
-            f"cleanup path: {pilot}"
+            "refusing unsafe cleanup "
+            f"path: {pilot}"
         )
 
     shutil.rmtree(
         pilot
     )
 
-    print("=" * 80)
+    print("=" * 96)
 
     print(
-        "Stage-6 source "
-        "cleanup: PASS"
+        "Stage-6 source cleanup: PASS"
     )
 
-    print("=" * 80)
+    print("=" * 96)
 
     print(
         f"Fault ID       : "
@@ -1992,6 +2167,7 @@ def main() -> int:
         )
         is None
     ):
+
         raise FinalizeError(
             f"invalid fault ID: "
             f"{fault_id!r}"
@@ -2004,6 +2180,7 @@ def main() -> int:
     )
 
     if not pilot.is_dir():
+
         raise FinalizeError(
             "source pilot "
             f"not found: {pilot}"
@@ -2014,7 +2191,6 @@ def main() -> int:
         .expanduser()
         .resolve()
         if args.output_dir
-        is not None
         else None
     )
 
@@ -2022,12 +2198,14 @@ def main() -> int:
         args.action
         == "check"
     ):
+
         return do_check(
             fault_id,
             pilot,
         )
 
     if output is None:
+
         raise FinalizeError(
             "--output-dir is required "
             "for finalize/cleanup"
@@ -2037,6 +2215,7 @@ def main() -> int:
         args.action
         == "finalize"
     ):
+
         return do_finalize(
             fault_id,
             pilot,
@@ -2053,6 +2232,7 @@ def main() -> int:
 if __name__ == "__main__":
 
     try:
+
         raise SystemExit(
             main()
         )

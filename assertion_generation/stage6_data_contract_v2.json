@@ -1,0 +1,117 @@
+{
+  "schema_version": "stage6_data_contract_v2",
+  "method": "generate_first_verify_then_diagnose_scope",
+
+  "generation_budget": {
+    "max_attempts": 3,
+    "rounds": [0, 1, 2]
+  },
+
+  "scope_policy": {
+    "trigger": "first Golden-safe TARGET_NOT_DETECTED",
+    "principle": "shallowest_sufficient_observation_scope",
+
+    "base_evidence_family": [
+      "SAME_CYCLE_JOINT_STATE_NOVELTY",
+      "ONE_CYCLE_TRANSITION_NOVELTY"
+    ],
+
+    "search_order": [
+      "BASE",
+      "DOWNSTREAM_DEPTH_2",
+      "DOWNSTREAM_DEPTH_3"
+    ],
+
+    "scope_is_frozen_after_first_decision": true,
+
+    "no_evidence_fallback":
+      "SAME_CONTEXT_RETRY"
+  },
+
+  "feedback_types": [
+    "NONE",
+    "GOLDEN_REPAIR",
+    "LOCALIZED_BASE",
+    "LOCALIZED_DOWNSTREAM",
+    "SAME_CONTEXT_RETRY",
+    "COUNTEREXAMPLE_BASE",
+    "COUNTEREXAMPLE_DOWNSTREAM"
+  ],
+
+  "evidence_levels": {
+    "BASELINE":
+      "No target-fault dynamic localization evidence is exposed.",
+
+    "COARSE_LOCALIZATION":
+      "Only the frozen scope and evidence type are exposed; exact faulty patterns are hidden.",
+
+    "EXACT_COUNTEREXAMPLE":
+      "Exact fault-only state/transition/divergence values at the same frozen scope are exposed."
+  },
+
+  "durable_fault_files": {
+    "required": [
+      "fault_result.json",
+      "roundN_property.sva for every generated round"
+    ],
+
+    "conditional": [
+      "failure.log only for infrastructure or unexpected terminal failure"
+    ]
+  },
+
+  "durable_fault_result": {
+    "schema_version":
+      "stage6_fault_result_v2",
+
+    "required_top_level_fields": [
+      "schema_version",
+      "fault_id",
+      "generation_budget",
+      "trajectory",
+      "trajectory_code",
+      "rounds",
+      "final"
+    ],
+
+    "optional_top_level_fields": [
+      "diagnostic_scope",
+      "api_usage_total"
+    ]
+  },
+
+  "api_usage_retention": [
+    "input_tokens",
+    "output_tokens",
+    "total_tokens",
+    "cached_input_tokens",
+    "reasoning_tokens"
+  ],
+
+  "upstream_metadata_policy":
+    "Do not duplicate design/module/site/source/polarity/source_kind/receiver metadata in Stage6 durable results; resolve them by fault_id from frozen Stage4/Stage5 sources.",
+
+  "discard_after_successful_finalization": [
+    "full rendered prompt files",
+    "full model-context files",
+    "raw API request/response files",
+    "API response text files",
+    "full Golden profiler output",
+    "full scope/downstream candidate analysis",
+    "checker source files",
+    "compile/golden/faulty runner JSON files",
+    "normal Xcelium logs",
+    "VCD files",
+    "temporary fault netlists",
+    "scratch/work directories"
+  ],
+
+  "future_campaign_files": [
+    "campaign_manifest.json",
+    "campaign_results.jsonl",
+    "campaign_summary.csv"
+  ],
+
+  "future_campaign_ordering_policy":
+    "Freeze one deterministic ordered eligible fault list once; --next N consumes the next N unfinished faults from that order."
+}
