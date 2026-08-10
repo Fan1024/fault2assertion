@@ -1,0 +1,117 @@
+{
+  "schema_version": "stage6_data_contract_v1",
+
+  "generation_budget": {
+    "max_attempts": 3,
+    "rounds": [0, 1, 2]
+  },
+
+  "durable_fault_files": {
+    "required": [
+      "fault_result.json",
+      "roundN_property.sva for every generated round"
+    ],
+
+    "conditional": [
+      "failure.log only for infrastructure or unexpected terminal failure"
+    ]
+  },
+
+  "fault_result_schema": {
+    "required_top_level_fields": [
+      "schema_version",
+      "fault_id",
+      "generation_budget",
+      "trajectory",
+      "trajectory_code",
+      "rounds",
+      "final"
+    ],
+
+    "optional_top_level_fields": [
+      "diagnostic_evidence",
+      "api_usage_total"
+    ],
+
+    "round_fields": [
+      "round",
+      "feedback_type",
+      "property_file",
+      "property_sha256",
+      "model_input_delta",
+      "simulation",
+      "api"
+    ],
+
+    "feedback_types": [
+      "NONE",
+      "GOLDEN_REPAIR",
+      "LOCALIZED_FAULT",
+      "FAULT_COUNTEREXAMPLE"
+    ],
+
+    "scientific_verdicts": [
+      "TARGET_DETECTED",
+      "TARGET_NOT_DETECTED",
+      "GOLDEN_FALSE_POSITIVE"
+    ]
+  },
+
+  "model_input_retention": {
+    "policy": "Store only dynamic model-visible information. Do not repeat prompt templates or upstream static fault metadata.",
+
+    "round0": "Compact Golden behavior plus training_observation when present.",
+
+    "golden_repair": "Previous verdict plus the fact that valid Golden behavior violated the previous property. No exact Golden counterexample.",
+
+    "localized_fault": "Selected alias, evidence types, and expanded Golden behavior.",
+
+    "fault_counterexample": "Exact counterexample information actually exposed to the model."
+  },
+
+  "diagnostic_evidence_retention": {
+    "keep": [
+      "selected_alias",
+      "selected_depth",
+      "selected_internal_signal",
+      "evidence_types",
+      "fault_only_observed_states",
+      "fault_only_site_downstream_transitions",
+      "divergence_values"
+    ],
+
+    "discard": [
+      "all unselected downstream candidates",
+      "candidate counts",
+      "candidate scores",
+      "absolute divergence cycle/time"
+    ]
+  },
+
+  "discard_after_successful_finalization": [
+    "full rendered prompt files",
+    "full model_context files",
+    "raw API request/response files",
+    "API response text files",
+    "full Golden profiler output",
+    "full downstream candidate analysis",
+    "checker source files",
+    "compile/golden/faulty runner JSON files",
+    "normal Xcelium logs",
+    "VCD files",
+    "temporary fault netlists",
+    "scratch/work directories"
+  ],
+
+  "upstream_metadata_policy":
+    "Do not duplicate design/module/site/source/polarity/source_kind/receiver metadata in Stage6 durable results. Resolve them by fault_id from frozen Stage4/Stage5 sources.",
+
+  "future_campaign_files": [
+    "campaign_manifest.json",
+    "campaign_results.jsonl",
+    "campaign_summary.csv"
+  ],
+
+  "future_campaign_ordering_policy":
+    "Freeze one deterministic ordered eligible fault list once. --next N always consumes the next N unfinished faults from that frozen order."
+}
