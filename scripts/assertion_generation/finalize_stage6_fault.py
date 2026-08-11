@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-"""Finalize one terminal Stage-6 fault into the compact durable v2 schema.
+"""Finalize one terminal Stage-6 fault into the compact durable v3 schema.
 
 Durable files:
   fault_result.json
   roundN_property.sva for every generated round
   failure.log only for infrastructure/unexpected failures
 
-A scientific fault is terminal when:
+Scientific terminal conditions:
   * TARGET_DETECTED occurs, or
   * Round 2 simulation completed (3/3 API generations consumed), or
   * an infrastructure execution verdict makes continuation invalid.
 
-A missing discriminative scope is NOT terminal before Round 2; it routes to
-SAME_CONTEXT_RETRY and may consume the remaining generation budget.
+NO_DISCRIMINATIVE_EVIDENCE is not terminal before Round 2. It routes to
+TARGET_MISS_REPAIR, which keeps the same evidence context but explicitly gives
+the model this fault's prior properties and their scientific verdicts.
 """
 
 from __future__ import annotations
@@ -31,7 +32,7 @@ from typing import Any, Mapping
 
 
 SCHEMA_VERSION = (
-    "stage6_fault_result_v2"
+    "stage6_fault_result_v3"
 )
 
 MAX_ROUND = 2
@@ -45,7 +46,7 @@ VALID_FEEDBACK = {
     "GOLDEN_REPAIR",
     "LOCALIZED_BASE",
     "LOCALIZED_DOWNSTREAM",
-    "SAME_CONTEXT_RETRY",
+    "TARGET_MISS_REPAIR",
     "COUNTEREXAMPLE_BASE",
     "COUNTEREXAMPLE_DOWNSTREAM",
 }
@@ -94,8 +95,8 @@ FEEDBACK_CODE = {
     "LOCALIZED_DOWNSTREAM":
         "LD",
 
-    "SAME_CONTEXT_RETRY":
-        "SCR",
+    "TARGET_MISS_REPAIR":
+        "TMR",
 
     "COUNTEREXAMPLE_BASE":
         "CEB",
@@ -342,6 +343,21 @@ def api_summary(
             ]
         )
 
+    if isinstance(
+        payload.get(
+            "conversation_linkage"
+        ),
+        dict,
+    ):
+
+        result[
+            "conversation_linkage"
+        ] = copy.deepcopy(
+            payload[
+                "conversation_linkage"
+            ]
+        )
+
     return (
         result
         or None
@@ -349,7 +365,8 @@ def api_summary(
 
 
 def usage_metrics(
-    usage: Mapping[str, Any],
+    usage:
+        Mapping[str, Any],
 ) -> dict[str, int]:
 
     result: dict[
@@ -363,8 +380,10 @@ def usage_metrics(
         "total_tokens",
     ):
 
-        value = usage.get(
-            key
+        value = (
+            usage.get(
+                key
+            )
         )
 
         if isinstance(
@@ -376,8 +395,10 @@ def usage_metrics(
                 key
             ] = value
 
-    input_details = usage.get(
-        "input_tokens_details"
+    input_details = (
+        usage.get(
+            "input_tokens_details"
+        )
     )
 
     if isinstance(
@@ -400,8 +421,10 @@ def usage_metrics(
                 "cached_input_tokens"
             ] = cached
 
-    output_details = usage.get(
-        "output_tokens_details"
+    output_details = (
+        usage.get(
+            "output_tokens_details"
+        )
     )
 
     if isinstance(
@@ -428,7 +451,8 @@ def usage_metrics(
 
 
 def total_usage(
-    rounds: list[dict[str, Any]],
+    rounds:
+        list[dict[str, Any]],
 ) -> dict[str, int] | None:
 
     total: dict[
@@ -438,8 +462,10 @@ def total_usage(
 
     for item in rounds:
 
-        api = item.get(
-            "api"
+        api = (
+            item.get(
+                "api"
+            )
         )
 
         usage = (
@@ -457,6 +483,7 @@ def total_usage(
             usage,
             dict,
         ):
+
             continue
 
         for (
@@ -483,15 +510,18 @@ def total_usage(
 
 
 def simulation_summary(
-    simulation: Mapping[str, Any],
+    simulation:
+        Mapping[str, Any],
 ) -> dict[str, Any]:
 
     def runner(
         name: str,
     ) -> Any:
 
-        value = simulation.get(
-            name
+        value = (
+            simulation.get(
+                name
+            )
         )
 
         return (
@@ -530,8 +560,10 @@ def simulation_summary(
             ),
     }
 
-    verdict = simulation.get(
-        "verdict"
+    verdict = (
+        simulation.get(
+            "verdict"
+        )
     )
 
     phase = (
@@ -548,8 +580,10 @@ def simulation_summary(
 
     if phase:
 
-        raw = simulation.get(
-            phase
+        raw = (
+            simulation.get(
+                phase
+            )
         )
 
         event = (
@@ -634,8 +668,10 @@ def model_input_delta(
             "Round-0 visible context",
         )
 
-        golden = visible.get(
-            "golden_behavior"
+        golden = (
+            visible.get(
+                "golden_behavior"
+            )
         )
 
         if not isinstance(
@@ -690,8 +726,10 @@ def model_input_delta(
         ),
     )
 
-    previous = model.get(
-        "previous_round"
+    previous = (
+        model.get(
+            "previous_round"
+        )
     )
 
     if not isinstance(
@@ -705,7 +743,46 @@ def model_input_delta(
             "no previous_round"
         )
 
-    result = {
+    history = (
+        model.get(
+            "attempt_history"
+        )
+    )
+
+    history_rounds: list[
+        int
+    ] = []
+
+    if isinstance(
+        history,
+        list,
+    ):
+
+        for item in history:
+
+            if (
+                isinstance(
+                    item,
+                    dict,
+                )
+                and isinstance(
+                    item.get(
+                        "round"
+                    ),
+                    int,
+                )
+            ):
+
+                history_rounds.append(
+                    item[
+                        "round"
+                    ]
+                )
+
+    result: dict[
+        str,
+        Any,
+    ] = {
         "type":
             feedback,
 
@@ -721,6 +798,14 @@ def model_input_delta(
             previous.get(
                 "verdict"
             ),
+
+        "attempt_history_included":
+            bool(
+                history_rounds
+            ),
+
+        "attempt_history_rounds":
+            history_rounds,
     }
 
     if (
@@ -742,23 +827,34 @@ def model_input_delta(
 
     if (
         feedback
-        == "SAME_CONTEXT_RETRY"
+        == "TARGET_MISS_REPAIR"
     ):
 
         result[
             "new_information"
         ] = {
+            "prior_failed_properties_and_verdicts_provided":
+                True,
+
             "new_signal_information":
                 False,
 
+            "new_golden_information":
+                False,
+
             "new_target_fault_information":
+                False,
+
+            "exact_counterexample_provided":
                 False,
         }
 
         return result
 
-    diagnostic = model.get(
-        "diagnostic_feedback"
+    diagnostic = (
+        model.get(
+            "diagnostic_feedback"
+        )
     )
 
     if not isinstance(
@@ -799,8 +895,10 @@ def model_input_delta(
         == "LOCALIZED_DOWNSTREAM"
     ):
 
-        golden = model.get(
-            "golden_behavior"
+        golden = (
+            model.get(
+                "golden_behavior"
+            )
         )
 
         if not isinstance(
@@ -998,25 +1096,61 @@ def collect_rounds(
 
         if meta:
 
-            scope = meta.get(
-                "observation_scope"
-            )
-
-            depth = meta.get(
-                "scope_depth"
-            )
-
-            if scope is not None:
+            if (
+                meta.get(
+                    "observation_scope"
+                )
+                is not None
+            ):
 
                 record[
                     "observation_scope"
-                ] = scope
+                ] = meta[
+                    "observation_scope"
+                ]
 
-            if depth is not None:
+            if (
+                meta.get(
+                    "scope_depth"
+                )
+                is not None
+            ):
 
                 record[
                     "scope_depth"
-                ] = depth
+                ] = meta[
+                    "scope_depth"
+                ]
+
+            if isinstance(
+                meta.get(
+                    "attempt_history_rounds"
+                ),
+                list,
+            ):
+
+                record[
+                    "attempt_history_rounds"
+                ] = copy.deepcopy(
+                    meta[
+                        "attempt_history_rounds"
+                    ]
+                )
+
+            if isinstance(
+                meta.get(
+                    "conversation_linkage"
+                ),
+                dict,
+            ):
+
+                record[
+                    "conversation_linkage"
+                ] = copy.deepcopy(
+                    meta[
+                        "conversation_linkage"
+                    ]
+                )
 
         api = api_summary(
             pilot,
@@ -1358,8 +1492,10 @@ def diagnostic_scope(
         if not meta:
             continue
 
-        value = meta.get(
-            "scope_feedback"
+        value = (
+            meta.get(
+                "scope_feedback"
+            )
         )
 
         if (
@@ -1410,8 +1546,10 @@ def diagnostic_scope(
         "frozen scope record",
     )
 
-    decision = scope.get(
-        "scope_decision"
+    decision = (
+        scope.get(
+            "scope_decision"
+        )
     )
 
     result: dict[
@@ -1440,10 +1578,15 @@ def diagnostic_scope(
             ),
     }
 
-    if decision == "BASE":
+    if (
+        decision
+        == "BASE"
+    ):
 
-        base = scope.get(
-            "base_analysis"
+        base = (
+            scope.get(
+                "base_analysis"
+            )
         )
 
         exact = (
@@ -1473,8 +1616,10 @@ def diagnostic_scope(
         == "DOWNSTREAM"
     ):
 
-        selected = scope.get(
-            "selected"
+        selected = (
+            scope.get(
+                "selected"
+            )
         )
 
         if isinstance(
@@ -1484,18 +1629,24 @@ def diagnostic_scope(
 
             result[
                 "selected_alias"
-            ] = selected.get(
-                "alias"
+            ] = (
+                selected.get(
+                    "alias"
+                )
             )
 
             result[
                 "selected_internal_signal"
-            ] = selected.get(
-                "internal_signal"
+            ] = (
+                selected.get(
+                    "internal_signal"
+                )
             )
 
-        exact = scope.get(
-            "exact_evidence"
+        exact = (
+            scope.get(
+                "exact_evidence"
+            )
         )
 
         if isinstance(
@@ -1668,8 +1819,10 @@ def verify_output(
             "schema/fault_id mismatch"
         )
 
-    rounds = result.get(
-        "rounds"
+    rounds = (
+        result.get(
+            "rounds"
+        )
     )
 
     if (
@@ -1747,7 +1900,8 @@ def verify_output(
 def copy_failure_log(
     pilot: Path,
     temp: Path,
-    result: Mapping[str, Any],
+    result:
+        Mapping[str, Any],
 ) -> None:
 
     if (
@@ -1761,6 +1915,7 @@ def copy_failure_log(
             "OTHER_TERMINAL_FAILURE",
         }
     ):
+
         return
 
     round_index = int(
@@ -1817,7 +1972,8 @@ def inside(
 
 
 def print_summary(
-    result: Mapping[str, Any],
+    result:
+        Mapping[str, Any],
 ) -> None:
 
     usage = (

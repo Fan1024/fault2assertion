@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 """Generate Stage-6 Round 1 or 2 under the frozen three-generation budget.
 
+Method:
+    Generate first -> Verify -> only after a Golden-safe TARGET_NOT_DETECTED
+    diagnose observation sufficiency -> refine at the shallowest sufficient
+    frozen scope.
+
 Routing:
 
 GOLDEN_FALSE_POSITIVE
     -> GOLDEN_REPAIR.
 
-TARGET_NOT_DETECTED before scope diagnosis
+First TARGET_NOT_DETECTED after the current scope has not yet been diagnosed
     -> consume round<next>_scope_feedback.json:
 
        BASE_EVIDENCE_FOUND
@@ -16,7 +21,7 @@ TARGET_NOT_DETECTED before scope diagnosis
            -> LOCALIZED_DOWNSTREAM
 
        NO_DISCRIMINATIVE_EVIDENCE
-           -> SAME_CONTEXT_RETRY
+           -> TARGET_MISS_REPAIR
 
 TARGET_NOT_DETECTED after coarse localization
     -> exact counterexample at the SAME frozen scope:
@@ -27,10 +32,13 @@ TARGET_NOT_DETECTED after coarse localization
        LOCALIZED_DOWNSTREAM
            -> COUNTEREXAMPLE_DOWNSTREAM
 
-TARGET_NOT_DETECTED after SAME_CONTEXT_RETRY
-    -> SAME_CONTEXT_RETRY again.
+TARGET_NOT_DETECTED after TARGET_MISS_REPAIR
+    -> TARGET_MISS_REPAIR again, using the same evidence context.
 
-Round number, feedback type, and observation scope are separate variables.
+Every feedback round receives fault-local attempt_history containing all earlier
+properties and their scientific verdicts. No request uses previous_response_id
+or a shared conversation object; every API request is explicitly constructed
+from this fault's own artifacts.
 """
 
 from __future__ import annotations
@@ -58,7 +66,7 @@ VALID_FEEDBACK = {
     "GOLDEN_REPAIR",
     "LOCALIZED_BASE",
     "LOCALIZED_DOWNSTREAM",
-    "SAME_CONTEXT_RETRY",
+    "TARGET_MISS_REPAIR",
     "COUNTEREXAMPLE_BASE",
     "COUNTEREXAMPLE_DOWNSTREAM",
 }
@@ -280,9 +288,18 @@ def parse_env_file(
     return result
 
 
+def normalize_property(
+    text: str,
+) -> str:
+
+    return " ".join(
+        text.strip().split()
+    )
+
+
 def extract_property(
     response_text: str,
-    previous_property: str,
+    prior_properties: list[str],
 ) -> str:
 
     if (
@@ -377,15 +394,30 @@ def extract_property(
             "end with semicolon"
         )
 
+    normalized = (
+        normalize_property(
+            body
+        )
+    )
+
+    prior_normalized = {
+        normalize_property(
+            item
+        )
+        for item
+        in prior_properties
+    }
+
     if (
-        body
-        == previous_property.strip()
+        normalized
+        in prior_normalized
     ):
 
         raise WorkflowError(
-            "new property is identical "
-            "to previous property; "
-            "this API attempt is not "
+            "new property repeats a "
+            "previously generated property; "
+            "this API attempt still consumes "
+            "its generation round and is not "
             "eligible for a free retry"
         )
 
@@ -453,58 +485,26 @@ def core_context(
             ),
     }
 
-    if (
-        "training_observation"
-        in context
+    for key in (
+        "training_observation",
+        "diagnostic_feedback",
+        "workflow_feedback",
+        "diagnostic_scope",
     ):
 
-        result[
-            "training_observation"
-        ] = copy.deepcopy(
-            context[
-                "training_observation"
-            ]
-        )
+        if key in context:
 
-    if (
-        "diagnostic_feedback"
-        in context
-    ):
+            result[
+                key
+            ] = copy.deepcopy(
+                context[
+                    key
+                ]
+            )
 
-        result[
-            "diagnostic_feedback"
-        ] = copy.deepcopy(
-            context[
-                "diagnostic_feedback"
-            ]
-        )
-
-    if (
-        "workflow_feedback"
-        in context
-    ):
-
-        result[
-            "workflow_feedback"
-        ] = copy.deepcopy(
-            context[
-                "workflow_feedback"
-            ]
-        )
-
-    if (
-        "diagnostic_scope"
-        in context
-    ):
-
-        result[
-            "diagnostic_scope"
-        ] = copy.deepcopy(
-            context[
-                "diagnostic_scope"
-            ]
-        )
-
+    # attempt_history is deliberately
+    # rebuilt from THIS fault's artifacts
+    # before every API call.
     return result
 
 
@@ -574,15 +574,15 @@ def previous_contexts(
     )
 
 
-def previous_property(
+def read_property(
     pilot_dir: Path,
-    previous_round: int,
+    round_index: int,
 ) -> str:
 
     path = (
         pilot_dir
         / (
-            f"round{previous_round}"
+            f"round{round_index}"
             "_property.sva"
         )
     )
@@ -594,8 +594,9 @@ def previous_property(
     ):
 
         raise WorkflowError(
-            "previous property "
-            f"missing/empty: {path}"
+            f"Round-{round_index} "
+            "property missing/empty: "
+            f"{path}"
         )
 
     return (
@@ -603,6 +604,117 @@ def previous_property(
             encoding="utf-8"
         )
         .strip()
+    )
+
+
+def build_attempt_history(
+    pilot_dir: Path,
+    through_round: int,
+    fault_id: str,
+) -> list[dict[str, Any]]:
+
+    history: list[
+        dict[str, Any]
+    ] = []
+
+    for round_index in range(
+        through_round + 1
+    ):
+
+        property_body = read_property(
+            pilot_dir,
+            round_index,
+        )
+
+        simulation_path = (
+            pilot_dir
+            / (
+                f"round{round_index}"
+                "_simulation.json"
+            )
+        )
+
+        simulation = load_json(
+            simulation_path,
+            (
+                f"Round-{round_index} "
+                "simulation"
+            ),
+        )
+
+        sim_fault_id = (
+            simulation.get(
+                "fault_id"
+            )
+        )
+
+        if (
+            sim_fault_id
+            is not None
+            and sim_fault_id
+            != fault_id
+        ):
+
+            raise WorkflowError(
+                f"Round-{round_index} "
+                "simulation fault_id mismatch: "
+                f"expected {fault_id}, "
+                f"got {sim_fault_id!r}"
+            )
+
+        verdict = (
+            simulation.get(
+                "verdict"
+            )
+        )
+
+        if (
+            not isinstance(
+                verdict,
+                str,
+            )
+            or not verdict
+        ):
+
+            raise WorkflowError(
+                f"Round-{round_index} "
+                "simulation has no "
+                "scientific verdict"
+            )
+
+        history.append(
+            {
+                "round":
+                    round_index,
+
+                "property":
+                    property_body,
+
+                "verdict":
+                    verdict,
+            }
+        )
+
+    return history
+
+
+def attach_attempt_history(
+    internal: dict[str, Any],
+    model: dict[str, Any],
+    history:
+        list[dict[str, Any]],
+) -> None:
+
+    internal[
+        "attempt_history"
+    ] = copy.deepcopy(
+        history
+    )
+
+    model[
+        "attempt_history"
+    ] = copy.deepcopy(
+        history
     )
 
 
@@ -663,6 +775,7 @@ def frozen_scope_meta(
             )
             or not value.strip()
         ):
+
             continue
 
         path = (
@@ -737,6 +850,8 @@ def build_golden_repair(
         Mapping[str, Any],
     previous_round_index: int,
     previous_property_body: str,
+    history:
+        list[dict[str, Any]],
 ) -> tuple[
     dict[str, Any],
     dict[str, Any],
@@ -767,8 +882,8 @@ def build_golden_repair(
 
         "meaning":
             (
-                "The previous property "
-                "was violated during valid "
+                "The previous property was "
+                "violated during valid "
                 "fault-free Golden execution "
                 "and is inconsistent with "
                 "the already provided "
@@ -782,28 +897,27 @@ def build_golden_repair(
             False,
     }
 
-    internal[
-        "previous_round"
-    ] = copy.deepcopy(
-        previous
-    )
+    for target in (
+        internal,
+        model,
+    ):
 
-    model[
-        "previous_round"
-    ] = copy.deepcopy(
-        previous
-    )
+        target[
+            "previous_round"
+        ] = copy.deepcopy(
+            previous
+        )
 
-    internal[
-        "workflow_feedback"
-    ] = copy.deepcopy(
-        feedback
-    )
+        target[
+            "workflow_feedback"
+        ] = copy.deepcopy(
+            feedback
+        )
 
-    model[
-        "workflow_feedback"
-    ] = copy.deepcopy(
-        feedback
+    attach_attempt_history(
+        internal,
+        model,
+        history,
     )
 
     return (
@@ -819,7 +933,10 @@ def base_coarse_context(
         Mapping[str, Any],
     previous_round_index: int,
     previous_property_body: str,
-    scope: Mapping[str, Any],
+    scope:
+        Mapping[str, Any],
+    history:
+        list[dict[str, Any]],
 ) -> tuple[
     dict[str, Any],
     dict[str, Any],
@@ -894,6 +1011,12 @@ def base_coarse_context(
             diagnostic
         )
 
+    attach_attempt_history(
+        internal,
+        model,
+        history,
+    )
+
     return (
         internal,
         model,
@@ -907,7 +1030,10 @@ def downstream_coarse_context(
         Mapping[str, Any],
     previous_round_index: int,
     previous_property_body: str,
-    scope: Mapping[str, Any],
+    scope:
+        Mapping[str, Any],
+    history:
+        list[dict[str, Any]],
 ) -> tuple[
     dict[str, Any],
     dict[str, Any],
@@ -921,8 +1047,10 @@ def downstream_coarse_context(
         previous_model
     )
 
-    selected = scope.get(
-        "selected"
+    selected = (
+        scope.get(
+            "selected"
+        )
     )
 
     if not isinstance(
@@ -931,20 +1059,26 @@ def downstream_coarse_context(
     ):
 
         raise WorkflowError(
-            "DOWNSTREAM scope "
-            "has no selected record"
+            "DOWNSTREAM scope has "
+            "no selected record"
         )
 
-    expression = selected.get(
-        "internal_signal"
+    expression = (
+        selected.get(
+            "internal_signal"
+        )
     )
 
-    expanded = selected.get(
-        "expanded_golden_behavior"
+    expanded = (
+        selected.get(
+            "expanded_golden_behavior"
+        )
     )
 
-    depth = scope.get(
-        "scope_depth"
+    depth = (
+        scope.get(
+            "scope_depth"
+        )
     )
 
     if (
@@ -996,7 +1130,8 @@ def downstream_coarse_context(
 
         raise WorkflowError(
             "down_0_i already exists "
-            "before downstream localization"
+            "before downstream "
+            "localization"
         )
 
     internal[
@@ -1123,6 +1258,12 @@ def downstream_coarse_context(
             diagnostic
         )
 
+    attach_attempt_history(
+        internal,
+        model,
+        history,
+    )
+
     serialized = json.dumps(
         model,
         sort_keys=True,
@@ -1154,13 +1295,15 @@ def downstream_coarse_context(
     )
 
 
-def same_context_retry(
+def target_miss_repair(
     previous_internal:
         Mapping[str, Any],
     previous_model:
         Mapping[str, Any],
     previous_round_index: int,
     previous_property_body: str,
+    history:
+        list[dict[str, Any]],
 ) -> tuple[
     dict[str, Any],
     dict[str, Any],
@@ -1187,47 +1330,59 @@ def same_context_retry(
 
     feedback = {
         "type":
-            "SAME_CONTEXT_RETRY",
+            "TARGET_MISS_REPAIR",
 
         "meaning":
             (
-                "The previous property "
-                "was Golden-safe but did not "
-                "detect the target fault. "
-                "Generate a different property "
-                "using the same available "
-                "evidence context."
+                "The previous property was "
+                "valid on the fault-free "
+                "Golden execution but did "
+                "not trigger during the "
+                "target faulty execution. "
+                "It therefore failed the "
+                "diagnostic objective for "
+                "this target. Use the "
+                "fault-local attempt history "
+                "and generate a materially "
+                "different property from the "
+                "same available evidence "
+                "context."
             ),
 
         "new_signal_information":
             False,
 
+        "new_golden_information":
+            False,
+
         "new_target_fault_information":
+            False,
+
+        "exact_counterexample_provided":
             False,
     }
 
-    internal[
-        "previous_round"
-    ] = copy.deepcopy(
-        previous
-    )
+    for target in (
+        internal,
+        model,
+    ):
 
-    model[
-        "previous_round"
-    ] = copy.deepcopy(
-        previous
-    )
+        target[
+            "previous_round"
+        ] = copy.deepcopy(
+            previous
+        )
 
-    internal[
-        "workflow_feedback"
-    ] = copy.deepcopy(
-        feedback
-    )
+        target[
+            "workflow_feedback"
+        ] = copy.deepcopy(
+            feedback
+        )
 
-    model[
-        "workflow_feedback"
-    ] = copy.deepcopy(
-        feedback
+    attach_attempt_history(
+        internal,
+        model,
+        history,
     )
 
     return (
@@ -1243,8 +1398,11 @@ def exact_counterexample(
         Mapping[str, Any],
     previous_round_index: int,
     previous_property_body: str,
-    scope: Mapping[str, Any],
+    scope:
+        Mapping[str, Any],
     scope_kind: str,
+    history:
+        list[dict[str, Any]],
 ) -> tuple[
     dict[str, Any],
     dict[str, Any],
@@ -1258,14 +1416,18 @@ def exact_counterexample(
         previous_model
     )
 
-    exact = scope.get(
-        "exact_evidence"
+    exact = (
+        scope.get(
+            "exact_evidence"
+        )
     )
 
     if scope_kind == "BASE":
 
-        base = scope.get(
-            "base_analysis"
+        base = (
+            scope.get(
+                "base_analysis"
+            )
         )
 
         if not isinstance(
@@ -1278,8 +1440,10 @@ def exact_counterexample(
                 "no base_analysis"
             )
 
-        exact = base.get(
-            "exact_evidence"
+        exact = (
+            base.get(
+                "exact_evidence"
+            )
         )
 
     if not isinstance(
@@ -1315,28 +1479,27 @@ def exact_counterexample(
         ),
     }
 
-    internal[
-        "previous_round"
-    ] = copy.deepcopy(
-        previous
-    )
+    for target in (
+        internal,
+        model,
+    ):
 
-    model[
-        "previous_round"
-    ] = copy.deepcopy(
-        previous
-    )
+        target[
+            "previous_round"
+        ] = copy.deepcopy(
+            previous
+        )
 
-    internal[
-        "diagnostic_feedback"
-    ] = copy.deepcopy(
-        diagnostic
-    )
+        target[
+            "diagnostic_feedback"
+        ] = copy.deepcopy(
+            diagnostic
+        )
 
-    model[
-        "diagnostic_feedback"
-    ] = copy.deepcopy(
-        diagnostic
+    attach_attempt_history(
+        internal,
+        model,
+        history,
     )
 
     serialized = json.dumps(
@@ -1372,6 +1535,8 @@ def choose_feedback(
     previous_model:
         Mapping[str, Any],
     previous_property_body: str,
+    history:
+        list[dict[str, Any]],
 ) -> tuple[
     str,
     dict[str, Any],
@@ -1405,6 +1570,7 @@ def choose_feedback(
             previous_model,
             previous_round_index,
             previous_property_body,
+            history,
         )
 
         scope_path = (
@@ -1429,7 +1595,7 @@ def choose_feedback(
             else None
         )
 
-        scope_depth = (
+        raw_depth = (
             existing_scope[
                 0
             ].get(
@@ -1439,20 +1605,22 @@ def choose_feedback(
             else None
         )
 
+        scope_depth = (
+            raw_depth
+            if isinstance(
+                raw_depth,
+                int,
+            )
+            else None
+        )
+
         return (
             "GOLDEN_REPAIR",
             internal,
             model,
             scope_path,
             scope_kind,
-            (
-                scope_depth
-                if isinstance(
-                    scope_depth,
-                    int,
-                )
-                else None
-            ),
+            scope_depth,
         )
 
     if (
@@ -1477,15 +1645,13 @@ def choose_feedback(
     previous_feedback = (
         "NONE"
         if previous_round_index == 0
-        else (
-            str(
-                previous_meta.get(
-                    "feedback_type"
-                )
+        else str(
+            previous_meta.get(
+                "feedback_type"
             )
-            if previous_meta
-            else ""
         )
+        if previous_meta
+        else ""
     )
 
     if (
@@ -1516,6 +1682,7 @@ def choose_feedback(
             previous_property_body,
             scope,
             "BASE",
+            history,
         )
 
         return (
@@ -1559,10 +1726,13 @@ def choose_feedback(
             previous_property_body,
             scope,
             "DOWNSTREAM",
+            history,
         )
 
-        depth = scope.get(
-            "scope_depth"
+        depth = (
+            scope.get(
+                "scope_depth"
+            )
         )
 
         return (
@@ -1575,31 +1745,30 @@ def choose_feedback(
                 ]
             ),
             "DOWNSTREAM",
-            (
-                int(
-                    depth
-                )
-                if isinstance(
-                    depth,
-                    int,
-                )
-                else None
-            ),
+            int(
+                depth
+            )
+            if isinstance(
+                depth,
+                int,
+            )
+            else None,
         )
 
     if (
         previous_feedback
-        == "SAME_CONTEXT_RETRY"
+        == "TARGET_MISS_REPAIR"
     ):
 
         (
             internal,
             model,
-        ) = same_context_retry(
+        ) = target_miss_repair(
             previous_internal,
             previous_model,
             previous_round_index,
             previous_property_body,
+            history,
         )
 
         scope_path = (
@@ -1613,7 +1782,7 @@ def choose_feedback(
         )
 
         return (
-            "SAME_CONTEXT_RETRY",
+            "TARGET_MISS_REPAIR",
             internal,
             model,
             scope_path,
@@ -1644,8 +1813,10 @@ def choose_feedback(
         scope_path
     )
 
-    status = scope.get(
-        "status"
+    status = (
+        scope.get(
+            "status"
+        )
     )
 
     if (
@@ -1662,6 +1833,7 @@ def choose_feedback(
             previous_round_index,
             previous_property_body,
             scope,
+            history,
         )
 
         return (
@@ -1689,10 +1861,13 @@ def choose_feedback(
             previous_round_index,
             previous_property_body,
             scope,
+            history,
         )
 
-        depth = scope.get(
-            "scope_depth"
+        depth = (
+            scope.get(
+                "scope_depth"
+            )
         )
 
         return (
@@ -1703,16 +1878,14 @@ def choose_feedback(
                 scope_path
             ),
             "DOWNSTREAM",
-            (
-                int(
-                    depth
-                )
-                if isinstance(
-                    depth,
-                    int,
-                )
-                else None
-            ),
+            int(
+                depth
+            )
+            if isinstance(
+                depth,
+                int,
+            )
+            else None,
         )
 
     if (
@@ -1723,15 +1896,16 @@ def choose_feedback(
         (
             internal,
             model,
-        ) = same_context_retry(
+        ) = target_miss_repair(
             previous_internal,
             previous_model,
             previous_round_index,
             previous_property_body,
+            history,
         )
 
         return (
-            "SAME_CONTEXT_RETRY",
+            "TARGET_MISS_REPAIR",
             internal,
             model,
             str(
@@ -1768,6 +1942,12 @@ Scientific objective:
 Golden behavior in the context is valid observed workload behavior and must not
 be contradicted.
 
+ATTEMPT HISTORY is fault-local. It contains only properties previously generated
+for THIS fault and their simulator-derived scientific verdicts. Treat a
+TARGET_NOT_DETECTED property as Golden-safe but unsuccessful for the diagnostic
+objective. Do not repeat any prior property and do not merely restate one with
+syntactic changes.
+
 Do not use raw hierarchy names, raw implementation net names, absolute cycle
 numbers, or simulation time.
 
@@ -1782,38 +1962,46 @@ Useful SVA knowledge:
         "GOLDEN_REPAIR":
             """
 FEEDBACK TYPE: GOLDEN_REPAIR
-The previous property produced a false positive during valid fault-free Golden
-execution. Re-read the same available Golden context and revise the property.
-No new target-fault evidence is introduced in this round.
+The immediately previous property produced a false positive during valid
+fault-free Golden execution. Re-read the available Golden context and the
+fault-local attempt history, then repair the property. No new target-fault
+evidence is introduced in this round.
 """,
 
         "LOCALIZED_BASE":
             """
 FEEDBACK TYPE: LOCALIZED_BASE
-The previous property was Golden-safe but did not detect the target fault.
-Deterministic simulator analysis established that the CURRENT observation set
-already contains supported fault-specific behavior. Do not move the observation
-scope. Evidence types are provided, but exact faulty states/transitions are
-hidden. Infer a different property using the existing aliases and Golden
-behavior.
+The immediately previous property was Golden-safe but did not detect the target
+fault. Deterministic simulator analysis established that the CURRENT observation
+set already contains supported fault-specific behavior. Do not move the
+observation scope. Evidence types are provided, but exact faulty
+states/transitions are hidden. Use the attempt history to avoid previously
+failed property strategies.
 """,
 
         "LOCALIZED_DOWNSTREAM":
             """
 FEEDBACK TYPE: LOCALIZED_DOWNSTREAM
-The previous property was Golden-safe but did not detect the target fault.
-The current base observation set contained no supported discriminative evidence,
-so the shallowest bounded downstream observation with such evidence was added.
-Use the expanded Golden behavior and the coarse evidence type. Exact faulty
-states/transitions and exact divergence values remain hidden.
+The immediately previous property was Golden-safe but did not detect the target
+fault. The current base observation set contained no supported discriminative
+evidence, so the shallowest bounded downstream observation with such evidence
+was added. Use the expanded Golden behavior and coarse evidence type. Exact
+faulty states/transitions and exact divergence values remain hidden. Use the
+attempt history to avoid previously failed property strategies.
 """,
 
-        "SAME_CONTEXT_RETRY":
+        "TARGET_MISS_REPAIR":
             """
-FEEDBACK TYPE: SAME_CONTEXT_RETRY
-The previous property was Golden-safe but did not detect the target fault.
-No additional model-visible signal or exact target-fault evidence is introduced.
-Generate a DIFFERENT property using the same available evidence context.
+FEEDBACK TYPE: TARGET_MISS_REPAIR
+The immediately previous property was valid on the fault-free Golden execution
+but did not trigger during the target faulty execution. It therefore failed the
+diagnostic objective for this target fault.
+
+No new Golden behavior, fault behavior, observation signal, or exact
+counterexample is introduced in this round. Review ALL entries in
+attempt_history. Generate a materially different property using the SAME
+available evidence context. Do not repeat any prior property and do not produce
+a merely syntactic restatement of a prior property.
 """,
 
         "COUNTEREXAMPLE_BASE":
@@ -1821,8 +2009,9 @@ Generate a DIFFERENT property using the same available evidence context.
 FEEDBACK TYPE: COUNTEREXAMPLE_BASE
 The previous property was Golden-safe but still missed the target after coarse
 BASE localization. Exact target-fault counterexample evidence for the SAME BASE
-scope is now provided in diagnostic_feedback. Preserve Golden safety and do not
-expand the observation scope.
+scope is now provided in diagnostic_feedback. Preserve Golden safety, do not
+expand the observation scope, and use attempt_history to avoid already failed
+properties.
 """,
 
         "COUNTEREXAMPLE_DOWNSTREAM":
@@ -1831,7 +2020,8 @@ FEEDBACK TYPE: COUNTEREXAMPLE_DOWNSTREAM
 The previous property was Golden-safe but still missed the target after coarse
 downstream localization. Exact target-fault counterexample evidence for the
 SAME frozen downstream scope is now provided in diagnostic_feedback. Preserve
-Golden safety and do not change the observation scope.
+Golden safety, do not change the observation scope, and use attempt_history to
+avoid already failed properties.
 """,
     }[
         feedback_type
@@ -1846,12 +2036,10 @@ Golden safety and do not change the observation scope.
             indent=2,
             ensure_ascii=False,
         )
-        + (
-            "\n\nReturn exactly:\n\n"
-            "BEGIN_SVA\n"
-            "<one property expression body>\n"
-            "END_SVA\n"
-        )
+        + "\n\nReturn exactly:\n\n"
+        + "BEGIN_SVA\n"
+        + "<one property expression body>\n"
+        + "END_SVA\n"
     )
 
 
@@ -1868,45 +2056,53 @@ def usage_line(
             "API tokens      : unavailable"
         )
 
-    input_tokens = usage.get(
-        "input_tokens"
+    input_tokens = (
+        usage.get(
+            "input_tokens"
+        )
     )
 
-    output_tokens = usage.get(
-        "output_tokens"
+    output_tokens = (
+        usage.get(
+            "output_tokens"
+        )
     )
 
-    total_tokens = usage.get(
-        "total_tokens"
+    total_tokens = (
+        usage.get(
+            "total_tokens"
+        )
+    )
+
+    input_details = (
+        usage.get(
+            "input_tokens_details"
+        )
     )
 
     cached = (
-        usage.get(
-            "input_tokens_details",
-            {},
-        ).get(
+        input_details.get(
             "cached_tokens"
         )
         if isinstance(
-            usage.get(
-                "input_tokens_details"
-            ),
+            input_details,
             dict,
         )
         else None
     )
 
-    reasoning = (
+    output_details = (
         usage.get(
-            "output_tokens_details",
-            {},
-        ).get(
+            "output_tokens_details"
+        )
+    )
+
+    reasoning = (
+        output_details.get(
             "reasoning_tokens"
         )
         if isinstance(
-            usage.get(
-                "output_tokens_details"
-            ),
+            output_details,
             dict,
         )
         else None
@@ -2083,9 +2279,17 @@ def main() -> int:
     )
 
     previous_property_body = (
-        previous_property(
+        read_property(
             pilot_dir,
             previous_round_index,
+        )
+    )
+
+    history = (
+        build_attempt_history(
+            pilot_dir,
+            previous_round_index,
+            fault_id,
         )
     )
 
@@ -2099,16 +2303,24 @@ def main() -> int:
     ) = choose_feedback(
         pilot_dir=
             pilot_dir,
+
         next_round=
             next_round,
+
         previous_verdict=
             previous_verdict,
+
         previous_internal=
             previous_internal,
+
         previous_model=
             previous_model,
+
         previous_property_body=
             previous_property_body,
+
+        history=
+            history,
     )
 
     if (
@@ -2120,6 +2332,18 @@ def main() -> int:
         raise WorkflowError(
             "invalid feedback type: "
             f"{feedback_type}"
+        )
+
+    if (
+        model_context.get(
+            "attempt_history"
+        )
+        != history
+    ):
+
+        raise WorkflowError(
+            "fault-local attempt_history "
+            "construction mismatch"
         )
 
     knowledge_path = (
@@ -2333,7 +2557,7 @@ def main() -> int:
 
     request_record = {
         "schema_version":
-            "2.0",
+            "3.0",
 
         "stage":
             "stage_06_generation_attempt",
@@ -2364,6 +2588,26 @@ def main() -> int:
 
         "scope_depth":
             scope_depth,
+
+        "attempt_history_rounds":
+            [
+                item[
+                    "round"
+                ]
+                for item
+                in history
+            ],
+
+        "conversation_linkage": {
+            "previous_response_id_used":
+                False,
+
+            "conversation_object_used":
+                False,
+
+            "history_source":
+                "fault_local_artifacts_only",
+        },
 
         "model":
             model,
@@ -2398,12 +2642,21 @@ def main() -> int:
     client = OpenAI(
         api_key=
             api_key,
+
         timeout=
             300.0,
+
         max_retries=
             2,
     )
 
+    # Intentionally independent request:
+    #
+    # no previous_response_id
+    # no conversation
+    #
+    # Same-fault history is explicitly
+    # serialized into this prompt only.
     response = (
         client.responses.create(
             model=
@@ -2462,8 +2715,10 @@ def main() -> int:
         ),
     )
 
-    usage = response_payload.get(
-        "usage"
+    usage = (
+        response_payload.get(
+            "usage"
+        )
     )
 
     write_json(
@@ -2472,7 +2727,7 @@ def main() -> int:
         ],
         {
             "schema_version":
-                "2.0",
+                "3.0",
 
             "stage":
                 "stage_06_api_status",
@@ -2523,6 +2778,14 @@ def main() -> int:
                     response_text
                 ),
 
+            "conversation_linkage": {
+                "previous_response_id_used":
+                    False,
+
+                "conversation_object_used":
+                    False,
+            },
+
             "recorded_at_utc":
                 utc_now(),
         },
@@ -2535,10 +2798,18 @@ def main() -> int:
             "contained no output_text"
         )
 
+    prior_properties = [
+        item[
+            "property"
+        ]
+        for item
+        in history
+    ]
+
     property_body = (
         extract_property(
             response_text,
-            previous_property_body,
+            prior_properties,
         )
     )
 
@@ -2552,7 +2823,7 @@ def main() -> int:
 
     meta = {
         "schema_version":
-            "2.0",
+            "3.0",
 
         "stage":
             "stage_06_generation_metadata",
@@ -2584,8 +2855,28 @@ def main() -> int:
         "scope_depth":
             scope_depth,
 
+        "attempt_history_rounds":
+            [
+                item[
+                    "round"
+                ]
+                for item
+                in history
+            ],
+
         "generation_consumes_budget":
             True,
+
+        "conversation_linkage": {
+            "previous_response_id_used":
+                False,
+
+            "conversation_object_used":
+                False,
+
+            "history_source":
+                "fault_local_artifacts_only",
+        },
 
         "generated_at_utc":
             utc_now(),
@@ -2620,47 +2911,63 @@ def main() -> int:
     )
 
     print()
-    print("=" * 88)
+    print("=" * 96)
 
     print(
         f"Stage-6 generation "
         f"Round {next_round}: PASS"
     )
 
-    print("=" * 88)
+    print("=" * 96)
 
     print(
-        f"Fault ID         : "
+        f"Fault ID          : "
         f"{fault_id}"
     )
 
     print(
-        f"Previous verdict : "
+        f"Previous verdict  : "
         f"{previous_verdict}"
     )
 
     print(
-        f"Feedback type    : "
+        f"Feedback type     : "
         f"{feedback_type}"
     )
 
     print(
-        f"Observation scope: "
+        f"Observation scope : "
         f"{observation_scope}"
     )
 
     print(
-        f"Scope depth      : "
+        f"Scope depth       : "
         f"{scope_depth}"
     )
 
     print(
-        f"Generation budget: "
+        "Attempt history   : "
+        + ", ".join(
+            f"R{x['round']}="
+            f"{x['verdict']}"
+            for x
+            in history
+        )
+    )
+
+    print(
+        "Conversation link : "
+        "NONE "
+        "(fault-local explicit context only)"
+    )
+
+    print(
+        f"Generation budget : "
         f"{next_round + 1}/3"
     )
 
     print(
-        f"Property         : "
+        f"Property          : "
         f"{property_body}"
     )
 

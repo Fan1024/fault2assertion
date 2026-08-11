@@ -1,0 +1,61 @@
+{
+  "schema_version": "stage6_data_contract_v3",
+
+  "method": "generate_first_verify_then_diagnose_scope",
+
+  "generation_budget": {
+    "max_attempts": 3,
+    "rounds": [0, 1, 2]
+  },
+
+  "api_context_policy": {
+    "api_requests_are_independent": true,
+    "use_previous_response_id": false,
+    "use_conversation_object": false,
+    "cross_fault_history_allowed": false,
+    "same_fault_history_policy":
+      "Explicitly serialize previous properties and their scientific verdicts from the current fault directory only."
+  },
+
+  "scope_policy": {
+    "trigger":
+      "first Golden-safe TARGET_NOT_DETECTED",
+
+    "principle":
+      "shallowest_sufficient_observation_scope",
+
+    "search_order": [
+      "BASE",
+      "DOWNSTREAM_DEPTH_2",
+      "DOWNSTREAM_DEPTH_3"
+    ],
+
+    "scope_is_frozen_after_first_decision":
+      true,
+
+    "no_evidence_fallback":
+      "TARGET_MISS_REPAIR"
+  },
+
+  "feedback_types": [
+    "NONE",
+    "GOLDEN_REPAIR",
+    "LOCALIZED_BASE",
+    "LOCALIZED_DOWNSTREAM",
+    "TARGET_MISS_REPAIR",
+    "COUNTEREXAMPLE_BASE",
+    "COUNTEREXAMPLE_DOWNSTREAM"
+  ],
+
+  "target_miss_repair": {
+    "new_signal_information": false,
+    "new_golden_information": false,
+    "new_target_fault_information": false,
+    "exact_counterexample_provided": false,
+    "attempt_history_included": true,
+    "must_avoid_all_previous_properties": true
+  },
+
+  "durable_result_schema":
+    "stage6_fault_result_v3"
+}
