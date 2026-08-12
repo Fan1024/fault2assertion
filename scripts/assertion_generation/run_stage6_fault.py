@@ -31,10 +31,21 @@ DEFERRED_SCHEMA = (
 CONTINUABLE_VERDICTS = {
     "GOLDEN_FALSE_POSITIVE",
     "TARGET_NOT_DETECTED",
+    "COMPILE_FAILED",
 }
 
-INFRA_VERDICTS = {
+# run_stage6_simulation.py returns
+# non-zero for these explicit verdicts.
+# COMPILE_FAILED is repairable within
+# the three-generation budget.
+NONZERO_SIMULATION_VERDICTS = {
     "COMPILE_FAILED",
+    "GOLDEN_EXECUTION_FAILED",
+    "FAULT_EXECUTION_FAILED",
+}
+
+# Runtime/tool failures remain terminal.
+INFRA_VERDICTS = {
     "GOLDEN_EXECUTION_FAILED",
     "FAULT_EXECUTION_FAILED",
 }
@@ -172,7 +183,7 @@ def run_simulation(
         )
     ).strip()
 
-    if verdict not in INFRA_VERDICTS:
+    if verdict not in NONZERO_SIMULATION_VERDICTS:
 
         raise Stage6FaultError(
             "Stage-6 simulation returned "

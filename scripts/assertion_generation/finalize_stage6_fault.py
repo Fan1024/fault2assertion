@@ -43,6 +43,7 @@ FAULT_RE = re.compile(
 
 VALID_FEEDBACK = {
     "NONE",
+    "COMPILE_REPAIR",
     "GOLDEN_REPAIR",
     "LOCALIZED_BASE",
     "LOCALIZED_DOWNSTREAM",
@@ -54,10 +55,10 @@ VALID_FEEDBACK = {
 CONTINUABLE_VERDICTS = {
     "GOLDEN_FALSE_POSITIVE",
     "TARGET_NOT_DETECTED",
+    "COMPILE_FAILED",
 }
 
 INFRA_VERDICTS = {
-    "COMPILE_FAILED",
     "GOLDEN_EXECUTION_FAILED",
     "FAULT_EXECUTION_FAILED",
 }
@@ -85,6 +86,9 @@ VERDICT_CODE = {
 FEEDBACK_CODE = {
     "NONE":
         "NONE",
+
+    "COMPILE_REPAIR":
+        "CR",
 
     "GOLDEN_REPAIR":
         "GR",
@@ -820,6 +824,104 @@ def model_input_delta(
                 True,
 
             "new_target_fault_information":
+                False,
+        }
+
+        return result
+
+    if (
+        feedback
+        == "COMPILE_REPAIR"
+    ):
+
+        workflow = (
+            model.get(
+                "workflow_feedback"
+            )
+        )
+
+        if (
+            not isinstance(
+                workflow,
+                dict,
+            )
+            or workflow.get(
+                "type"
+            )
+            != "COMPILE_REPAIR"
+        ):
+
+            raise FinalizeError(
+                f"Round-{round_index} "
+                "COMPILE_REPAIR has no "
+                "valid workflow_feedback"
+            )
+
+        diagnostics = (
+            workflow.get(
+                "compiler_diagnostics"
+            )
+        )
+
+        if not isinstance(
+            diagnostics,
+            dict,
+        ):
+
+            raise FinalizeError(
+                f"Round-{round_index} "
+                "COMPILE_REPAIR has no "
+                "compiler diagnostics"
+            )
+
+        lines = (
+            diagnostics.get(
+                "lines"
+            )
+        )
+
+        result[
+            "new_information"
+        ] = {
+            "previous_property_compile_failed":
+                True,
+
+            "compiler_diagnostics_provided":
+                bool(
+                    isinstance(
+                        lines,
+                        list,
+                    )
+                    and lines
+                ),
+
+            "compiler_diagnostic_line_count":
+                (
+                    len(
+                        lines
+                    )
+                    if isinstance(
+                        lines,
+                        list,
+                    )
+                    else 0
+                ),
+
+            "compile_runner_status":
+                diagnostics.get(
+                    "runner_status"
+                ),
+
+            "new_signal_information":
+                False,
+
+            "new_golden_information":
+                False,
+
+            "new_target_fault_information":
+                False,
+
+            "exact_counterexample_provided":
                 False,
         }
 

@@ -63,6 +63,7 @@ FAULT_ID_RE = re.compile(
 )
 
 VALID_FEEDBACK = {
+    "COMPILE_REPAIR",
     "GOLDEN_REPAIR",
     "LOCALIZED_BASE",
     "LOCALIZED_DOWNSTREAM",
@@ -926,6 +927,351 @@ def build_golden_repair(
     )
 
 
+def compile_diagnostics(
+    pilot_dir: Path,
+    previous_round_index: int,
+) -> dict[str, Any]:
+
+    log_path = (
+        pilot_dir
+        / (
+            f"round{previous_round_index}"
+            "_compile.log"
+        )
+    )
+
+    result_path = (
+        pilot_dir
+        / (
+            f"round{previous_round_index}"
+            "_compile.json"
+        )
+    )
+
+    if not log_path.is_file():
+
+        raise WorkflowError(
+            "COMPILE_REPAIR requires "
+            "the previous compile log: "
+            f"{log_path}"
+        )
+
+    compile_result: dict[
+        str,
+        Any,
+    ] = {}
+
+    if result_path.is_file():
+
+        compile_result = load_json(
+            result_path,
+            (
+                f"Round-{previous_round_index} "
+                "compile result"
+            ),
+        )
+
+    raw_lines = (
+        log_path.read_text(
+            encoding="utf-8",
+            errors="replace",
+        )
+        .splitlines()
+    )
+
+    checker_name = (
+        f"round{previous_round_index}"
+        "_checker.sv"
+    )
+
+    error_re = re.compile(
+        r"(?:"
+        r"\*E,"
+        r"|\*F,"
+        r"|\berror\b"
+        r"|\bsyntax\b"
+        r"|\billegal\b"
+        r"|\bexpect(?:ed|ing)\b"
+        r")",
+        flags=re.IGNORECASE,
+    )
+
+    # Prefer diagnostics that explicitly
+    # point to the generated Stage-6
+    # checker/property.
+    hit_indices = [
+        index
+        for (
+            index,
+            line,
+        ) in enumerate(
+            raw_lines
+        )
+        if (
+            checker_name
+            in line
+            and error_re.search(
+                line
+            )
+        )
+    ]
+
+    # Some Xcelium diagnostics print the
+    # source line and tool message on
+    # adjacent lines. Fall back to all
+    # compiler-error markers if necessary.
+    if not hit_indices:
+
+        hit_indices = [
+            index
+            for (
+                index,
+                line,
+            ) in enumerate(
+                raw_lines
+            )
+            if error_re.search(
+                line
+            )
+        ]
+
+    selected_indices: list[
+        int
+    ] = []
+
+    seen: set[
+        int
+    ] = set()
+
+    for index in hit_indices:
+
+        for candidate in range(
+            max(
+                0,
+                index - 2,
+            ),
+            min(
+                len(
+                    raw_lines
+                ),
+                index + 4,
+            ),
+        ):
+
+            if candidate in seen:
+                continue
+
+            seen.add(
+                candidate
+            )
+
+            selected_indices.append(
+                candidate
+            )
+
+    # Fail closed only if the log is
+    # completely unusable. A bounded tail
+    # is better compiler feedback than
+    # silently discarding the failure.
+    if not selected_indices:
+
+        start = max(
+            0,
+            len(
+                raw_lines
+            )
+            - 40,
+        )
+
+        selected_indices = list(
+            range(
+                start,
+                len(
+                    raw_lines
+                ),
+            )
+        )
+
+    selected_indices = (
+        selected_indices[
+            :80
+        ]
+    )
+
+    pilot_string = str(
+        pilot_dir
+    )
+
+    lines: list[
+        str
+    ] = []
+
+    for index in selected_indices:
+
+        line = (
+            raw_lines[
+                index
+            ]
+            .replace(
+                pilot_string,
+                "<STAGE6_WORK>",
+            )
+        )
+
+        if len(
+            line
+        ) > 1200:
+
+            line = (
+                line[
+                    :1200
+                ]
+                + " ..."
+            )
+
+        if line.strip():
+
+            lines.append(
+                line
+            )
+
+    if not lines:
+
+        raise WorkflowError(
+            "COMPILE_REPAIR could not "
+            "extract any compiler "
+            "diagnostic text"
+        )
+
+    return {
+        "source_file":
+            log_path.name,
+
+        "checker_file":
+            checker_name,
+
+        "runner_status":
+            compile_result.get(
+                "status"
+            ),
+
+        "runner_reason":
+            compile_result.get(
+                "reason"
+            ),
+
+        "lines":
+            lines,
+
+        "line_count":
+            len(
+                lines
+            ),
+    }
+
+
+def compile_repair(
+    previous_internal:
+        Mapping[str, Any],
+    previous_model:
+        Mapping[str, Any],
+    previous_round_index: int,
+    previous_property_body: str,
+    history:
+        list[dict[str, Any]],
+    pilot_dir: Path,
+) -> tuple[
+    dict[str, Any],
+    dict[str, Any],
+]:
+
+    internal = core_context(
+        previous_internal
+    )
+
+    model = core_context(
+        previous_model
+    )
+
+    diagnostics = (
+        compile_diagnostics(
+            pilot_dir,
+            previous_round_index,
+        )
+    )
+
+    previous = {
+        "round":
+            previous_round_index,
+
+        "property":
+            previous_property_body,
+
+        "verdict":
+            "COMPILE_FAILED",
+    }
+
+    feedback = {
+        "type":
+            "COMPILE_REPAIR",
+
+        "meaning":
+            (
+                "The previous generated "
+                "property failed Stage-6 "
+                "compile/elaboration. Repair "
+                "the SVA property using the "
+                "compiler diagnostics while "
+                "preserving the same "
+                "diagnostic objective and "
+                "available observation scope."
+            ),
+
+        "compiler_diagnostics":
+            diagnostics,
+
+        "new_signal_information":
+            False,
+
+        "new_golden_information":
+            False,
+
+        "new_target_fault_information":
+            False,
+
+        "exact_counterexample_provided":
+            False,
+    }
+
+    for target in (
+        internal,
+        model,
+    ):
+
+        target[
+            "previous_round"
+        ] = copy.deepcopy(
+            previous
+        )
+
+        target[
+            "workflow_feedback"
+        ] = copy.deepcopy(
+            feedback
+        )
+
+    attach_attempt_history(
+        internal,
+        model,
+        history,
+    )
+
+    return (
+        internal,
+        model,
+    )
+
+
 def base_coarse_context(
     previous_internal:
         Mapping[str, Any],
@@ -1559,6 +1905,73 @@ def choose_feedback(
 
     if (
         previous_verdict
+        == "COMPILE_FAILED"
+    ):
+
+        (
+            internal,
+            model,
+        ) = compile_repair(
+            previous_internal,
+            previous_model,
+            previous_round_index,
+            previous_property_body,
+            history,
+            pilot_dir,
+        )
+
+        scope_path = (
+            str(
+                existing_scope[
+                    1
+                ]
+            )
+            if existing_scope
+            else None
+        )
+
+        scope_kind = (
+            str(
+                existing_scope[
+                    0
+                ].get(
+                    "observation_scope"
+                )
+            )
+            if existing_scope
+            else None
+        )
+
+        raw_depth = (
+            existing_scope[
+                0
+            ].get(
+                "scope_depth"
+            )
+            if existing_scope
+            else None
+        )
+
+        scope_depth = (
+            raw_depth
+            if isinstance(
+                raw_depth,
+                int,
+            )
+            else None
+        )
+
+        return (
+            "COMPILE_REPAIR",
+            internal,
+            model,
+            scope_path,
+            scope_kind,
+            scope_depth,
+        )
+
+    if (
+        previous_verdict
         == "GOLDEN_FALSE_POSITIVE"
     ):
 
@@ -1959,6 +2372,22 @@ Useful SVA knowledge:
 """
 
     specific = {
+        "COMPILE_REPAIR":
+            """
+FEEDBACK TYPE: COMPILE_REPAIR
+The immediately previous generated property failed Stage-6 compilation or
+elaboration. Compiler diagnostics are provided in
+workflow_feedback.compiler_diagnostics.
+
+Repair the SystemVerilog Assertion syntax or property semantics that caused the
+compiler failure. Preserve the same diagnostic objective, Golden constraints,
+available aliases, and observation scope. A compiler failure is NOT evidence
+about the target fault, so do not infer new faulty behavior from it.
+
+Do not repeat the previous property. Produce a corrected property body that can
+compile under the same Stage-6 checker.
+""",
+
         "GOLDEN_REPAIR":
             """
 FEEDBACK TYPE: GOLDEN_REPAIR

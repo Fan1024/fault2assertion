@@ -774,10 +774,38 @@ def parse_generated_event(
     fault_id: str,
     round_index: int,
 ) -> dict[str, Any] | None:
+    """Recognize failure of THIS generated Stage-6 assertion.
+
+    Primary path:
+        Parse the explicit F2A marker emitted by the generated
+        assertion action block.
+
+    Fallback path:
+        Xcelium may finalize a strong/liveness assertion at
+        simulation termination (for example s_eventually) without
+        executing the assertion action block. In that case Xcelium
+        emits *F,ASRTST directly.
+
+        Accept that fallback only when the ASRTST line identifies all
+        of the following Stage-6-owned objects for this exact fault
+        and round:
+
+          * roundN_checker.sv
+          * deterministic generated monitor instance
+          * a_f2a_stage6_roundN assertion label
+
+        This strict ownership check prevents pre-existing DUT/TB
+        assertions from being misclassified as the generated Stage-6
+        assertion.
+    """
 
     events: list[
         dict[str, Any]
     ] = []
+
+    # ------------------------------------------------------------
+    # Primary path: explicit Stage-6 marker.
+    # ------------------------------------------------------------
 
     for raw in text.splitlines():
 
@@ -813,19 +841,20 @@ def parse_generated_event(
             tokens[1:]
         ):
 
-            if "=" in token:
+            if "=" not in token:
+                continue
 
-                (
-                    key,
-                    value,
-                ) = token.split(
-                    "=",
-                    1,
-                )
+            (
+                key,
+                value,
+            ) = token.split(
+                "=",
+                1,
+            )
 
-                fields[
-                    key
-                ] = value
+            fields[
+                key
+            ] = value
 
         if (
             fields.get(
@@ -842,6 +871,7 @@ def parse_generated_event(
             continue
 
         try:
+
             cycle = int(
                 fields[
                     "cycle"
@@ -857,10 +887,12 @@ def parse_generated_event(
         values = {
             key:
                 value
+
             for (
                 key,
                 value,
             ) in fields.items()
+
             if key
             not in {
                 "fault_id",
@@ -874,6 +906,9 @@ def parse_generated_event(
             {
                 "triggered":
                     True,
+
+                "source":
+                    "F2A_MARKER",
 
                 "fault_id":
                     fault_id,
@@ -897,17 +932,182 @@ def parse_generated_event(
             }
         )
 
-    if not events:
+    if events:
+
+        first = dict(
+            events[
+                0
+            ]
+        )
+
+        first[
+            "event_count_in_log"
+        ] = len(
+            events
+        )
+
+        return first
+
+    # ------------------------------------------------------------
+    # Fallback path:
+    #
+    # A strong/liveness assertion can remain pending until $finish.
+    # Xcelium can then report *F,ASRTST directly, without executing
+    # the checker action block and therefore without printing the
+    # F2A marker above.
+    #
+    # Match ONLY this exact generated Stage-6 assertion.
+    # ------------------------------------------------------------
+
+    tag = hashlib.sha256(
+        (
+            f"{fault_id}:"
+            f"round{round_index}"
+        ).encode(
+            "utf-8"
+        )
+    ).hexdigest()[
+        :10
+    ]
+
+    checker_name = (
+        f"round{round_index}"
+        "_checker.sv"
+    )
+
+    monitor_instance = (
+        f"f2a_stage6_round"
+        f"{round_index}_"
+        f"{tag}_i"
+    )
+
+    assertion_label = (
+        f"a_f2a_stage6_round"
+        f"{round_index}"
+    )
+
+    fallback_events: list[
+        dict[str, Any]
+    ] = []
+
+    for raw in text.splitlines():
+
+        if (
+            "*F,ASRTST"
+            not in raw
+        ):
+            continue
+
+        # Strict ownership:
+        # all three generated identifiers
+        # must be present on the same
+        # Xcelium ASRTST diagnostic line.
+        if (
+            checker_name
+            not in raw
+            or monitor_instance
+            not in raw
+            or assertion_label
+            not in raw
+            or "has failed"
+            not in raw
+        ):
+            continue
+
+        time_match = re.search(
+            r"\(time\s+([^)]+)\)",
+            raw,
+        )
+
+        failure_window = re.search(
+            r"has failed\s+\("
+            r"(\d+)\s+cycles?"
+            r"(?:,\s+starting\s+([^)]+))?"
+            r"\)",
+            raw,
+            flags=re.IGNORECASE,
+        )
+
+        event: dict[
+            str,
+            Any,
+        ] = {
+            "triggered":
+                True,
+
+            "source":
+                "XCELIUM_ASRTST_FALLBACK",
+
+            "fault_id":
+                fault_id,
+
+            "round":
+                round_index,
+
+            # Xcelium does not provide the
+            # Stage-6 sampled cycle counter
+            # in this termination-time
+            # diagnostic. Do not infer one.
+            "cycle":
+                None,
+
+            "time":
+                (
+                    time_match.group(
+                        1
+                    ).strip()
+                    if time_match
+                    else None
+                ),
+
+            "sampled_values":
+                {},
+
+            "raw_marker_line":
+                raw.strip(),
+        }
+
+        if failure_window:
+
+            event[
+                "xcelium_failure_window"
+            ] = {
+                "cycles":
+                    int(
+                        failure_window.group(
+                            1
+                        )
+                    ),
+
+                "starting":
+                    (
+                        failure_window.group(
+                            2
+                        ).strip()
+                        if failure_window.group(
+                            2
+                        )
+                        else None
+                    ),
+            }
+
+        fallback_events.append(
+            event
+        )
+
+    if not fallback_events:
         return None
 
     first = dict(
-        events[0]
+        fallback_events[
+            0
+        ]
     )
 
     first[
         "event_count_in_log"
     ] = len(
-        events
+        fallback_events
     )
 
     return first
