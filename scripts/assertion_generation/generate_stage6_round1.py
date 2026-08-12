@@ -1,11 +1,30 @@
 #!/usr/bin/env python3
-"""Generate Stage-6 Train Round-1 from bounded downstream fault feedback."""
+"""Generate Stage-6 Train Round-1 using bounded downstream feedback.
+
+Inputs:
+- frozen Round-0 visible context
+- Round-0 property and simulation verdict
+- Train-only downstream feedback
+- frozen OpenAI model policy
+
+Outputs:
+- round1_context.json
+- round1_prompt.txt
+- round1_request.json
+- round1_response.json
+- round1_response.txt
+- round1_api_status.json
+- round1_property.sva
+
+No simulation is performed here.
+"""
 
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
+import re
 import sys
 
 from datetime import datetime, timezone
@@ -16,8 +35,12 @@ from typing import Any, Mapping
 BEGIN_MARKER = "BEGIN_SVA"
 END_MARKER = "END_SVA"
 
+FAULT_ID_RE = re.compile(
+    r"^TF\d{6}_SA[01]$"
+)
 
-class GenerationError(RuntimeError):
+
+class Round1Error(RuntimeError):
     pass
 
 
@@ -33,39 +56,44 @@ def load_json(
 ) -> dict[str, Any]:
 
     try:
-        value = json.loads(
+        payload = json.loads(
             path.read_text(
                 encoding="utf-8"
             )
         )
 
     except FileNotFoundError as exc:
-        raise GenerationError(
+        raise Round1Error(
             f"{label} not found: {path}"
         ) from exc
 
     except json.JSONDecodeError as exc:
-        raise GenerationError(
+        raise Round1Error(
             f"invalid {label} JSON "
             f"{path}: {exc}"
         ) from exc
 
     if not isinstance(
-        value,
+        payload,
         dict,
     ):
-        raise GenerationError(
+        raise Round1Error(
             f"{label} must contain "
             f"one JSON object: {path}"
         )
 
-    return value
+    return payload
 
 
 def write_json(
     path: Path,
     payload: Mapping[str, Any],
 ) -> None:
+
+    path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
 
     temporary = path.with_name(
         f".{path.name}.tmp"
@@ -91,6 +119,11 @@ def write_text(
     text: str,
 ) -> None:
 
+    path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
     temporary = path.with_name(
         f".{path.name}.tmp"
     )
@@ -111,7 +144,9 @@ def sha256_file(
 
     digest = hashlib.sha256()
 
-    with path.open("rb") as handle:
+    with path.open(
+        "rb"
+    ) as handle:
 
         for block in iter(
             lambda: handle.read(
@@ -131,7 +166,7 @@ def parse_env_file(
 ) -> dict[str, str]:
 
     if not path.is_file():
-        raise GenerationError(
+        raise Round1Error(
             "credential file "
             f"not found: {path}"
         )
@@ -155,31 +190,25 @@ def parse_env_file(
 
         if (
             not line
-            or line.startswith(
-                "#"
-            )
+            or line.startswith("#")
         ):
             continue
 
         if line.startswith(
             "export "
         ):
-            line = (
-                line[7:]
-                .strip()
-            )
+            line = line[
+                len("export "):
+            ].strip()
 
         if "=" not in line:
-            raise GenerationError(
+            raise Round1Error(
                 "invalid credential "
                 f"line {line_number}: "
                 f"{path}"
             )
 
-        (
-            key,
-            value,
-        ) = line.split(
+        key, value = line.split(
             "=",
             1,
         )
@@ -189,119 +218,161 @@ def parse_env_file(
 
         if (
             len(value) >= 2
-            and value[0]
-            == value[-1]
-            and value[0]
-            in {
-                "'",
-                '"',
-            }
+            and value[0] == value[-1]
+            and value[0] in {"'", '"'}
         ):
             value = value[
                 1:-1
             ]
 
-        result[
-            key
-        ] = value
+        result[key] = value
 
     return result
 
 
 def extract_property(
-    text: str,
-    previous: str,
+    response_text: str,
+    previous_property: str,
 ) -> str:
 
     if (
-        text.count(
+        response_text.count(
             BEGIN_MARKER
-        )
-        != 1
-        or text.count(
+        ) != 1
+        or response_text.count(
             END_MARKER
-        )
-        != 1
+        ) != 1
     ):
-        raise GenerationError(
-            "response must contain "
-            "exactly one BEGIN_SVA "
-            "and END_SVA"
+        raise Round1Error(
+            "response must contain exactly "
+            "one BEGIN_SVA and one END_SVA"
         )
 
-    begin_marker = (
-        text.index(
+    marker_start = (
+        response_text.index(
             BEGIN_MARKER
         )
     )
 
-    begin = (
-        begin_marker
-        + len(
-            BEGIN_MARKER
+    body_start = (
+        marker_start
+        + len(BEGIN_MARKER)
+    )
+
+    body_end = (
+        response_text.index(
+            END_MARKER,
+            body_start,
         )
     )
 
-    end = text.index(
-        END_MARKER,
-        begin,
-    )
+    prefix = response_text[
+        :marker_start
+    ].strip()
 
-    if (
-        text[
-            :begin_marker
-        ].strip()
-        or text[
-            end
-            + len(
-                END_MARKER
-            ):
-        ].strip()
-    ):
-        raise GenerationError(
+    suffix = response_text[
+        body_end
+        + len(END_MARKER):
+    ].strip()
+
+    if prefix or suffix:
+        raise Round1Error(
             "response contains text "
-            "outside "
-            "BEGIN_SVA/END_SVA"
+            "outside BEGIN_SVA/END_SVA"
         )
 
-    body = text[
-        begin:end
+    body = response_text[
+        body_start:body_end
     ].strip()
 
     if not body:
-        raise GenerationError(
-            "generated property "
-            "is empty"
+        raise Round1Error(
+            "generated property is empty"
+        )
+
+    lowered = body.lower()
+
+    if "assert property" in lowered:
+        raise Round1Error(
+            "model emitted full "
+            "assert property syntax"
         )
 
     if (
-        "assert property"
-        in body.lower()
+        "module " in lowered
+        or "endmodule" in lowered
     ):
-        raise GenerationError(
-            "only a property body "
-            "is allowed"
+        raise Round1Error(
+            "model emitted module syntax"
         )
 
-    if body.endswith(
-        ";"
-    ):
-        raise GenerationError(
+    if body.endswith(";"):
+        raise Round1Error(
             "property body must not "
-            "end with a semicolon"
+            "end in semicolon"
         )
 
     if (
-        body
-        == previous.strip()
+        body.strip()
+        == previous_property.strip()
     ):
-        raise GenerationError(
-            "Round-1 property "
-            "is identical to "
-            "Round-0"
+        raise Round1Error(
+            "Round-1 property is "
+            "identical to Round-0"
         )
 
     return body
+
+
+def validate_expanded_behavior(
+    behavior: Mapping[str, Any],
+    expected_aliases: list[str],
+) -> None:
+
+    order = behavior.get(
+        "signal_order"
+    )
+
+    if order != expected_aliases:
+        raise Round1Error(
+            "expanded Golden signal "
+            "order mismatch\n"
+            f"expected={expected_aliases}\n"
+            f"actual={order}"
+        )
+
+    states = behavior.get(
+        "observed_states"
+    )
+
+    if (
+        not isinstance(states, list)
+        or not states
+    ):
+        raise Round1Error(
+            "expanded Golden behavior "
+            "has no observed states"
+        )
+
+    width = len(
+        expected_aliases
+    )
+
+    for value in states:
+
+        if (
+            not isinstance(value, str)
+            or len(value) != width
+            or any(
+                bit not in {"0", "1"}
+                for bit in value
+            )
+        ):
+            raise Round1Error(
+                "invalid expanded "
+                "Golden state: "
+                f"{value!r}"
+            )
 
 
 def build_prompt(
@@ -317,39 +388,79 @@ def build_prompt(
     return f"""Generate one repaired diagnostic SystemVerilog Assertion property body for the
 known structural fault below.
 
-This is Train Round 1. Round 0 passed the complete fault-free Golden CRC32
-execution but did not trigger on the target faulty execution.
+This is Train Round 1.
 
-The context now includes one additional downstream alias selected by a bounded
-fault-propagation analysis. This target-fault information is privileged training
-feedback; use it to repair the Round-0 property.
+Round 0 successfully compiled and remained silent during the complete
+fault-free Golden CRC32 execution, but it did not trigger during the target
+faulty execution.
 
-Interpret the behavior fields as follows:
-- `golden_behavior.signal_order` defines the bit order of every Golden state;
-- every listed Golden state was observed and must not be rejected;
-- for `one_cycle_transitions.<alias>`, each two-bit state is ordered as
-  `[site_i, <alias>]`;
-- `AB->CD` means consecutive sampled-clock states;
-- `fault_only_observed_states` were observed in the target faulty execution but
-  were not observed in the Golden execution for the expanded signal order;
-- `fault_only_site_downstream_transitions` were observed for
-  `[site_i, down_0_i]` in the target faulty execution but not in Golden;
-- `first_divergence_sample` is a value snapshot, not permission to use an
-  absolute simulation cycle number.
+A bounded downstream fault-propagation analysis has now provided one additional
+observation alias, `down_0_i`.
 
-Use only the supplied aliases: `site_i`, `recv_N_i`, and `down_0_i`.
-The new property must remain consistent with all supplied Golden behavior and
-should exploit the downstream fault feedback when useful.
+This downstream information is privileged Train-only feedback. Its purpose in
+this round is to test whether a more diagnostically useful observation point can
+repair the Golden-safe but target-insensitive Round-0 assertion.
+
+Interpret the context carefully:
+
+1. `golden_behavior.signal_order` defines the bit order of every string in
+   `golden_behavior.observed_states`.
+
+2. Every listed Golden state was observed during the complete fault-free
+   workload execution. The generated property must remain consistent with all
+   listed Golden behavior.
+
+3. For `golden_behavior.one_cycle_transitions.<alias>`, each two-bit state is
+   ordered as `[site_i, <alias>]`.
+
+4. `"AB->CD"` means state `AB` at one sampled clock edge was followed by state
+   `CD` at the immediately following sampled clock edge.
+
+5. `privileged_downstream_feedback.fault_only_observed_states` contains expanded
+   joint states that were observed during the target faulty execution but were
+   not observed during the Golden execution for the exact expanded signal order.
+
+6. `privileged_downstream_feedback.fault_only_site_downstream_transitions`
+   contains `[site_i, down_0_i]` transitions observed in the target faulty
+   execution but not in Golden.
+
+7. `first_divergence_sample` is diagnostic evidence only. Do not use its
+   absolute simulation cycle number.
+
+Use only these aliases:
+- `site_i`
+- the supplied `recv_N_i` aliases
+- `down_0_i`
+
+Do not use raw hierarchy names or raw net names in the property.
+
+The new property must:
+- remain Golden-safe;
+- differ from the Round-0 property;
+- use the downstream feedback when it provides a meaningful discriminative
+  condition;
+- aim to trigger on the target faulty execution.
 
 Useful SVA constructs:
 - `|->` overlapped implication
 - `|=>` next-cycle implication
 - `##N` exact cycle delay
-- `$past`, `$stable`, `$rose`, `$fell`
+- `$past`
+- `$stable`
+- `$rose`
+- `$fell`
 
 Generate only one property-expression body.
-Do not emit clock/reset syntax, `assert property`, modules, semicolons, raw
-hierarchy names, or absolute simulation cycle numbers.
+
+Do not emit:
+- clock/reset syntax
+- `assert property`
+- modules
+- semicolons
+- explanations
+- Markdown
+- raw hierarchy names
+- absolute simulation cycle numbers
 
 ROUND-1 CONTEXT
 {context_text}
@@ -422,12 +533,22 @@ def main() -> int:
         args.fault_id.strip()
     )
 
+    if (
+        FAULT_ID_RE.fullmatch(
+            fault_id
+        )
+        is None
+    ):
+        raise Round1Error(
+            f"invalid fault ID: "
+            f"{fault_id!r}"
+        )
+
     pilot_dir = (
         args.pilot_dir
         .expanduser()
         .resolve()
-        if args.pilot_dir
-        is not None
+        if args.pilot_dir is not None
         else (
             root
             / "runs"
@@ -437,8 +558,8 @@ def main() -> int:
     )
 
     if not pilot_dir.is_dir():
-        raise GenerationError(
-            "pilot directory "
+        raise Round1Error(
+            f"pilot directory "
             f"not found: {pilot_dir}"
         )
 
@@ -449,17 +570,21 @@ def main() -> int:
     )
 
     if (
-        round0_sim.get(
-            "verdict"
-        )
+        round0_sim.get("verdict")
         != "TARGET_NOT_DETECTED"
     ):
-        raise GenerationError(
-            "Round-1 downstream repair "
-            "requires "
+        raise Round1Error(
+            "Round-1 downstream feedback "
+            "requires Round-0 "
             "TARGET_NOT_DETECTED; got "
             f"{round0_sim.get('verdict')!r}"
         )
+
+    baseline = load_json(
+        pilot_dir
+        / "visible_context.json",
+        "Round-0 visible context",
+    )
 
     feedback_path = (
         pilot_dir
@@ -468,19 +593,29 @@ def main() -> int:
 
     feedback = load_json(
         feedback_path,
-        "downstream feedback",
+        "Round-1 downstream feedback",
     )
 
     if (
-        feedback.get(
-            "status"
-        )
+        feedback.get("status")
         != "DOWNSTREAM_CANDIDATE_FOUND"
     ):
-        raise GenerationError(
-            "no usable downstream "
-            "candidate: status="
+        raise Round1Error(
+            "downstream analysis did not "
+            "find a candidate: "
             f"{feedback.get('status')!r}"
+        )
+
+    if (
+        feedback.get(
+            "privileged_train_only"
+        )
+        is not True
+    ):
+        raise Round1Error(
+            "downstream feedback must be "
+            "explicitly marked "
+            "privileged_train_only"
         )
 
     selected = feedback.get(
@@ -491,33 +626,59 @@ def main() -> int:
         selected,
         dict,
     ):
-        raise GenerationError(
-            "downstream feedback "
-            "has no selected candidate"
+        raise Round1Error(
+            "feedback has no selected "
+            "downstream candidate"
         )
 
-    visible = load_json(
-        pilot_dir
-        / "visible_context.json",
-        "baseline visible context",
+    if (
+        selected.get("alias")
+        != "down_0_i"
+    ):
+        raise Round1Error(
+            "selected downstream alias "
+            "must be down_0_i"
+        )
+
+    expression = selected.get(
+        "expression"
     )
 
-    signals = visible.get(
+    depth = selected.get(
+        "depth"
+    )
+
+    if (
+        not isinstance(expression, str)
+        or not expression.strip()
+        or not isinstance(depth, int)
+    ):
+        raise Round1Error(
+            "selected downstream "
+            "expression/depth invalid"
+        )
+
+    signals = baseline.get(
         "signals"
     )
 
-    if not isinstance(
-        signals,
-        dict,
+    if (
+        not isinstance(signals, dict)
+        or "site_i" not in signals
     ):
-        raise GenerationError(
-            "baseline visible context "
-            "has no signals"
+        raise Round1Error(
+            "baseline signals missing"
         )
 
     expanded_signals = dict(
         signals
     )
+
+    if "down_0_i" in expanded_signals:
+        raise Round1Error(
+            "baseline unexpectedly "
+            "already contains down_0_i"
+        )
 
     expanded_signals[
         "down_0_i"
@@ -526,46 +687,84 @@ def main() -> int:
             "train_feedback_downstream_observation",
 
         "netlist_expression":
-            selected.get(
-                "expression"
-            ),
+            expression.strip(),
 
         "downstream_depth":
-            selected.get(
-                "depth"
-            ),
+            depth,
     }
 
-    golden_behavior = (
-        selected.get(
-            "expanded_golden_behavior"
-        )
+    expected_aliases = list(
+        expanded_signals.keys()
+    )
+
+    expanded_behavior = selected.get(
+        "expanded_golden_behavior"
     )
 
     if not isinstance(
-        golden_behavior,
+        expanded_behavior,
         dict,
     ):
-        raise GenerationError(
-            "selected candidate "
-            "has no expanded "
-            "Golden behavior"
+        raise Round1Error(
+            "selected downstream candidate "
+            "has no expanded Golden behavior"
         )
 
-    previous_property_path = (
+    validate_expanded_behavior(
+        expanded_behavior,
+        expected_aliases,
+    )
+
+    fault_only_states = selected.get(
+        "candidate_added_fault_only_states",
+        [],
+    )
+
+    fault_only_transitions = selected.get(
+        "fault_only_site_candidate_transitions",
+        [],
+    )
+
+    if not isinstance(
+        fault_only_states,
+        list,
+    ):
+        raise Round1Error(
+            "fault-only states must "
+            "be a list"
+        )
+
+    if not isinstance(
+        fault_only_transitions,
+        list,
+    ):
+        raise Round1Error(
+            "fault-only transitions "
+            "must be a list"
+        )
+
+    if (
+        not fault_only_states
+        and not fault_only_transitions
+    ):
+        raise Round1Error(
+            "selected candidate has "
+            "no discriminative "
+            "fault-side feedback"
+        )
+
+    round0_property_path = (
         pilot_dir
         / "round0_property.sva"
     )
 
-    if not previous_property_path.is_file():
-        raise GenerationError(
-            "Round-0 property "
-            f"not found: "
-            f"{previous_property_path}"
+    if not round0_property_path.is_file():
+        raise Round1Error(
+            "Round-0 property missing"
         )
 
-    previous_property = (
-        previous_property_path
+    round0_property = (
+        round0_property_path
         .read_text(
             encoding="utf-8"
         )
@@ -580,42 +779,35 @@ def main() -> int:
         earliest,
         dict,
     ):
-        raise GenerationError(
-            "selected candidate "
-            "has no earliest "
-            "divergence snapshot"
-        )
+        earliest = None
 
     round1_context = {
         "design":
-            visible.get(
-                "design"
-            ),
+            baseline.get("design"),
 
         "workload":
-            visible.get(
-                "workload"
-            ),
+            baseline.get("workload"),
 
         "fault":
-            visible.get(
-                "fault"
-            ),
+            baseline.get("fault"),
 
         "signals":
             expanded_signals,
 
         "golden_behavior":
-            golden_behavior,
+            expanded_behavior,
 
         "training_observation":
-            visible.get(
+            baseline.get(
                 "training_observation"
             ),
 
         "round0_feedback": {
             "previous_property":
-                previous_property,
+                round0_property,
+
+            "compile":
+                "COMPILE_PASS",
 
             "golden_safe":
                 True,
@@ -628,48 +820,43 @@ def main() -> int:
         },
 
         "privileged_downstream_feedback": {
+            "train_only":
+                True,
+
             "selected_alias":
                 "down_0_i",
 
             "downstream_depth":
-                selected.get(
-                    "depth"
-                ),
-
-            "selection_basis":
-                (
-                    "earliest bounded downstream "
-                    "depth with time-aligned "
-                    "divergence and "
-                    "Golden-discriminative "
-                    "fault behavior"
-                ),
+                depth,
 
             "fault_only_observed_states":
-                selected.get(
-                    "candidate_added_fault_only_states",
-                    [],
-                ),
+                fault_only_states,
 
             "fault_only_site_downstream_transitions":
-                selected.get(
-                    "fault_only_site_candidate_transitions",
-                    [],
+                fault_only_transitions,
+
+            "first_divergence_sample":
+                (
+                    None
+                    if earliest is None
+                    else {
+                        "golden_values":
+                            earliest.get(
+                                "golden_values"
+                            ),
+
+                        "fault_values":
+                            earliest.get(
+                                "fault_values"
+                            ),
+                    }
                 ),
-
-            "first_divergence_sample": {
-                "golden_values":
-                    earliest.get(
-                        "golden_values"
-                    ),
-
-                "fault_values":
-                    earliest.get(
-                        "fault_values"
-                    ),
-            },
         },
     }
+
+    prompt = build_prompt(
+        round1_context
+    )
 
     outputs = {
         "context":
@@ -703,51 +890,49 @@ def main() -> int:
 
     existing = [
         path
-        for path
-        in outputs.values()
+        for path in outputs.values()
         if path.exists()
     ]
 
     if existing:
-        raise GenerationError(
+        raise Round1Error(
             "refusing to overwrite "
-            "existing Round-1 "
-            "artifacts:\n  "
+            "existing Round-1 artifacts:\n  "
             + "\n  ".join(
                 str(path)
-                for path
-                in existing
+                for path in existing
             )
         )
 
-    prompt = build_prompt(
-        round1_context
-    )
-
     write_json(
-        outputs[
-            "context"
-        ],
+        outputs["context"],
         round1_context,
     )
 
     write_text(
-        outputs[
-            "prompt"
-        ],
+        outputs["prompt"],
         prompt,
     )
 
-    policy_path = (
+    model_policy_path = (
         args.model_policy
         .expanduser()
         .resolve()
     )
 
     policy = load_json(
-        policy_path,
+        model_policy_path,
         "model policy",
     )
+
+    if (
+        policy.get("api")
+        != "responses"
+    ):
+        raise Round1Error(
+            "model policy must use "
+            "api='responses'"
+        )
 
     model = str(
         policy.get(
@@ -756,14 +941,14 @@ def main() -> int:
         )
     ).strip()
 
-    effort = str(
+    reasoning_effort = str(
         policy.get(
             "reasoning_effort",
             "medium",
         )
     ).strip()
 
-    max_tokens = int(
+    max_output_tokens = int(
         policy.get(
             "max_output_tokens",
             32768,
@@ -779,18 +964,20 @@ def main() -> int:
 
     if (
         not model
-        or max_tokens <= 0
+        or max_output_tokens <= 0
     ):
-        raise GenerationError(
+        raise Round1Error(
             "invalid model policy"
         )
 
-    credentials = (
-        parse_env_file(
-            args.credential_file
-            .expanduser()
-            .resolve()
-        )
+    credential_path = (
+        args.credential_file
+        .expanduser()
+        .resolve()
+    )
+
+    credentials = parse_env_file(
+        credential_path
     )
 
     api_key = (
@@ -806,17 +993,16 @@ def main() -> int:
         or api_key
         == "REPLACE_WITH_REAL_OPENAI_API_KEY"
     ):
-        raise GenerationError(
-            "OPENAI_API_KEY "
-            "is missing or "
-            "a placeholder"
+        raise Round1Error(
+            "OPENAI_API_KEY missing "
+            "or placeholder"
         )
 
     try:
         from openai import OpenAI
 
     except ImportError as exc:
-        raise GenerationError(
+        raise Round1Error(
             "OpenAI Python SDK "
             "is not installed"
         ) from exc
@@ -826,37 +1012,46 @@ def main() -> int:
             "1.0",
 
         "stage":
-            "stage_06_round1_downstream_generation",
+            "stage_06_round1_generation",
 
         "fault_id":
             fault_id,
+
+        "generated_at_utc":
+            utc_now(),
+
+        "feedback_type":
+            "bounded_downstream_strong_teacher_v1",
+
+        "privileged_train_only":
+            True,
 
         "model":
             model,
 
         "reasoning_effort":
-            effort,
+            reasoning_effort,
 
         "max_output_tokens":
-            max_tokens,
+            max_output_tokens,
 
         "store":
             store,
 
         "prompt_sha256":
             sha256_file(
-                outputs[
-                    "prompt"
-                ]
+                outputs["prompt"]
             ),
 
-        "downstream_feedback_sha256":
+        "feedback_sha256":
             sha256_file(
                 feedback_path
             ),
 
-        "requested_at_utc":
-            utc_now(),
+        "round0_property_sha256":
+            sha256_file(
+                round0_property_path
+            ),
     }
 
     client = OpenAI(
@@ -869,21 +1064,21 @@ def main() -> int:
         client.responses.create(
             model=model,
 
-            reasoning={
-                "effort":
-                    effort
-            },
-
             input=prompt,
 
+            reasoning={
+                "effort":
+                    reasoning_effort
+            },
+
             max_output_tokens=
-                max_tokens,
+                max_output_tokens,
 
             store=store,
         )
     )
 
-    response_record = (
+    response_payload = (
         response.model_dump(
             mode="json"
         )
@@ -894,36 +1089,29 @@ def main() -> int:
         or ""
     ).strip()
 
+    # Persist API facts before parsing the property.
     write_json(
-        outputs[
-            "request"
-        ],
+        outputs["request"],
         request_record,
     )
 
     write_json(
-        outputs[
-            "response"
-        ],
-        response_record,
+        outputs["response"],
+        response_payload,
     )
 
     write_text(
-        outputs[
-            "response_text"
-        ],
-        response_text
-        + (
-            "\n"
+        outputs["response_text"],
+        (
+            response_text
+            + "\n"
             if response_text
             else ""
         ),
     )
 
     write_json(
-        outputs[
-            "api_status"
-        ],
+        outputs["api_status"],
         {
             "schema_version":
                 "1.0",
@@ -934,31 +1122,29 @@ def main() -> int:
             "fault_id":
                 fault_id,
 
+            "response_id":
+                response_payload.get("id"),
+
+            "response_status":
+                response_payload.get(
+                    "status"
+                ),
+
             "model_requested":
                 model,
 
             "model_returned":
-                response_record.get(
+                response_payload.get(
                     "model"
                 ),
 
-            "response_id":
-                response_record.get(
-                    "id"
-                ),
-
-            "response_status":
-                response_record.get(
-                    "status"
-                ),
-
             "incomplete_details":
-                response_record.get(
+                response_payload.get(
                     "incomplete_details"
                 ),
 
             "usage":
-                response_record.get(
+                response_payload.get(
                     "usage"
                 ),
 
@@ -973,60 +1159,82 @@ def main() -> int:
     )
 
     if not response_text:
-        raise GenerationError(
+        raise Round1Error(
             "OpenAI response "
             "contained no output_text"
         )
 
-    property_body = (
-        extract_property(
-            response_text,
-            previous_property,
-        )
+    property_body = extract_property(
+        response_text,
+        round0_property,
     )
 
     write_text(
-        outputs[
-            "property"
-        ],
-        property_body
-        + "\n",
+        outputs["property"],
+        property_body + "\n",
     )
 
     print()
     print("=" * 80)
-
     print(
         "Stage-6 Round-1 "
-        "downstream generation: PASS"
+        "generation: PASS"
     )
-
     print("=" * 80)
 
     print(
-        f"Fault ID        : "
+        f"Fault ID          : "
         f"{fault_id}"
     )
 
     print(
-        "Downstream alias: "
-        "down_0_i"
+        f"Model             : "
+        f"{model}"
     )
 
     print(
-        f"Depth           : "
-        f"{selected.get('depth')}"
+        f"Reasoning         : "
+        f"{reasoning_effort}"
     )
 
     print(
-        f"Expression      : "
-        f"{selected.get('expression')}"
+        f"Downstream alias  : "
+        f"down_0_i"
     )
 
-    print("Property:")
+    print(
+        f"Downstream signal : "
+        f"{expression}"
+    )
 
     print(
-        property_body
+        f"Depth             : "
+        f"{depth}"
+    )
+
+    print(
+        f"Fault-only states : "
+        f"{fault_only_states}"
+    )
+
+    print()
+    print("Generated property:")
+    print(property_body)
+
+    print()
+    print(
+        f"Context           : "
+        f"{outputs['context']}"
+    )
+
+    print(
+        f"Prompt            : "
+        f"{outputs['prompt']}"
+    )
+
+    print(
+        f"Property          : "
+        f"{outputs['property']}"
     )
 
     return 0
@@ -1039,7 +1247,7 @@ if __name__ == "__main__":
             main()
         )
 
-    except GenerationError as exc:
+    except Round1Error as exc:
 
         print(
             f"ERROR: {exc}",

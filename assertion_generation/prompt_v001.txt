@@ -1,0 +1,21 @@
+Generate one concise diagnostic SystemVerilog Assertion property body for the
+known structural fault below.
+
+Success criterion:
+- the assertion must remain silent on the golden CRC32 execution;
+- the assertion should trigger on the target faulty execution.
+
+Use only `site_i` and the supplied `recv_N_i` aliases.
+Prefer a meaningful temporal or relational property between the fault site and
+its direct receivers.
+
+{{SVA_KNOWLEDGE}}
+
+FAULT CONTEXT
+{{VISIBLE_CONTEXT_JSON}}
+
+Return exactly:
+
+BEGIN_SVA
+<one property expression body>
+END_SVA

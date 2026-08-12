@@ -1,0 +1,34 @@
+Generate one repaired diagnostic SystemVerilog Assertion property body for the known structural fault below.
+
+This is Stage-6 Round 1: LOCALIZED diagnostic feedback.
+
+The previous Round-0 property was Golden-safe but did not detect the target faulty execution.
+
+Round 1 provides one additional downstream observation alias and a coarse diagnostic evidence type. The exact faulty state, exact faulty transition, exact Golden/Fault divergence values, absolute simulation cycle, raw downstream net name, and structural depth are intentionally withheld.
+
+Interpret the feedback types as follows:
+
+- SAME_CYCLE_JOINT_STATE_NOVELTY:
+  The target fault effect reaches the expanded local observation set and creates at least one same-cycle joint behavior that is inconsistent with the observed Golden behavior. The exact faulty joint state is hidden.
+
+- ONE_CYCLE_TRANSITION_NOVELTY:
+  The target fault effect reaches the selected downstream observation and creates at least one one-cycle [site_i, selected_observation] transition that is inconsistent with the observed Golden behavior. The exact faulty transition is hidden.
+
+Use the expanded Golden behavior to infer a Golden-safe relational or temporal property. Prefer to exploit the selected downstream observation when useful.
+
+The generated property must:
+- remain silent on the complete Golden workload execution;
+- differ from the previous-round property;
+- aim to trigger on the target faulty execution;
+- use only the supplied aliases.
+
+{{SVA_KNOWLEDGE}}
+
+ROUND-1 MODEL-VISIBLE CONTEXT
+{{MODEL_CONTEXT_JSON}}
+
+Return exactly:
+
+BEGIN_SVA
+<one property expression body>
+END_SVA

@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0",
+
+  "profiles": {
+    "PILOT_TRAIN_V1": {
+      "status": "active",
+
+      "include_exact_fault_site": true,
+      "include_static_structure": true,
+      "include_golden_activity": true,
+
+      "include_training_observed_behavior": true,
+
+      "include_existing_detector": false,
+      "include_local_divergence": false,
+      "include_faulty_dynamic_trace": false,
+
+      "purpose": "First real-fault Train-style engineering closure using currently available Stage-5 batch artifacts."
+    },
+
+    "STATIC_V1": {
+      "status": "active",
+
+      "include_exact_fault_site": true,
+      "include_static_structure": true,
+      "include_golden_activity": false,
+
+      "include_training_observed_behavior": false,
+
+      "include_existing_detector": false,
+      "include_local_divergence": false,
+      "include_faulty_dynamic_trace": false,
+
+      "purpose": "Future low-information ablation."
+    },
+
+    "ACTIVITY_V1": {
+      "status": "active",
+
+      "include_exact_fault_site": true,
+      "include_static_structure": true,
+      "include_golden_activity": true,
+
+      "include_training_observed_behavior": false,
+
+      "include_existing_detector": false,
+      "include_local_divergence": false,
+      "include_faulty_dynamic_trace": false,
+
+      "purpose": "Candidate Dev/Test Scenario-A visible context."
+    },
+
+    "DIVERGENCE_V1": {
+      "status": "reserved_not_implemented",
+
+      "include_exact_fault_site": true,
+      "include_static_structure": true,
+      "include_golden_activity": true,
+
+      "include_training_observed_behavior": false,
+
+      "include_existing_detector": false,
+      "include_local_divergence": true,
+      "include_faulty_dynamic_trace": false,
+
+      "purpose": "Reserved for an explicit local-divergence extension; current batch oracle does not compute it."
+    }
+  }
+}

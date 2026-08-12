@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "updated_at_utc": "2026-08-10T03:20:08.010814+00:00",
+  "faults": [
+    {
+      "fault_id": "TF000516_SA0",
+      "selection_id": "TS000516",
+      "site_id": "RS011526",
+      "site_order": 12,
+      "purpose": "stage6_first_real_fault_engineering_closure",
+      "exclude_from_future_scientific_split": true,
+      "source_campaign_manifest_digest_sha256": "88b36f2944cc512fb08ccd0b2b2d39644ced3ce844361c8662bbf83d5e9dda9f",
+      "registered_at_utc": "2026-08-10T03:20:08.010802+00:00"
+    }
+  ]
+}

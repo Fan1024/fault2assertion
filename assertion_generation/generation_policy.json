@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+
+  "pilot": {
+    "max_rounds": 1,
+    "feedback_enabled": false,
+    "stop_on_success": true
+  },
+
+  "train": {
+    "max_rounds": 3,
+    "feedback_enabled": true,
+    "stop_on_success": true
+  },
+
+  "dev": {
+    "pass_at": 1,
+    "max_rounds": 1,
+    "feedback_enabled": false
+  },
+
+  "test": {
+    "pass_at": 1,
+    "max_rounds": 1,
+    "feedback_enabled": false
+  }
+}

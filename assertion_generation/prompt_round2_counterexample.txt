@@ -1,0 +1,32 @@
+Generate one repaired diagnostic SystemVerilog Assertion property body for the known structural fault below.
+
+This is Stage-6 Round 2: COUNTEREXAMPLE diagnostic feedback.
+
+Round 1 was Golden-safe but still did not detect the target faulty execution. Round 2 therefore reveals exact target-fault counterexample information derived from the same bounded downstream observation used in Round 1.
+
+Interpret the context as follows:
+
+- golden_behavior contains observed fault-free workload behavior and must not be contradicted.
+- diagnostic_feedback.fault_only_observed_states lists exact expanded joint states observed in the target faulty execution but not observed in Golden.
+- diagnostic_feedback.fault_only_site_downstream_transitions lists exact one-cycle [site_i, selected_observation] transitions observed in the target faulty execution but not in Golden.
+- diagnostic_feedback.divergence_sample, when present, gives exact Golden and Fault signal values at a diagnostic divergence sample.
+- No absolute simulation cycle or time is provided. Do not invent or encode an absolute cycle number.
+
+Use the counterexample information to repair the previous property while preserving Golden safety.
+
+The generated property must:
+- remain silent on the complete Golden workload execution;
+- differ from the previous-round property;
+- aim to trigger on the target faulty execution;
+- use only the supplied aliases.
+
+{{SVA_KNOWLEDGE}}
+
+ROUND-2 MODEL-VISIBLE CONTEXT
+{{MODEL_CONTEXT_JSON}}
+
+Return exactly:
+
+BEGIN_SVA
+<one property expression body>
+END_SVA
